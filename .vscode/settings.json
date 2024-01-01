@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "freertos_posix_internal.h": "c",
+        "freertos_posix.h": "c",
+        "gk_syscalls.h": "c",
+        "errno.h": "c"
+    }
+}

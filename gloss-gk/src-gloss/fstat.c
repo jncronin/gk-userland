@@ -1,5 +1,4 @@
 #include <gk_syscalls.h>
-#include <sys/stat.h>
 
 int _fstat(int file, struct stat *st)
 {

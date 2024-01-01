@@ -17,6 +17,13 @@ target_sources(gloss-gk
 	${SOURCES_GLOSS}
 )
 
+target_include_directories(gloss-gk
+	PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface")
+
+set_target_properties(gloss-gk PROPERTIES PUBLIC_HEADER "gk-userlandinterface/gk_syscalls.h")
+
+
 add_library(pthread)
 
 target_sources(pthread
@@ -27,6 +34,7 @@ target_sources(pthread
 target_include_directories(pthread
 	PRIVATE
 		"${CMAKE_CURRENT_SOURCE_DIR}/inc-pthread"
+		"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
 )
 set_target_properties(pthread PROPERTIES PUBLIC_HEADER "inc-pthread/pthread.h;inc-pthread/sched.h")
 

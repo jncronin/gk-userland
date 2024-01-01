@@ -1,6 +1,6 @@
+#include <gk_syscalls.h>
+
 void *_sbrk(int nbytes)
 {
-	(void)nbytes;
-	while(1);
+	return __gk_syscalls->_sbrk(nbytes);
 }
-

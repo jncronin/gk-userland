@@ -1,10 +1,8 @@
+#include <gk_syscalls.h>
+
 int _execve(char *name,
 		char **argv,
 		char **env)
 {
-	(void)name;
-	(void)argv;
-	(void)env;
-	while(1);
+	return __gk_syscalls->_execve(name, argv, env);
 }
-

@@ -1,7 +1,6 @@
+#include <gk_syscalls.h>
+
 int _link(char *old, char *new)
 {
-	(void)old;
-	(void)new;
-	while(1);
+	return __gk_syscalls->_link(old, new);
 }
-

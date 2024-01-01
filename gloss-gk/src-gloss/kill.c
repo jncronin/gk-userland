@@ -1,7 +1,6 @@
+#include <gk_syscalls.h>
+
 int _kill(int pid, int sig)
 {
-	(void)pid;
-	(void)sig;
-	while(1);
+	return __gk_syscalls->_kill(pid, sig);
 }
-

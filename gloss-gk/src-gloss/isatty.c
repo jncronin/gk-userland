@@ -1,6 +1,6 @@
+#include <gk_syscalls.h>
+
 int _isatty(int file)
 {
-	(void)file;
-	while(1);
+	return __gk_syscalls->_isatty(file);
 }
-

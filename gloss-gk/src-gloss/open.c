@@ -1,8 +1,6 @@
+#include <gk_syscalls.h>
+
 int _open(const char *name, int flags, int mode)
 {
-	(void)name;
-	(void)flags;
-	(void)mode;
-	while(1);
+	return __gk_syscalls->_open(name, flags, mode);
 }
-

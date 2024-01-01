@@ -1,9 +1,7 @@
+#include <gk_syscalls.h>
+
 int _write(int file, char *buf, int nbytes)
 {
-	(void)file;
-	(void)buf;
-	(void)nbytes;
-
-	while(1);
+	return __gk_syscalls->_write(file, buf, nbytes);
 }
 

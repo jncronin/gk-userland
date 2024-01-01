@@ -1,6 +1,7 @@
+#include <gk_syscalls.h>
+
 int _wait(int *status)
 {
-	(void)status;
-	while(1);
+	return __gk_syscalls->_wait(status);
 }
 

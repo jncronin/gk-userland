@@ -1,5 +1,6 @@
+#include <gk_syscalls.h>
+
 int _fork()
 {
-	while(1);
+	return __gk_syscalls->_fork();
 }
-

@@ -517,6 +517,8 @@ static int CPU_haveNEON(void)
         }
         return 0;
     }
+#elif defined(__GAMEKID__)
+    return 0;
 #else
 #warning SDL_HasNEON is not implemented for this ARM platform. Write me.
     return 0;

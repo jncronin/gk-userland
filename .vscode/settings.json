@@ -3,6 +3,8 @@
         "freertos_posix_internal.h": "c",
         "freertos_posix.h": "c",
         "gk_syscalls.h": "c",
-        "errno.h": "c"
+        "errno.h": "c",
+        "pthread.h": "c",
+        "types.h": "c"
     }
 }

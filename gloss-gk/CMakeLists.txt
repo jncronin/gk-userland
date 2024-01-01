@@ -37,7 +37,7 @@ target_include_directories(pthread
 		"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
 		"${CMAKE_CURRENT_SOURCE_DIR}/src-pthread"
 )
-set_target_properties(pthread PROPERTIES PUBLIC_HEADER "inc-pthread/pthread.h;inc-pthread/sched.h")
+#set_target_properties(pthread PROPERTIES PUBLIC_HEADER "inc-pthread/pthread.h;inc-pthread/sched.h")
 
 install(TARGETS gloss-gk pthread)
 

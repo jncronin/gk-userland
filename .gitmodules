@@ -1,0 +1,3 @@
+[submodule "gloss-gk/gk-userlandinterface"]
+	path = gloss-gk/gk-userlandinterface
+	url = https://github.com/jncronin/gk-userlandinterface.git

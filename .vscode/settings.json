@@ -5,6 +5,7 @@
         "gk_syscalls.h": "c",
         "errno.h": "c",
         "pthread.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "config.h": "c"
     }
 }

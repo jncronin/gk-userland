@@ -1,3 +1,9 @@
 [submodule "gloss-gk/gk-userlandinterface"]
 	path = gloss-gk/gk-userlandinterface
 	url = https://github.com/jncronin/gk-userlandinterface.git
+[submodule "gloss-gk/cmsis_device_h7"]
+	path = gloss-gk/cmsis_device_h7
+	url = https://github.com/STMicroelectronics/cmsis_device_h7.git
+[submodule "gloss-gk/cmsis_core"]
+	path = gloss-gk/cmsis_core
+	url = https://github.com/STMicroelectronics/cmsis_core.git

@@ -1,6 +1,8 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _isatty(int file)
 {
-	return __gk_syscalls->_isatty(file);
+	int ret;
+	__syscall(__syscall_isatty, &ret, (void *)file, NULL);
+	return ret;
 }

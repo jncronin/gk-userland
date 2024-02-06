@@ -1,6 +1,8 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _kill(int pid, int sig)
 {
-	return __gk_syscalls->_kill(pid, sig);
+	int ret;
+	__syscall(__syscall_kill, &ret, (void *)pid, (void *)sig);
+	return ret;
 }

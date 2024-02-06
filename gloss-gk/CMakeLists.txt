@@ -6,6 +6,10 @@ file(GLOB_RECURSE SOURCES_GLOSS CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/src-gloss/*.c
 )
 
+file(GLOB_RECURSE SOURCES_GK CONFIGURE_DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/src-gk/*.c
+)
+
 file(GLOB_RECURSE SOURCES_PTHREAD CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/src-pthread/*.c
 )
@@ -22,6 +26,23 @@ target_include_directories(gloss-gk
 	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface")
 
 set_target_properties(gloss-gk PROPERTIES PUBLIC_HEADER "gk-userlandinterface/gk_syscalls.h")
+
+
+add_library(gk)
+
+target_sources(gk
+	PRIVATE
+	${SOURCES_GK}
+)
+
+target_include_directories(gk
+	PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
+	"${CMAKE_CURRENT_SOURCE_DIR}/inc-gk"
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_device_h7/Include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_core/Include")
+
+set_target_properties(gk PROPERTIES PUBLIC_HEADER "inc-gk/gk.h;cmsis_device_h7/Include/stm32h7xx.h;cmsis_device_h7/Include/stm32h747xx.h;cmsis_core/Include/cmsis_compiler.h;cmsis_core/Include/cmsis_gcc.h;cmsis_core/Include/cmsis_version.h;cmsis_core/Include/core_cm4.h;cmsis_core/Include/core_cm7.h")
 
 
 add_library(pthread)

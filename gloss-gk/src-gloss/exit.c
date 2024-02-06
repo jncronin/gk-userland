@@ -1,6 +1,6 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 void _exit(int rc)
 {
-	__gk_syscalls->_exit(rc);
+	__syscall(__syscall_exit, (void *)rc, NULL, NULL);
 }

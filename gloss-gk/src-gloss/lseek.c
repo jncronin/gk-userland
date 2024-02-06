@@ -1,6 +1,12 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _lseek(int file, int offset, int whence)
 {
-	return __gk_syscalls->_lseek(file, offset, whence);
+	int ret;
+	struct __syscall_lseek_params p;
+	p.file = file;
+	p.offset = offset;
+	p.whence = whence;
+	__syscall(__syscall_lseek, &ret, &p, NULL);
+	return ret;
 }

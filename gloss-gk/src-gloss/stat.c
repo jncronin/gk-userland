@@ -1,7 +1,9 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _stat(char *file, struct stat *st)
 {
-	return __gk_syscalls->_stat(file, st);
+	int ret;
+	__syscall(__syscall_stat, &ret, file, st);
+	return ret;
 }
 

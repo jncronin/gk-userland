@@ -1,6 +1,8 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _fork()
 {
-	return __gk_syscalls->_fork();
+	int ret;
+	__syscall(__syscall_fork, &ret, NULL, NULL);
+	return ret;
 }

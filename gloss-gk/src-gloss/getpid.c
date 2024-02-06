@@ -1,6 +1,8 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _getpid()
 {
-	return __gk_syscalls->_getpid();
+	int ret;
+	__syscall(__syscall_getpid, &ret, NULL, NULL);
+	return ret;
 }

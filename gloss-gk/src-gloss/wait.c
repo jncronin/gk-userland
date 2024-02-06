@@ -1,7 +1,9 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _wait(int *status)
 {
-	return __gk_syscalls->_wait(status);
+	int ret;
+	__syscall(__syscall_wait, &ret, status, NULL);
+	return ret;
 }
 

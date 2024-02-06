@@ -1,6 +1,8 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _close(int file)
 {
-	return __gk_syscalls->_close(file);
+	int ret;
+	__syscall(__syscall_close, &ret, (void *)file, NULL);
+	return ret;
 }

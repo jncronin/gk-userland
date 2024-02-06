@@ -1,7 +1,9 @@
-#include <gk_syscalls.h>
+#include <syscalls.h>
 
 int _unlink(char *name)
 {
-	return __gk_syscalls->_unlink(name);
+	int ret;
+	__syscall(__syscall_unlink, &ret, name, NULL);
+	return ret;
 }
 

@@ -7,5 +7,6 @@
         "pthread.h": "c",
         "types.h": "c",
         "config.h": "c"
-    }
+    },
+    "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

@@ -1,0 +1,107 @@
+#ifndef _SYS_TERMIOS_H
+#define _SYS_TERMIOS_H
+
+typedef unsigned int cc_t;
+typedef unsigned int speed_t;
+typedef unsigned int tcflag_t;
+
+#define NCCS        32
+
+struct termios
+{
+    tcflag_t c_iflag;
+    tcflag_t c_oflag;
+    tcflag_t c_cflag;
+    tcflag_t c_lflag;
+    cc_t     c_cc[NCCS];
+};
+
+speed_t cfgetispeed(const struct termios *);
+speed_t cfgetospeed(const struct termios *);
+int     cfsetispeed(struct termios *, speed_t);
+int     cfsetospeed(struct termios *, speed_t);
+int     tcdrain(int);
+int     tcflow(int, int);
+int     tcflush(int, int);
+int     tcgetattr(int, struct termios *);
+int     tcsendbreak(int, int);
+int     tcsetattr(int, int, const struct termios *);
+
+#define TCIFLUSH        1
+#define TCOFLUSH        2
+#define TCIOFLUSH       3
+
+#define ECHO            1
+#define ECHOE           2
+#define ECHOK           4
+#define ECHONL          8
+#define ICANON          16
+#define ISIG            32
+
+
+#define IXON            1
+#define IXOFF           2
+#define ICRNL           4
+#define IXANY           8
+#define BRKINT          16
+#define IGNBRK          32
+#define IGNCR           64
+#define IGNPAR          128
+#define INLCR           256
+#define INPCK           512
+#define ISTRIP          1024
+#define PARMRK          2048
+
+#define OPOST           1
+#define ONLCR           2
+#define OCRNL           4
+#define ONOCR           8
+#define ONLRET          16
+#define OFILL           32
+#define NLDLY           64
+#define CRDLY           128
+#define TABDLY          256
+#define BSDLY           512
+#define VTDLY           1024
+#define FFDLY           2048
+
+
+
+#define TCSANOW         1
+#define TCSADRAIN       2
+#define TCSAFLUSH       3
+
+#define VINTR           8
+#define VEOF            9
+#define VMIN            10
+#define VTIME           11
+
+#define B0              0
+#define B50             1
+#define B75             2
+#define B110            3
+#define B134            4
+#define B150            5
+#define B200            6
+#define B300            7
+#define B600            8
+#define B1200           9
+#define B1800           10
+#define B2400           11
+#define B4800           12
+#define B9600           13
+#define B19200          14
+#define B38400          15
+#define B57600          16
+#define B115200         17
+#define B230400         18
+#define B460800         19
+#define B500000         20
+#define B576000         21
+#define B921600         22
+#define B1000000        23
+#define B1152000        24
+#define B1500000        25
+#define B2000000        26
+
+#endif

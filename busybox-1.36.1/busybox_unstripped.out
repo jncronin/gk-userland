@@ -1,0 +1,558 @@
+Output of:
+arm-none-eabi-gcc -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -ffast-math --specs=nano.specs -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS -I/home/jncronin/src/gk/include -Wall -Wshadow -Wwrite-strings -Wundef -Wstrict-prototypes -Wunused -Wunused-parameter -Wunused-function -Wunused-value -Wmissing-prototypes -Wmissing-declarations -Wno-format-security -Wdeclaration-after-statement -Wold-style-definition -finline-limit=0 -fno-builtin-strlen -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-guess-branch-probability -funsigned-char -static-libgcc -falign-functions=1 -falign-jumps=1 -falign-labels=1 -falign-loops=1 -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-builtin-printf -Os -static -Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L~/src/gk/lib -lm -Wl,--whole-archive /home/jncronin/src/gk/lib/libgloss-gk.a -Wl,--no-whole-archive -Wl,-q -o busybox_unstripped -Wl,--sort-common -Wl,--sort-section,alignment -Wl,--gc-sections -Wl,--start-group applets/built-in.o archival/lib.a archival/libarchive/lib.a console-tools/lib.a coreutils/lib.a coreutils/libcoreutils/lib.a debianutils/lib.a klibc-utils/lib.a e2fsprogs/lib.a editors/lib.a findutils/lib.a init/lib.a libbb/lib.a libpwdgrp/lib.a loginutils/lib.a mailutils/lib.a miscutils/lib.a modutils/lib.a networking/lib.a networking/libiproute/lib.a networking/udhcp/lib.a printutils/lib.a procps/lib.a runit/lib.a selinux/lib.a shell/lib.a sysklogd/lib.a util-linux/lib.a util-linux/volume_id/lib.a archival/built-in.o archival/libarchive/built-in.o console-tools/built-in.o coreutils/built-in.o coreutils/libcoreutils/built-in.o debianutils/built-in.o klibc-utils/built-in.o e2fsprogs/built-in.o editors/built-in.o findutils/built-in.o init/built-in.o libbb/built-in.o libpwdgrp/built-in.o loginutils/built-in.o mailutils/built-in.o miscutils/built-in.o modutils/built-in.o networking/built-in.o networking/libiproute/built-in.o networking/udhcp/built-in.o printutils/built-in.o procps/built-in.o runit/built-in.o selinux/built-in.o shell/built-in.o sysklogd/built-in.o util-linux/built-in.o util-linux/volume_id/built-in.o -Wl,--end-group -Wl,--start-group -lm -Wl,--end-group
+==========
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(dd.o): in function `dd_main':
+dd.c:(.text.dd_main+0xee): undefined reference to `ftruncate'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: dd.c:(.text.dd_main+0x442): undefined reference to `fsync'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `mk_splitter':
+awk.c:(.text.mk_splitter+0x18): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.mk_splitter+0x1e): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `awk_split':
+awk.c:(.text.awk_split+0x88): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.awk_split+0xb0): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `awk_getline':
+awk.c:(.text.awk_getline+0x7e): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `evaluate':
+awk.c:(.text.evaluate+0x268): undefined reference to `popen'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.evaluate+0x424): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.evaluate+0x432): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.evaluate+0x570): undefined reference to `popen'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.evaluate+0x776): undefined reference to `pclose'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `as_regex':
+awk.c:(.text.as_regex+0x42): undefined reference to `regcomp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `do_match':
+awk.c:(.text.do_match+0x1a): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.do_match+0x26): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `awk_sub':
+awk.c:(.text.awk_sub+0x42): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: awk.c:(.text.awk_sub+0x82): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(awk.o): in function `awk_exit.isra.0':
+awk.c:(.text.awk_exit.isra.0+0x44): undefined reference to `pclose'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(duration.o): in function `sleep_for_duration':
+duration.c:(.text.sleep_for_duration+0x6a): undefined reference to `nanosleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(appletlib.o): in function `parse_config_file':
+appletlib.c:(.text.parse_config_file+0x6): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(appletlib.o): in function `run_applet_no_and_exit':
+appletlib.c:(.text.run_applet_no_and_exit+0x1e): undefined reference to `getgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0x5e): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0x84): undefined reference to `getgrgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0x96): undefined reference to `getpwnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0xd0): undefined reference to `setresgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0xee): undefined reference to `setresuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0xfc): undefined reference to `setgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: appletlib.c:(.text.run_applet_no_and_exit+0x104): undefined reference to `setuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs.o): in function `get_terminal_width_height':
+xfuncs.c:(.text.get_terminal_width_height+0x46): undefined reference to `ioctl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs.o): in function `tcsetattr_stdin_TCSANOW':
+xfuncs.c:(.text.tcsetattr_stdin_TCSANOW+0x6): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs.o): in function `get_termios_and_make_raw':
+xfuncs.c:(.text.get_termios_and_make_raw+0x18): undefined reference to `tcgetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs.o): in function `safe_waitpid':
+xfuncs.c:(.text.safe_waitpid+0x10): undefined reference to `waitpid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `mmap_anon':
+xfuncs_printf.c:(.text.mmap_anon+0x12): undefined reference to `mmap'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `xpipe':
+xfuncs_printf.c:(.text.xpipe+0x2): undefined reference to `pipe'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `xdup2':
+xfuncs_printf.c:(.text.xdup2+0x4): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `chdir_or_warn':
+xfuncs_printf.c:(.text.chdir_or_warn+0x4): undefined reference to `chdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `xchroot':
+xfuncs_printf.c:(.text.xchroot+0x4): undefined reference to `chroot'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `warn_opendir':
+xfuncs_printf.c:(.text.warn_opendir+0x4): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `xsocket':
+xfuncs_printf.c:(.text.xsocket+0x2): undefined reference to `socket'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `ioctl_or_perror':
+xfuncs_printf.c:(.text.ioctl_or_perror+0x4): undefined reference to `ioctl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `bb_xioctl':
+xfuncs_printf.c:(.text.bb_xioctl+0x4): undefined reference to `ioctl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xfuncs_printf.o): in function `xmalloc_ttyname':
+xfuncs_printf.c:(.text.xmalloc_ttyname+0x8): undefined reference to `ttyname_r'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(signals.o): in function `sigaction_set':
+signals.c:(.text.sigaction_set+0x2): undefined reference to `sigaction'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(signals.o): in function `sigprocmask_allsigs':
+signals.c:(.text.sigprocmask_allsigs+0xc): undefined reference to `sigprocmask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(signals.o): in function `sigprocmask2':
+signals.c:(.text.sigprocmask2+0x2): undefined reference to `sigprocmask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(signals.o): in function `sig_unblock':
+signals.c:(.text.sig_unblock+0x10): undefined reference to `sigprocmask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(time.o): in function `get_mono':
+time.c:(.text.get_mono+0x6): undefined reference to `clock_gettime'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libpwdgrp/lib.a(uidgid_get.o): in function `get_uidgid':
+uidgid_get.c:(.text.get_uidgid+0x4c): undefined reference to `getpwuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: uidgid_get.c:(.text.get_uidgid+0x70): undefined reference to `getpwnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: uidgid_get.c:(.text.get_uidgid+0x8a): undefined reference to `getgrnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(popmaildir.o): in function `pop3_checkr':
+popmaildir.c:(.text.pop3_checkr+0x30): undefined reference to `alarm'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(popmaildir.o): in function `popmaildir_main':
+popmaildir.c:(.text.popmaildir_main+0x15e): undefined reference to `popen'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: popmaildir.c:(.text.popmaildir_main+0x1e8): undefined reference to `pclose'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(reformime.o): in function `parse':
+reformime.c:(.text.parse+0x156): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(sendmail.o): in function `smtp_checkp':
+sendmail.c:(.text.smtp_checkp+0x6a): undefined reference to `alarm'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(sendmail.o): in function `sendmail_main':
+sendmail.c:(.text.sendmail_main+0xf0): undefined reference to `sleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: sendmail.c:(.text.sendmail_main+0x19a): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(mail.o): in function `launch_helper':
+mail.c:(.text.launch_helper+0x20): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mailutils/lib.a(mail.o): in function `send_mail_command':
+mail.c:(.text.send_mail_command+0xe): undefined reference to `alarm'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `set_tty_cooked':
+less.c:(.text.set_tty_cooked+0x16): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `fill_match_lines':
+less.c:(.text.fill_match_lines+0x2c): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `read_lines':
+less.c:(.text.read_lines+0xc8): undefined reference to `sched_yield'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `buffer_print':
+less.c:(.text.buffer_print+0xe2): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `getch_nowait':
+less.c:(.text.getch_nowait+0x2c): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(less.o): in function `regex_process':
+less.c:(.text.regex_process+0x22): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: miscutils/lib.a(tree.o): in function `tree_print':
+tree.c:(.text.tree_print+0x14): undefined reference to `scandir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tree.c:(.text.tree_print+0x70): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tree.c:(.text.tree_print+0xf8): undefined reference to `alphasort'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: networking/lib.a(hostname.o): in function `do_sethostname':
+hostname.c:(.text.do_sethostname+0x38): undefined reference to `sethostname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: networking/lib.a(hostname.o): in function `hostname_main':
+hostname.c:(.text.hostname_main+0x90): undefined reference to `inet_ntoa'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(cttyhack.o): in function `cttyhack_main':
+cttyhack.c:(.text.cttyhack_main+0x4a): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cttyhack.c:(.text.cttyhack_main+0x52): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cttyhack.c:(.text.cttyhack_main+0x5a): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cttyhack.c:(.text.cttyhack_main+0x68): undefined reference to `ioctl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `sigexit':
+hush.c:(.text.sigexit+0x20): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `checkjobs':
+hush.c:(.text.checkjobs+0x28): undefined reference to `waitpid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `checkjobs_and_fg_shell':
+hush.c:(.text.checkjobs_and_fg_shell+0x12): undefined reference to `getpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.checkjobs_and_fg_shell+0x1a): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `builtin_fg_bg':
+hush.c:(.text.builtin_fg_bg+0x48): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `builtin_umask':
+hush.c:(.text.builtin_umask+0x6): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.builtin_umask+0x52): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `install_sighandler':
+hush.c:(.text.install_sighandler+0xe): undefined reference to `sigaction'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `execvp_or_die':
+hush.c:(.text.execvp_or_die+0x18): undefined reference to `execvp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `builtin_exec':
+hush.c:(.text.builtin_exec+0x22): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `glob_brace':
+hush.c:(.text.glob_brace+0xd0): undefined reference to `glob'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.glob_brace+0x116): undefined reference to `globfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `builtin_cd':
+hush.c:(.text.builtin_cd+0x1a): undefined reference to `chdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `generate_stream_from_string':
+hush.c:(.text.generate_stream_from_string+0x12): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `check_and_run_traps':
+hush.c:(.text.check_and_run_traps+0x14): undefined reference to `sigisemptyset'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `wait_for_child_or_signal':
+hush.c:(.text.wait_for_child_or_signal+0x18): undefined reference to `sigisemptyset'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.wait_for_child_or_signal+0x2e): undefined reference to `sigisemptyset'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.wait_for_child_or_signal+0x50): undefined reference to `sigprocmask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.wait_for_child_or_signal+0x82): undefined reference to `sigsuspend'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.wait_for_child_or_signal+0x8c): undefined reference to `sigprocmask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `builtin_wait':
+hush.c:(.text.builtin_wait+0xa4): undefined reference to `waitpid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `fgetc_interactive':
+hush.c:(.text.fgetc_interactive+0x46): undefined reference to `sigisemptyset'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `setup_heredoc':
+hush.c:(.text.setup_heredoc+0x86): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.setup_heredoc+0x9c): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `run_pipe':
+hush.c:(.text.run_pipe+0x346): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.run_pipe+0x396): undefined reference to `setpgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.run_pipe+0x3b0): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `run_list':
+hush.c:(.text.run_list+0x194): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(hush.o): in function `hush_main':
+hush.c:(.text.hush_main+0x32): undefined reference to `getppid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x156): undefined reference to `uname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x3f8): undefined reference to `tcgetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x41c): undefined reference to `dup'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x43a): undefined reference to `getpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x442): undefined reference to `tcgetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x46a): undefined reference to `setpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: hush.c:(.text.hush_main+0x472): undefined reference to `tcsetpgrp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(shell_common.o): in function `shell_builtin_read':
+shell_common.c:(.text.shell_builtin_read+0x112): undefined reference to `tcgetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_read+0x14c): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_read+0x1a2): undefined reference to `poll'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_read+0x1c2): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_read+0x200): undefined reference to `poll'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(shell_common.o): in function `shell_builtin_ulimit':
+shell_common.c:(.text.shell_builtin_ulimit+0x70): undefined reference to `getrlimit'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_ulimit+0xfc): undefined reference to `getrlimit'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_ulimit+0x170): undefined reference to `setrlimit'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell_common.c:(.text.shell_builtin_ulimit+0x188): undefined reference to `getrlimit'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(bbunzip.o): in function `bbunpack':
+bbunzip.c:(.text.bbunpack+0x156): undefined reference to `utimes'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(cpio.o): in function `cpio_o':
+cpio.c:(.text.cpio_o+0x9c): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cpio.c:(.text.cpio_o+0x12c): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cpio.c:(.text.cpio_o+0x136): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cpio.c:(.text.cpio_o+0x140): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cpio.c:(.text.cpio_o+0x14a): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(tar.o): in function `writeTarHeader':
+tar.c:(.text.writeTarHeader+0x188): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tar.c:(.text.writeTarHeader+0x19c): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(tar.o): in function `writeFileToTarball':
+tar.c:(.text.writeFileToTarball+0x96): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tar.c:(.text.writeFileToTarball+0xaa): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(tar.o): in function `vfork_compressor':
+tar.c:(.text.vfork_compressor+0x1a): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tar.c:(.text.vfork_compressor+0x36): undefined reference to `dup'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: tar.c:(.text.vfork_compressor+0x54): undefined reference to `execlp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(tar.o): in function `tar_main':
+tar.c:(.text.tar_main+0x1e): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(unzip.o): in function `get_lstat_mode':
+unzip.c:(.text.get_lstat_mode+0x8): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(unzip.o): in function `unzip_create_leading_dirs':
+unzip.c:(.text.unzip_create_leading_dirs+0x8): undefined reference to `dirname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/lib.a(unzip.o): in function `unzip_main':
+unzip.c:(.text.unzip_main+0x62): undefined reference to `mkdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(data_extract_all.o): in function `data_extract_all':
+data_extract_all.c:(.text.data_extract_all+0xf0): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x1da): undefined reference to `getpwnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x1e6): undefined reference to `getgrnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x1f4): undefined reference to `chown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x204): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x228): undefined reference to `utimes'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x230): undefined reference to `mkdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_all.c:(.text.data_extract_all+0x266): undefined reference to `mknod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(data_extract_to_command.o): in function `data_extract_to_command':
+data_extract_to_command.c:(.text.data_extract_to_command+0x2a): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: data_extract_to_command.c:(.text.data_extract_to_command+0xe6): undefined reference to `execl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(open_transformer.o): in function `fork_transformer':
+open_transformer.c:(.text.fork_transformer+0xe): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: open_transformer.c:(.text.fork_transformer+0x46): undefined reference to `execvp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(unsafe_symlink_target.o): in function `create_or_remember_link':
+unsafe_symlink_target.c:(.text.create_or_remember_link+0x3e): undefined reference to `symlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(unsafe_symlink_target.o): in function `create_links_from_list':
+unsafe_symlink_target.c:(.text.create_links_from_list+0x50): undefined reference to `symlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: console-tools/lib.a(reset.o): in function `reset_main':
+reset.c:(.text.reset_main+0x18): undefined reference to `execvp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(chmod.o): in function `fileAction':
+chmod.c:(.text.fileAction+0x26): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(chown.o): in function `chown_main':
+chown.c:(.text.chown_main+0x6c): undefined reference to `chown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: chown.c:(.text.chown_main+0x70): undefined reference to `lchown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(cp.o): in function `cp_main':
+cp.c:(.text.cp_main+0x66): undefined reference to `dirname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: cp.c:(.text.cp_main+0x134): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(cut.o): in function `cut_main':
+cut.c:(.text.cut_main+0x314): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(date.o): in function `date_main':
+date.c:(.text.date_main+0x13c): undefined reference to `clock_settime'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(df.o): in function `df_main':
+df.c:(.text.df_main+0xd2): undefined reference to `setmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: df.c:(.text.df_main+0xf2): undefined reference to `getmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: df.c:(.text.df_main+0xfc): undefined reference to `endmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: df.c:(.text.df_main+0x14e): undefined reference to `statvfs'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(dos2unix.o): in function `dos2unix_main':
+dos2unix.c:(.text.dos2unix_main+0x72): undefined reference to `fchmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: dos2unix.c:(.text.dos2unix_main+0x88): undefined reference to `fchown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(du.o): in function `du':
+du.c:(.text.du+0xa): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: du.c:(.text.du+0xd4): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: du.c:(.text.du+0xdc): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(env.o): in function `env_main':
+env.c:(.text.env_main+0x38): undefined reference to `clearenv'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(expr.o): in function `docolon':
+expr.c:(.text.docolon+0x4a): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: expr.c:(.text.docolon+0x86): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(hostid.o): in function `hostid_main':
+hostid.c:(.text.hostid_main+0xa): undefined reference to `gethostid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(id.o): in function `get_groups':
+id.c:(.text.get_groups+0xa): undefined reference to `getgrouplist'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: id.c:(.text.get_groups+0x1c): undefined reference to `getgroups'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: id.c:(.text.get_groups+0x34): undefined reference to `getgroups'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(id.o): in function `id_main':
+id.c:(.text.id_main+0x60): undefined reference to `getegid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: id.c:(.text.id_main+0x66): undefined reference to `getgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: id.c:(.text.id_main+0x6c): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: id.c:(.text.id_main+0x72): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(install.o): in function `install_main':
+install.c:(.text.install_main+0xde): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: install.c:(.text.install_main+0xe6): undefined reference to `getgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: install.c:(.text.install_main+0x122): undefined reference to `dirname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: install.c:(.text.install_main+0x180): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: install.c:(.text.install_main+0x1a0): undefined reference to `lchown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(ln.o): in function `ln_main':
+ln.c:(.text.ln_main+0xc0): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: ln.c:(.text.ln_main+0x174): undefined reference to `symlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(logname.o): in function `logname_main':
+logname.c:(.text.logname_main+0x10): undefined reference to `getlogin_r'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(ls.o): in function `my_stat':
+ls.c:(.text.my_stat+0x94): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: ls.c:(.text.my_stat+0x9e): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: ls.c:(.text.my_stat+0xa6): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(ls.o): in function `display_single':
+ls.c:(.text.display_single+0x102): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(ls.o): in function `scan_and_display_dirs_recur':
+ls.c:(.text.scan_and_display_dirs_recur+0xb0): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: ls.c:(.text.scan_and_display_dirs_recur+0xba): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(mkfifo.o): in function `mkfifo_main':
+mkfifo.c:(.text.mkfifo_main+0x24): undefined reference to `mkfifo'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(mknod.o): in function `mknod_main':
+mknod.c:(.text.mknod_main+0x52): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mknod.c:(.text.mknod_main+0x6a): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: mknod.c:(.text.mknod_main+0x94): undefined reference to `mknod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(mv.o): in function `mv_main':
+mv.c:(.text.mv_main+0x1d4): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(nohup.o): in function `nohup_main':
+nohup.c:(.text.nohup_main+0x7a): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(nproc.o): in function `nproc_main':
+nproc.c:(.text.nproc_main+0x22): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: nproc.c:(.text.nproc_main+0x4e): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: nproc.c:(.text.nproc_main+0x7a): undefined reference to `sched_getaffinity'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(rmdir.o): in function `rmdir_main':
+rmdir.c:(.text.rmdir_main+0x46): undefined reference to `rmdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: rmdir.c:(.text.rmdir_main+0x7e): undefined reference to `dirname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(shred.o): in function `shred_main':
+shred.c:(.text.shred_main+0x64): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shred.c:(.text.shred_main+0xbc): undefined reference to `fdatasync'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shred.c:(.text.shred_main+0xca): undefined reference to `ftruncate'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shred.c:(.text.shred_main+0xea): undefined reference to `fdatasync'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(sleep.o): in function `sleep_main':
+sleep.c:(.text.sleep_main+0x1a): undefined reference to `sleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(tail.o): in function `tail_main':
+tail.c:(.text.tail_main+0x1e2): undefined reference to `sleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(test.o): in function `binop':
+test.c:(.text.binop+0xb4): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.binop+0xca): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.binop+0xea): undefined reference to `regcomp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.binop+0x104): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.binop+0x10c): undefined reference to `regfree'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(test.o): in function `nexpr':
+test.c:(.text.nexpr+0xe2): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.nexpr+0x112): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.nexpr+0x14c): undefined reference to `getgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.nexpr+0x154): undefined reference to `getegid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.nexpr+0x214): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: test.c:(.text.nexpr+0x224): undefined reference to `getegid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(timeout.o): in function `timeout_main':
+timeout.c:(.text.timeout_main+0x86): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: timeout.c:(.text.timeout_main+0x96): undefined reference to `getppid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(touch.o): in function `touch_main':
+touch.c:(.text.touch_main+0xac): undefined reference to `utimensat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: touch.c:(.text.touch_main+0xda): undefined reference to `futimens'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(truncate.o): in function `truncate_main':
+truncate.c:(.text.truncate_main+0x80): undefined reference to `ftruncate'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(tsort.o): in function `tsort_main':
+tsort.c:(.text.tsort_main+0x56): undefined reference to `getline'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(uname.o): in function `uname_main':
+uname.c:(.text.uname_main+0x3a): undefined reference to `uname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(uudecode.o): in function `uudecode_main':
+uudecode.c:(.text.uudecode_main+0xd8): undefined reference to `fchmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(uuencode.o): in function `uuencode_main':
+uuencode.c:(.text.uuencode_main+0xc): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/libcoreutils/lib.a(getopt_mk_fifo_nod.o): in function `getopt_mk_fifo_nod':
+getopt_mk_fifo_nod.c:(.text.getopt_mk_fifo_nod+0x24): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: debianutils/lib.a(run_parts.o): in function `run_parts_main':
+run_parts.c:(.text.run_parts_main+0x2e): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: klibc-utils/lib.a(resume.o): in function `resume_main':
+resume.c:(.text.resume_main+0x76): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: resume.c:(.text.resume_main+0x114): undefined reference to `major'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: resume.c:(.text.resume_main+0x11c): undefined reference to `minor'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(ed.o): in function `doCommands':
+ed.c:(.text.doCommands+0x4a6): undefined reference to `creat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(patch.o): in function `patch_main':
+patch.c:(.text.patch_main+0x52e): undefined reference to `fchmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(sed.o): in function `process_files':
+sed.c:(.text.process_files+0x7c): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: sed.c:(.text.process_files+0x144): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: sed.c:(.text.process_files+0x318): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: sed.c:(.text.process_files+0x416): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: editors/lib.a(sed.o): in function `sed_main':
+sed.c:(.text.sed_main+0x166): undefined reference to `fchmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: sed.c:(.text.sed_main+0x174): undefined reference to `fchown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `func_regex':
+find.c:(.text.func_regex+0x14): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `func_path':
+find.c:(.text.func_path+0x14): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `func_name':
+find.c:(.text.func_name+0x54): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `func_empty':
+find.c:(.text.func_empty+0x10): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: find.c:(.text.func_empty+0x24): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: find.c:(.text.func_empty+0x40): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `func_delete':
+find.c:(.text.func_delete+0x1c): undefined reference to `rmdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(find.o): in function `parse_params':
+find.c:(.text.parse_params+0x42e): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(grep.o): in function `grep_file':
+grep.c:(.text.grep_file+0x120): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: grep.c:(.text.grep_file+0x28e): undefined reference to `regexec'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: findutils/lib.a(xargs.o): in function `xargs_main':
+xargs.c:(.text.xargs_main+0x17e): undefined reference to `dup'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: init/lib.a(halt.o): in function `halt_main':
+halt.c:(.text.halt_main+0x14): undefined reference to `sleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: halt.c:(.text.halt_main+0x20): undefined reference to `sync'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: halt.c:(.text.halt_main+0x38): undefined reference to `reboot'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_askpass.o): in function `bb_ask_noecho':
+bb_askpass.c:(.text.bb_ask_noecho+0xe): undefined reference to `tcflush'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0x20): undefined reference to `tcgetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0x3c): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0x54): undefined reference to `sigaction'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0x64): undefined reference to `alarm'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0xa6): undefined reference to `alarm'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_askpass.c:(.text.bb_ask_noecho+0xb8): undefined reference to `tcsetattr'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_getgroups.o): in function `bb_getgroups':
+bb_getgroups.c:(.text.bb_getgroups+0x22): undefined reference to `getgroups'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: bb_getgroups.c:(.text.bb_getgroups+0x48): undefined reference to `getgroups'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_pwd.o): in function `xgetpwnam':
+bb_pwd.c:(.text.xgetpwnam+0x4): undefined reference to `getpwnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_pwd.o): in function `xgetgrnam':
+bb_pwd.c:(.text.xgetgrnam+0x4): undefined reference to `getgrnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_pwd.o): in function `xgetpwuid':
+bb_pwd.c:(.text.xgetpwuid+0x4): undefined reference to `getpwuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_pwd.o): in function `uid2uname':
+bb_pwd.c:(.text.uid2uname+0x2): undefined reference to `getpwuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_pwd.o): in function `gid2group':
+bb_pwd.c:(.text.gid2group+0x2): undefined reference to `getgrgid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(copy_file.o): in function `copy_file':
+copy_file.c:(.text.copy_file+0x74): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0xfe): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x112): undefined reference to `mkdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x11c): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x126): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x12e): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x140): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x158): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x162): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x174): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x1a2): undefined reference to `utimes'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x1be): undefined reference to `chown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x1dc): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x284): undefined reference to `mknod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x2c0): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x2c8): undefined reference to `symlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x416): undefined reference to `symlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: copy_file.c:(.text.copy_file+0x446): undefined reference to `lchown'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(executable.o): in function `BB_EXECVP_or_die':
+executable.c:(.text.BB_EXECVP_or_die+0x8): undefined reference to `execvp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(find_mount_point.o): in function `find_mount_point':
+find_mount_point.c:(.text.find_mount_point+0x38): undefined reference to `setmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: find_mount_point.c:(.text.find_mount_point+0x48): undefined reference to `getmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: find_mount_point.c:(.text.find_mount_point+0xac): undefined reference to `endmntent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(get_console.o): in function `get_console_fd_or_die':
+get_console.c:(.text.get_console_fd_or_die+0x5e): undefined reference to `ioctl'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(get_shell_name.o): in function `get_shell_name':
+get_shell_name.c:(.text.get_shell_name+0xe): undefined reference to `getuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: get_shell_name.c:(.text.get_shell_name+0x12): undefined reference to `getpwuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(lineedit.o): in function `get_user_strings':
+lineedit.c:(.text.get_user_strings+0xa): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.get_user_strings+0xe): undefined reference to `getpwuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(lineedit.o): in function `parse_and_put_prompt':
+lineedit.c:(.text.parse_and_put_prompt+0x19a): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(lineedit.o): in function `complete_username':
+lineedit.c:(.text.complete_username+0xc): undefined reference to `setpwent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_username+0x12): undefined reference to `getpwent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_username+0x1a): undefined reference to `endpwent'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(lineedit.o): in function `complete_cmd_dir_file':
+lineedit.c:(.text.complete_cmd_dir_file+0x7e): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_cmd_dir_file+0x8c): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_cmd_dir_file+0x9a): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_cmd_dir_file+0x176): undefined reference to `getpwnam'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: lineedit.c:(.text.complete_cmd_dir_file+0x232): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(lineedit.o): in function `read_line_input':
+lineedit.c:(.text.read_line_input+0xe6): undefined reference to `sigaction'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(make_directory.o): in function `bb_make_directory':
+make_directory.c:(.text.bb_make_directory+0x36): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: make_directory.c:(.text.bb_make_directory+0x64): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: make_directory.c:(.text.bb_make_directory+0x72): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: make_directory.c:(.text.bb_make_directory+0x7c): undefined reference to `mkdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: make_directory.c:(.text.bb_make_directory+0xba): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: make_directory.c:(.text.bb_make_directory+0xe0): undefined reference to `chmod'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(parse_config.o): in function `config_read':
+parse_config.c:(.text.config_read+0x54): undefined reference to `getline'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: parse_config.c:(.text.config_read+0x90): undefined reference to `getline'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(parse_mode.o): in function `bb_parse_mode':
+parse_mode.c:(.text.bb_parse_mode+0xd4): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: parse_mode.c:(.text.bb_parse_mode+0xda): undefined reference to `umask'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(read_key.o): in function `read_key':
+read_key.c:(.text.read_key+0x34): undefined reference to `poll'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(recursive_action.o): in function `recursive_action1':
+recursive_action.c:(.text.recursive_action1+0x50): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: recursive_action.c:(.text.recursive_action1+0x82): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: recursive_action.c:(.text.recursive_action1+0x90): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: recursive_action.c:(.text.recursive_action1+0x98): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: recursive_action.c:(.text.recursive_action1+0x104): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(remove_file.o): in function `remove_file':
+remove_file.c:(.text.remove_file+0xc): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: remove_file.c:(.text.remove_file+0x5a): undefined reference to `opendir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: remove_file.c:(.text.remove_file+0x68): undefined reference to `readdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: remove_file.c:(.text.remove_file+0x70): undefined reference to `closedir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: remove_file.c:(.text.remove_file+0x106): undefined reference to `rmdir'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(safe_gethostname.o): in function `safe_gethostname':
+safe_gethostname.c:(.text.safe_gethostname+0x6): undefined reference to `uname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(safe_poll.o): in function `safe_poll':
+safe_poll.c:(.text.safe_poll+0x12): undefined reference to `poll'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(vfork_daemon_rexec.o): in function `spawn':
+vfork_daemon_rexec.c:(.text.spawn+0xc): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: vfork_daemon_rexec.c:(.text.spawn+0x1a): undefined reference to `execvp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(vfork_daemon_rexec.o): in function `re_exec':
+vfork_daemon_rexec.c:(.text.re_exec+0x12): undefined reference to `execv'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(vfork_daemon_rexec.o): in function `fork_or_rexec':
+vfork_daemon_rexec.c:(.text.fork_or_rexec+0xa): undefined reference to `vfork'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(vfork_daemon_rexec.o): in function `bb_daemonize_or_rexec':
+vfork_daemon_rexec.c:(.text.bb_daemonize_or_rexec+0x56): undefined reference to `dup'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: vfork_daemon_rexec.c:(.text.bb_daemonize_or_rexec+0x62): undefined reference to `setsid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: vfork_daemon_rexec.c:(.text.bb_daemonize_or_rexec+0x6a): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: vfork_daemon_rexec.c:(.text.bb_daemonize_or_rexec+0x72): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: vfork_daemon_rexec.c:(.text.bb_daemonize_or_rexec+0x7a): undefined reference to `dup2'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xconnect.o): in function `setsockopt_int':
+xconnect.c:(.text.setsockopt_int+0xa): undefined reference to `setsockopt'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xconnect.o): in function `xconnect':
+xconnect.c:(.text.xconnect+0x4): undefined reference to `connect'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xconnect.c:(.text.xconnect+0x14): undefined reference to `inet_ntoa'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xconnect.o): in function `str2sockaddr':
+xconnect.c:(.text.str2sockaddr+0xba): undefined reference to `inet_pton'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xconnect.c:(.text.str2sockaddr+0xe2): undefined reference to `getaddrinfo'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xconnect.c:(.text.str2sockaddr+0x100): undefined reference to `freeaddrinfo'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xconnect.c:(.text.str2sockaddr+0x110): undefined reference to `inet_aton'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xgetcwd.o): in function `xrealloc_getcwd_or_warn':
+xgetcwd.c:(.text.xrealloc_getcwd_or_warn+0x16): undefined reference to `getcwd'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xreadlink.o): in function `xmalloc_readlink':
+xreadlink.c:(.text.xmalloc_readlink+0x1a): undefined reference to `readlink'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xreadlink.o): in function `xmalloc_realpath':
+xreadlink.c:(.text.xmalloc_realpath+0x2): undefined reference to `realpath'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xregcomp.o): in function `regcomp_or_errmsg':
+xregcomp.c:(.text.regcomp_or_errmsg+0x4): undefined reference to `regcomp'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xregcomp.c:(.text.regcomp_or_errmsg+0x12): undefined reference to `regerror'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: xregcomp.c:(.text.regcomp_or_errmsg+0x26): undefined reference to `regerror'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(herror_msg.o): in function `bb_herror_msg_and_die':
+herror_msg.c:(.text.bb_herror_msg_and_die+0xc): undefined reference to `__h_errno_location'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: herror_msg.c:(.text.bb_herror_msg_and_die+0x12): undefined reference to `hstrerror'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: /usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-timesr.o): in function `_times_r':
+/build/newlib-pB30de/newlib-3.3.0/build_nano/arm-none-eabi/thumb/v7e-m+fp/hard/newlib/libc/reent/../../../../../../../../newlib/libc/reent/timesr.c:52: undefined reference to `_times'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: shell/lib.a(match.o): in function `scan_and_match':
+match.c:(.text.scan_and_match+0x76): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: match.c:(.text.scan_and_match+0x98): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(find_list_entry.o): in function `find_list_entry':
+find_list_entry.c:(.text.find_list_entry+0x12): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: archival/libarchive/lib.a(find_list_entry.o): in function `find_list_entry2':
+find_list_entry.c:(.text.find_list_entry2+0x44): undefined reference to `fnmatch'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(dirname.o): in function `dirname_main':
+dirname.c:(.text.dirname_main+0x8): undefined reference to `dirname'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(usleep.o): in function `usleep_main':
+usleep.c:(.text.usleep_main+0xe): undefined reference to `usleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: coreutils/lib.a(whoami.o): in function `whoami_main':
+whoami.c:(.text.whoami_main+0xa): undefined reference to `geteuid'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(bb_do_delay.o): in function `sleep1':
+bb_do_delay.c:(.text.sleep1+0x2): undefined reference to `sleep'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(isdirectory.o): in function `is_directory':
+isdirectory.c:(.text.is_directory+0x24): undefined reference to `lstat'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(makedev.o): in function `bb_makedev':
+makedev.c:(.text.bb_makedev+0x2): undefined reference to `makedev'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(sysconf.o): in function `bb_clk_tck':
+sysconf.c:(.text.bb_clk_tck+0x2): undefined reference to `sysconf'
+/usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld: libbb/lib.a(xgethostbyname.o): in function `xgethostbyname':
+xgethostbyname.c:(.text.xgethostbyname+0x4): undefined reference to `gethostbyname'
+collect2: error: ld returned 1 exit status

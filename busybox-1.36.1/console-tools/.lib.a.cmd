@@ -1,0 +1,1 @@
+cmd_console-tools/lib.a := rm -f console-tools/lib.a; arm-none-eabi-ar  rcs console-tools/lib.a console-tools/chvt.o console-tools/clear.o console-tools/deallocvt.o console-tools/dumpkmap.o console-tools/fgconsole.o console-tools/reset.o

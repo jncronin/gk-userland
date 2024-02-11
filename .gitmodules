@@ -7,3 +7,6 @@
 [submodule "gloss-gk/cmsis_core"]
 	path = gloss-gk/cmsis_core
 	url = https://github.com/STMicroelectronics/cmsis_core.git
+[submodule "rain-1-s-shell"]
+	path = rain-1-s-shell
+	url = https://github.com/jncronin/rain-1-s-shell.git

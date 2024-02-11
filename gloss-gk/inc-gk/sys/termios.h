@@ -31,14 +31,16 @@ int     tcsetattr(int, int, const struct termios *);
 #define TCOFLUSH        2
 #define TCIOFLUSH       3
 
+/* c_lflag constants */
 #define ECHO            1
 #define ECHOE           2
 #define ECHOK           4
 #define ECHONL          8
 #define ICANON          16
 #define ISIG            32
+#define IEXTEN          64
 
-
+/* c_iflag constants */
 #define IXON            1
 #define IXOFF           2
 #define ICRNL           4
@@ -52,6 +54,7 @@ int     tcsetattr(int, int, const struct termios *);
 #define ISTRIP          1024
 #define PARMRK          2048
 
+/* c_oflag constants */
 #define OPOST           1
 #define ONLCR           2
 #define OCRNL           4
@@ -65,7 +68,20 @@ int     tcsetattr(int, int, const struct termios *);
 #define VTDLY           1024
 #define FFDLY           2048
 
-
+/* c_cflag constants */
+#define CBAUD           0x1f
+#define CBAUDEX         0x10
+#define CSIZE           0x1e0
+#define CS5             0x20
+#define CS6             0x40
+#define CS7             0x80
+#define CS8             0x100
+#define CSTOPB          0x200
+#define CREAD           0x400
+#define PARENB          0x800
+#define PARODD          0x1000
+#define HUPCL           0x2000
+#define CLOCAL          0x4000
 
 #define TCSANOW         1
 #define TCSADRAIN       2

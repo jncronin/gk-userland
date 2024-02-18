@@ -1,4 +1,5 @@
 #include <syscalls.h>
+#include <errno.h>
 
 int _execve(char *name,
 		char **argv,
@@ -8,7 +9,11 @@ int _execve(char *name,
 	p.name = name;
 	p.argv = argv;
 	p.env = env;
-	int ret;
-	__syscall(__syscall_execve, &ret, &p, NULL);
+	int ret, _errno;
+	__syscall(__syscall_execve, &ret, &p, &_errno);
+	if(ret)
+	{
+		errno = _errno;
+	}
 	return ret;
 }

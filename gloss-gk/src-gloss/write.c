@@ -1,4 +1,5 @@
 #include <syscalls.h>
+#include <errno.h>
 
 int _write(int file, char *buf, int nbytes)
 {
@@ -6,7 +7,9 @@ int _write(int file, char *buf, int nbytes)
 	p.file = file;
 	p.ptr = buf;
 	p.len = nbytes;
-	int ret;
-	__syscall(__syscall_write, &ret, &p, NULL);
+	int ret, _errno;
+	__syscall(__syscall_write, &ret, &p, &_errno);
+	if(ret == -1)
+		errno = _errno;
 	return ret;
 }

@@ -3,14 +3,14 @@
 
 int lstat(const char *path, struct stat *buf)
 {
-    int ret;
+    int ret, _errno;
     struct __syscall_stat_params p;
-    p.path = path;
-    p.buf = buf;
-    __syscall(__syscall_stat, &ret, &p, NULL);
-    if(p._errno)
+    p.pathname = path;
+    p.st = buf;
+    __syscall(__syscall_stat, &ret, &p, _errno);
+    if(ret)
     {
-        errno = p._errno;
+        errno = _errno;
     }
     return ret;
 }

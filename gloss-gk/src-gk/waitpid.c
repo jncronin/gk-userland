@@ -9,10 +9,11 @@ pid_t waitpid(pid_t pid, int *stat_loc, int options)
     p.stat_loc = stat_loc;
     p.options = options;
     pid_t ret;
-    __syscall(__syscall_waitpid, &ret, &p, NULL);
-    if(p._errno != 0)
+    int _errno;
+    __syscall(__syscall_waitpid, &ret, &p, &_errno);
+    if(ret == (pid_t)-1)
     {
-        errno = p._errno;
+        errno = _errno;
     }
     return ret;
 }

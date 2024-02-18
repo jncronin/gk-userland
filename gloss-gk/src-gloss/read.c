@@ -1,4 +1,5 @@
 #include <syscalls.h>
+#include <errno.h>
 
 int _read(int file, char *ptr, int len)
 {
@@ -6,7 +7,9 @@ int _read(int file, char *ptr, int len)
 	p.file = file;
 	p.ptr = ptr;
 	p.len = len;
-	int ret;
-	__syscall(__syscall_read, &ret, &p, NULL);
+	int ret, _errno;
+	__syscall(__syscall_read, &ret, &p, &_errno);
+	if(ret == -1)
+		errno = _errno;
 	return ret;
 }

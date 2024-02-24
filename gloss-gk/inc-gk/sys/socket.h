@@ -6,6 +6,8 @@ typedef unsigned int sa_family_t;
 
 #include <sys/uio.h>
 #include <stdint.h>
+#include <stddef.h>
+#include <sys/types.h>
 
 struct sockaddr
 {

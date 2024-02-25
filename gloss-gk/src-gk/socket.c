@@ -28,3 +28,42 @@ int bind(int sockfd, const struct sockaddr *addr,
         errno = _errno;
     return ret;
 }
+
+int listen(int sockfd, int backlog)
+{
+    int ret, _errno;
+    struct __syscall_listen_params p;
+    p.sockfd = sockfd;
+    p.backlog = backlog;
+    __syscall(__syscall_listen, &ret, &p, &_errno);
+    if(ret == -1)
+        errno = _errno;
+    return ret;
+}
+
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+    int ret, _errno;
+    struct __syscall_accept_params p;
+    p.sockfd = sockfd;
+    p.addr = addr;
+    p.addrlen = addrlen;
+    __syscall(__syscall_accept, &ret, &p, &_errno);
+    if(ret == -1)
+        errno = _errno;
+    else if(ret == -2)
+    {
+		struct WaitSimpleSignal_params wssp;
+		while(1)
+		{
+			uint32_t wss;
+			__syscall(WaitSimpleSignal, &wss, &wssp, NULL);
+			if(wss)
+				break;
+		}
+		if(wssp.ival1 == -1)
+			errno = wssp.ival2;
+		return wssp.ival1;
+    }
+    return ret;
+}

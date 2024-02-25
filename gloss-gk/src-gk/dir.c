@@ -17,7 +17,7 @@ int fchdir(int fd)
 int chdir(const char *path)
 {
     int ret, _errno;
-    __syscall(__syscall_chdir, &ret, path, &_errno);
+    __syscall(__syscall_chdir, &ret, (void *)path, &_errno);
     if(_errno)
     {
         errno = _errno;
@@ -41,7 +41,7 @@ DIR *opendir(const char *name)
 {
     DIR *ret;
     int _errno;
-    __syscall(__syscall_opendir, &ret, name, &_errno);
+    __syscall(__syscall_opendir, &ret, (void *)name, &_errno);
     if(_errno)
     {
         errno = _errno;

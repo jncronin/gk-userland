@@ -7,7 +7,7 @@ int lstat(const char *path, struct stat *buf)
     struct __syscall_stat_params p;
     p.pathname = path;
     p.st = buf;
-    __syscall(__syscall_stat, &ret, &p, _errno);
+    __syscall(__syscall_stat, &ret, &p, &_errno);
     if(ret)
     {
         errno = _errno;

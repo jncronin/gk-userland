@@ -8,17 +8,21 @@ typedef unsigned int sa_family_t;
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 
 struct sockaddr
 {
+    uint8_t sa_len;
     sa_family_t sa_family;
-    char sa_data[];
+    char sa_data[14];
 };
 
 struct sockaddr_storage
 {
+    uint8_t sa_len;
     sa_family_t ss_family;
-    char sa_data[16];
+    char sa_data[2];
+    uint32_t sa_data2[6];
 };
 
 struct in_addr
@@ -33,12 +37,16 @@ struct in6_addr
 
 struct sockaddr_in
 {
+    uint8_t sin_len;
     sa_family_t sin_family;
     in_port_t sin_port;
     struct in_addr sin_addr;
+#define SIN_ZERO_LEN 8
+    char            sin_zero[SIN_ZERO_LEN];
 };
 
 struct sockaddr_in6 {
+    uint8_t         sin6_len;
     sa_family_t     sin6_family;   /* AF_INET6 */
     in_port_t       sin6_port;     /* port number */
     uint32_t        sin6_flowinfo; /* IPv6 flow information */
@@ -64,9 +72,9 @@ struct msghdr
 #define SOCK_RDM        5
 
 #define AF_UNSPEC       0
-#define AF_INET         1
-#define AF_INET6        2
-#define AF_UNIX         3
+#define AF_INET         2
+#define AF_INET6        10
+#define AF_UNIX         1
 
 #define INADDR_ANY      0
 

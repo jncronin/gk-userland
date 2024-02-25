@@ -2,13 +2,14 @@
 #define _SYS_SOCKET_H
 
 typedef unsigned int socklen_t;
-typedef unsigned int sa_family_t;
 
 #include <sys/uio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+
+typedef uint8_t sa_family_t;
 
 struct sockaddr
 {

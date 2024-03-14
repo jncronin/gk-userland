@@ -65,7 +65,9 @@ file(GLOB HEADERS_GK_NET CONFIGURE_DEPENDS
 file(GLOB HEADERS_GK_NETINET CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/inc-gk/netinet/*.h
 )
-
+file(GLOB HEADERS_GK__NETINET_IN CONFIGURE_DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_netinet_in.h
+)
 
 install(FILES 
 	${HEADERS_GK} DESTINATION include)
@@ -79,6 +81,8 @@ install(FILES
 	${HEADERS_GK_NET} DESTINATION include/net)
 install(FILES 
 	${HEADERS_GK_NETINET} DESTINATION include/netinet)
+install(FILES
+	${HEADERS_GK__NETINET_IN} DESTINATION include)
 
 add_library(pthread)
 

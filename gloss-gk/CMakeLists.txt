@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
-project(gloss-gk C ASM)
+project(gloss-gk C CXX ASM)
 
 file(GLOB_RECURSE SOURCES_GLOSS CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/src-gloss/*.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src-gloss/*.cpp
 )
 
 file(GLOB_RECURSE SOURCES_GK CONFIGURE_DEPENDS
@@ -23,7 +24,9 @@ target_sources(gloss-gk
 
 target_include_directories(gloss-gk
 	PRIVATE
-	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface")
+	"${CMAKE_CURRENT_SOURCE_DIR}/src-gloss"
+	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
+	)
 
 set_target_properties(gloss-gk PROPERTIES PUBLIC_HEADER "gk-userlandinterface/gk_syscalls.h")
 

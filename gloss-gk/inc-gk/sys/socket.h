@@ -1,22 +1,13 @@
 #ifndef _SYS_SOCKET_H
 #define _SYS_SOCKET_H
 
-typedef unsigned int socklen_t;
+#include "_netinet_in.h"
 
 #include <sys/uio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <netinet/in.h>
-
-typedef uint8_t sa_family_t;
-
-struct sockaddr
-{
-    uint8_t sa_len;
-    sa_family_t sa_family;
-    char sa_data[14];
-};
 
 struct sockaddr_storage
 {
@@ -26,24 +17,9 @@ struct sockaddr_storage
     uint32_t sa_data2[6];
 };
 
-struct in_addr
-{
-    uint32_t s_addr;
-};
-
 struct in6_addr
 {
     unsigned char s6_addr[16];
-};
-
-struct sockaddr_in
-{
-    uint8_t sin_len;
-    sa_family_t sin_family;
-    in_port_t sin_port;
-    struct in_addr sin_addr;
-#define SIN_ZERO_LEN 8
-    char            sin_zero[SIN_ZERO_LEN];
 };
 
 struct sockaddr_in6 {
@@ -65,17 +41,6 @@ struct msghdr
     socklen_t      msg_controllen;
     int            msg_flags;
 };
-
-#define SOCK_STREAM     1
-#define SOCK_DGRAM      2
-#define SOCK_RAW        3
-#define SOCK_SEQPACKET  4
-#define SOCK_RDM        5
-
-#define AF_UNSPEC       0
-#define AF_INET         2
-#define AF_INET6        10
-#define AF_UNIX         1
 
 #define INADDR_ANY      0
 

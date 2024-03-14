@@ -1,5 +1,8 @@
 {
     "files.associations": {
         "syscalls.h": "c"
-    }
+    },
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake"
+    },
 }

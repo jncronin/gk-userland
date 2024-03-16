@@ -2,4 +2,8 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake"
     },
+    "files.associations": {
+        "thread": "cpp",
+        "string": "cpp"
+    },
 }

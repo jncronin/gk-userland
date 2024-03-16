@@ -2,7 +2,7 @@
 #include "deferred.h"
 #include <errno.h>
 
-int _close(int file)
+extern "C" int _close(int file)
 {
 	auto ret = deferred_call(__syscall_close1, file);
 	if(ret != 0)

@@ -25,19 +25,7 @@
 typedef uint64_t __ino64_t;
 typedef uint64_t __off64_t;
 
-struct dirent
-  {
-#ifndef __USE_FILE_OFFSET64
-    __ino_t d_ino;
-    __off_t d_off;
-#else
-    __ino64_t d_ino;
-    __off64_t d_off;
-#endif
-    unsigned short int d_reclen;
-    unsigned char d_type;
-    char d_name[256];		/* We must not include limits.h! */
-  };
+#include "_sys_dirent.h"
 
 #ifdef __USE_LARGEFILE64
 struct dirent64

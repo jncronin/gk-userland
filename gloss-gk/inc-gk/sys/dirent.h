@@ -6,6 +6,8 @@
 #ifndef _SYS_DIRENT_H
 #define _SYS_DIRENT_H
 
+#include <_sys_dirent.h>
+
 #include <sys/types.h>
 #include <bits/dirent.h>
 #define _LIBC 1
@@ -34,6 +36,10 @@ typedef struct {
 
 /* --- redundant --- */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 DIR *opendir(const char *);
 struct dirent *readdir(DIR *);
 void rewinddir(DIR *);
@@ -54,5 +60,9 @@ int scandir (const char *__dir,
 
 int alphasort (const struct dirent **__a, const struct dirent **__b);
 #endif /* _POSIX_SOURCE */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -35,4 +35,15 @@ target_link_libraries(tftpd
         common
 )
 
-install(TARGETS ls tftpd)
+add_executable(echo)
+
+target_sources(echo
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/echo/echo.cpp"
+)
+target_link_libraries(echo
+    PRIVATE
+        common
+)
+
+install(TARGETS ls tftpd echo)

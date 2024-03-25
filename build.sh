@@ -36,5 +36,5 @@ make -C build/sdl2 install
 rm -rf ~/src/gk/lib/libiconv.a
 ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
 
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S tinygl-main/ -B build/tinygl
-make -C build/tinygl install
+#cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S tinygl-main/ -B build/tinygl
+#make -C build/tinygl install

@@ -186,6 +186,9 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
     int ret = deferred_call(__syscall_pthread_mutex_trylock, mutex);
     if(ret == 0)
         return 0;
+    if(ret == -3)
+        return EBUSY;
+
     return errno;
 }
 

@@ -1,0 +1,13 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake",
+        "CMAKE_INSTALL_PREFIX": "~/src/gk",
+        "CMAKE_FIND_ROOT_PATH": "~/src/gk",
+        "UNIX": "ON",
+        "SDL_LIBC": "ON",
+        "SDL_PTHREADS": "ON",
+        "SDL_THREADS": "ON",
+        "SDL_OPENGL": "OFF",
+        "SDL_OPENGLES": "OFF"
+    },
+}

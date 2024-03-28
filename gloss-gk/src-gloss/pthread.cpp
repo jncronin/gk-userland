@@ -175,7 +175,7 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex)
 
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
-    int ret = deferred_call(__syscall_pthread_mutex_lock, mutex);
+    int ret = deferred_call_with_retry(__syscall_pthread_mutex_trylock, mutex);
     if(ret == 0)
         return 0;
     return errno;

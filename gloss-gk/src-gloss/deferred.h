@@ -39,6 +39,19 @@ template<typename T> int deferred_call(syscall_no sno, T arg)
     return deferred_return(ret, _errno);
 }
 
+template<typename T> int deferred_call_with_retry(syscall_no sno, T arg)
+{
+    while(true)
+    {
+        int _errno = 0, ret = 0;
+        __syscall(sno, &ret, reinterpret_cast<void *>(arg), &_errno);
+        auto ret = deferred_return(ret, _errno);
+        if(ret != -2)
+            return ret;
+    }
+}
+
+
 #endif
 
 #endif

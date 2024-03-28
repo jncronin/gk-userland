@@ -210,10 +210,18 @@ extern "C" int pthread_key_create(pthread_key_t *key,
     return errno;
 }
 
+extern "C" int pthread_key_delete(pthread_key_t key)
+{
+    int ret = deferred_call(__syscall_pthread_key_delete, key);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
 void *pthread_getspecific(pthread_key_t key)
 {
     void *retp;
-    __syscall_pthread_getspecific_params p { key, retp };
+    __syscall_pthread_getspecific_params p { key, &retp };
     int ret = deferred_call(__syscall_pthread_getspecific, &p);
     if(ret == 0)
         return retp;

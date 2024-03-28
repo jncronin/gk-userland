@@ -10,4 +10,7 @@
         "SDL_OPENGL": "OFF",
         "SDL_OPENGLES": "OFF"
     },
+    "files.associations": {
+        "sdl_video.h": "c"
+    },
 }

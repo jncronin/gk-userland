@@ -68,6 +68,7 @@ file(GLOB HEADERS_GK_NETINET CONFIGURE_DEPENDS
 file(GLOB HEADERS_GK_USERLAND CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_netinet_in.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_sys_dirent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_gpu.h
 )
 
 install(FILES 

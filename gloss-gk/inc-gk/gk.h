@@ -8,7 +8,7 @@ extern "C"
 
 #include "_gk_gpu.h"
 
-void GK_GPUEnqueueMessages(const gpu_message *msgs, size_t nmsg);
+void GK_GPUEnqueueMessages(const struct gpu_message *msgs, size_t nmsg);
 
 
 

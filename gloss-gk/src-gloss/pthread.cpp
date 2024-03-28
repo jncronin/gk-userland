@@ -158,6 +158,16 @@ int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 int pthread_mutex_init(pthread_mutex_t *mutex, 
     const pthread_mutexattr_t *attr)
 {
+    pthread_mutexattr_t defattr;
+    if(!attr)
+    {
+        pthread_mutexattr_init(&defattr);
+        attr = &defattr;
+    }
+    if(!attr->is_initialized)
+    {
+        return EINVAL;
+    }
     __syscall_pthread_mutex_init_params p { mutex, attr };
     int ret = deferred_call(__syscall_pthread_mutex_init, &p);
     if(ret == 0)
@@ -240,6 +250,17 @@ int pthread_setspecific(pthread_key_t key, const void *value)
 int pthread_cond_init(pthread_cond_t *cond,
     const pthread_condattr_t *attr)
 {
+    pthread_condattr_t defattr;
+    if(!attr)
+    {
+        defattr.clock = 0;
+        defattr.is_initialized = 1;
+        attr = &defattr;
+    }
+    if(!attr->is_initialized)
+    {
+        return EINVAL;
+    }
     __syscall_pthread_cond_init_params p { cond, attr };
     int ret = deferred_call(__syscall_pthread_cond_init, &p);
     if(ret == 0)
@@ -257,7 +278,7 @@ int pthread_cond_destroy(pthread_cond_t *cond)
 
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
-    __syscall_pthread_cond_timedwait_params p { cond, mutex, nullptr };
+    __syscall_pthread_cond_timedwait_params p { cond, mutex, nullptr, nullptr };
     int ret = deferred_call(__syscall_pthread_cond_timedwait, &p);
     if(ret == 0)
         return 0;
@@ -267,10 +288,16 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 int pthread_cond_timedwait(pthread_cond_t *cond, 
     pthread_mutex_t *mutex, const struct timespec *abstime)
 {
-    __syscall_pthread_cond_timedwait_params p { cond, mutex, abstime };
+    int signalled = 0;
+    __syscall_pthread_cond_timedwait_params p { cond, mutex, abstime, &signalled };
     int ret = deferred_call(__syscall_pthread_cond_timedwait, &p);
     if(ret == 0)
-        return 0;
+    {
+        if(signalled)
+            return 0;
+        else
+            return ETIMEDOUT;
+    }
     return errno;
 }
 

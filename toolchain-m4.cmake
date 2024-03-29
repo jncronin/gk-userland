@@ -49,3 +49,19 @@ set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_LIBRARIES ON)
 set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS   ON)
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE           ON)
 
+
+function(gk_generate_package)
+    string(TIMESTAMP TSTAMP %s)
+    set(FNAME "${CMAKE_CURRENT_BINARY_DIR}/gk-${TSTAMP}.tar")
+    message("generating ${FNAME}")
+
+    foreach(tname IN LISTS ARGV)
+        list(APPEND EXFNAMES "$<TARGET_FILE:${tname}>")
+    endforeach()
+
+    add_custom_target(create_gk_package
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E echo "generating ${FNAME} from $<JOIN:${EXFNAMES},,>"
+        COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${FNAME}" ${EXFNAMES}
+    )
+endfunction()

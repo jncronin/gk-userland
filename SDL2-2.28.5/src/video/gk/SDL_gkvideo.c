@@ -136,7 +136,7 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
 
     SDL_GetWindowSizeInPixels(window, &w, &h);
 
-    _pixels = mmap(NULL, w*h*4, PROT_READ | PROT_WRITE, MAP_ANON, 0, 0);
+    _pixels = mmap(NULL, w*h*4, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
     if(!_pixels)
     {
         return -1;
@@ -153,7 +153,7 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
 int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
     void *_pixels;
-    struct gpu_message gmsg;
+    struct gpu_message gmsg[2];
 
     _pixels = SDL_GetWindowData(window, "_GK_pixels");
     if(!_pixels)
@@ -162,15 +162,18 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
     }
 
     /* Send data to display */
-    gmsg.type = BlitImage;
-    gmsg.dest_addr = 0;
-    gmsg.dest_fbuf_relative = 1;
-    gmsg.src_addr_color = (uint32_t)(uintptr_t)_pixels;
-    gmsg.nlines = 480;
-    gmsg.row_width = 640;
-    gmsg.dest_pf = 0;
-    gmsg.src_pf = 0;
-    GK_GPUEnqueueMessages(&gmsg, 1);
+    gmsg[0].type = BlitImage;
+    gmsg[0].dest_addr = 0;
+    gmsg[0].dest_fbuf_relative = 1;
+    gmsg[0].src_addr_color = (uint32_t)(uintptr_t)_pixels;
+    gmsg[0].nlines = 480;
+    gmsg[0].row_width = 640;
+    gmsg[0].dest_pf = 0;
+    gmsg[0].src_pf = 0;
+
+    gmsg[1].type = FlipBuffers;
+
+    GK_GPUEnqueueMessages(gmsg, 2);
 
     return 0;
 }
@@ -191,7 +194,7 @@ void GK_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
 
 void GK_PumpEvents(_THIS)
 {
-    
+
 }
 
 #endif

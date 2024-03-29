@@ -1,6 +1,10 @@
 #ifndef _SYS_MMAN_H
 #define _SYS_MMAN_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>
 #include <sys/types.h>
 
@@ -30,5 +34,8 @@ int    msync(void *, size_t, int);
 int    munlock(const void *, size_t);
 int    munlockall(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -163,8 +163,8 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
 
     /* Send data to display */
     gmsg[0].type = CleanCache;
-    gmsg[0].dest_addr = 0;
-    gmsg[0].dest_fbuf_relative = 1;
+    gmsg[0].dest_addr = (uint32_t)(uintptr_t)_pixels;
+    gmsg[0].dest_fbuf_relative = 0;
     gmsg[0].nlines = 480;
     gmsg[0].row_width = 640;
 

@@ -153,7 +153,7 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
 int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
     void *_pixels;
-    struct gpu_message gmsg[2];
+    struct gpu_message gmsg[4];
 
     _pixels = SDL_GetWindowData(window, "_GK_pixels");
     if(!_pixels)
@@ -162,18 +162,26 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
     }
 
     /* Send data to display */
-    gmsg[0].type = BlitImage;
+    gmsg[0].type = CleanCache;
     gmsg[0].dest_addr = 0;
     gmsg[0].dest_fbuf_relative = 1;
-    gmsg[0].src_addr_color = (uint32_t)(uintptr_t)_pixels;
     gmsg[0].nlines = 480;
     gmsg[0].row_width = 640;
-    gmsg[0].dest_pf = 0;
-    gmsg[0].src_pf = 0;
 
-    gmsg[1].type = FlipBuffers;
+    gmsg[1].type = BlitImage;
+    gmsg[1].dest_addr = 0;
+    gmsg[1].dest_fbuf_relative = 1;
+    gmsg[1].src_addr_color = (uint32_t)(uintptr_t)_pixels;
+    gmsg[1].nlines = 480;
+    gmsg[1].row_width = 640;
+    gmsg[1].dest_pf = 0;
+    gmsg[1].src_pf = 0;
 
-    GK_GPUEnqueueMessages(gmsg, 2);
+    gmsg[2].type = FlipBuffers;
+
+    gmsg[3].type = SignalThread;
+
+    GK_GPUEnqueueMessages(gmsg, 4);
 
     return 0;
 }

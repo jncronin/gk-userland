@@ -137,7 +137,7 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
     SDL_GetWindowSizeInPixels(window, &w, &h);
 
     _pixels = mmap(NULL, w*h*4, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
-    if(!_pixels)
+    if(_pixels == MAP_FAILED)
     {
         return -1;
     }

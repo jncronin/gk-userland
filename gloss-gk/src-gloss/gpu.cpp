@@ -8,7 +8,8 @@ extern "C" ssize_t GK_GPUEnqueueMessages(const struct gpu_message *msgs, size_t 
 {
     if(!msgs)
     {
-
+        errno = EINVAL;
+        return -1;
     }
     size_t nsent = 0;
     while(nsent < nmsg)

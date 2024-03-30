@@ -63,5 +63,9 @@ function(gk_generate_package)
         ALL
         COMMAND ${CMAKE_COMMAND} -E echo "generating ${FNAME} from $<JOIN:${EXFNAMES},,>"
         COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${FNAME}" ${EXFNAMES}
+        VERBATIM
     )
+
+    add_custom_target(RerunCmake ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR})
+    add_dependencies(create_gk_package RerunCmake)
 endfunction()

@@ -11,6 +11,8 @@
         "SDL_OPENGLES": "OFF"
     },
     "files.associations": {
-        "sdl_video.h": "c"
+        "sdl_video.h": "c",
+        "_gk_gpu.h": "c",
+        "gk.h": "c"
     },
 }

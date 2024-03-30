@@ -12,9 +12,9 @@
 #define cached_messages 64
 
 #define GK_DESTADDR(x,y) ((data->startx + (x)) * 4 + (data->starty + (y)) * 4 * 640)
-#define GK_COLOR(c) ((((uint32_t)((c).r)) << 0) | \
+#define GK_COLOR(c) ((((uint32_t)((c).b)) << 0) | \
                         (((uint32_t)((c).g)) << 8) | \
-                        (((uint32_t)((c).b)) << 16) | \
+                        (((uint32_t)((c).r)) << 16) | \
                         (((uint32_t)((c).a)) << 24))
 
 typedef struct GK_RenderData_t
@@ -133,17 +133,23 @@ static int GK_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_Text
 static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, void *vertices, size_t vertsize)
 {
     GK_RenderData *data = (GK_RenderData *)renderer->driverdata;
+#if DEBUG_GK
     printf("GK_RunCommandQueue\n");
+#endif
     while(cmd)
     {
+#if DEBUG_GK
         printf("GK: CMD: %u\n", cmd->command);
+#endif
         switch(cmd->command)
         {
             case SDL_RENDERCMD_SETVIEWPORT:
                 {
+#if DEBUG_GK
                     printf("GK: SDL_RENDERCMD_SETVIEWPORT: %d, %d\n",
                         cmd->data.viewport.rect.x,
                         cmd->data.viewport.rect.y);
+#endif
                     data->startx = cmd->data.viewport.rect.x;
                     data->starty = cmd->data.viewport.rect.y;
                 }
@@ -151,9 +157,11 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
 
             case SDL_RENDERCMD_SETCLIPRECT:
                 {
+#if DEBUG_GK
                     printf("GK: SDL_RENDERCMD_SETCLIPRECT: %d, %d\n",
                         cmd->data.cliprect.rect.x,
                         cmd->data.cliprect.rect.y);
+#endif
                     // TODO
                 }
                 break;
@@ -161,6 +169,9 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
             case SDL_RENDERCMD_SETDRAWCOLOR:
                 {
                     data->draw_color = GK_COLOR(cmd->data.color);
+#if DEBUG_GK
+                    printf("GK: SDL_RENDERCMD_SETDRAWCOLOR: %x\n", data->draw_color);
+#endif
                 }
                 break;
 
@@ -172,7 +183,7 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     gmsg.dest_pf = 0;
                     gmsg.row_width = 640;
                     gmsg.nlines = 480;
-                    gmsg.src_addr_color = data->draw_color;
+                    gmsg.src_addr_color = GK_COLOR(cmd->data.color);
                     gmsg.src_pf = 0;
                     gmsg.type = BlitColor;
                     //queue_msg(data, &gmsg);
@@ -239,13 +250,15 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                         dest_y = dstrect->y;
                     }
 
+#if DEBUG_GK
                     printf("RENDERCMD_COPY: src->x %d, src->y %d, dstrect: %x, dest->x %d, dest->y %d, texture->w %d, texture->h %d, src %x\n",
                         src_x, src_y, (unsigned int)(uintptr_t)dstrect, dest_x, dest_y, rw, rh, (unsigned int)(uintptr_t)src);
+#endif
 
                     src += src_x * 4 + src_y * 4 * texture->w;
 
                     gmsg.type = BlitImage;
-                    gmsg.dest_addr = GK_DESTADDR(dstrect->x, dstrect->y);
+                    gmsg.dest_addr = GK_DESTADDR(dest_x, dest_y);
                     gmsg.dest_fbuf_relative = 1;
                     gmsg.dest_pf = 0;
                     gmsg.nlines = rh;
@@ -276,14 +289,18 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
         cmd = cmd->next;
     }
 
+#if DEBUG_GK
     printf("End GK_RunCommandQueue\n");
+#endif
     return 0;
 }
 
 static int GK_RenderPresent(SDL_Renderer *renderer)
 {
     struct gpu_message gmsgs[2];
+#if DEBUG_GK
     printf("GK_RenderPresent\n");
+#endif
     memset(gmsgs, 0, sizeof(gmsgs));
     gmsgs[0].type = FlipBuffers;
     gmsgs[1].type = SignalThread;
@@ -356,7 +373,9 @@ static SDL_Renderer *GK_CreateRenderer(SDL_Window *window, Uint32 flags)
         return NULL;
     }
 
+#if DEBUG_GK
     printf("GK_CreateRenderer\n");
+#endif
 
     // fill in required functions
     renderer->QueueSetViewport = GK_QueueSetViewport;

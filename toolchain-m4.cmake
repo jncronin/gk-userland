@@ -23,7 +23,7 @@ set(CXX_FLAGS    "-fno-exceptions -fno-rtti -fno-threadsafe-statics -Wno-psabi")
 set(CMAKE_C_FLAGS_INIT          "${COMMON_FLAGS} ${C_CXX_FLAGS}"              CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_INIT        "${COMMON_FLAGS} ${C_CXX_FLAGS} ${CXX_FLAGS}" CACHE STRING "" FORCE)
 set(CMAKE_ASM_FLAGS_INIT        "${COMMON_FLAGS} -x assembler-with-cpp"       CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L$ENV{HOME}/src/gk/lib -lm -Wl,--whole-archive -llibcharset $ENV{HOME}/src/gk/lib/libgloss-gk.a $ENV{HOME}/src/gk/lib/libgk.a -Wl,--no-whole-archive -Wl,-q"                           CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-u _printf_float -Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L$ENV{HOME}/src/gk/lib -lm -Wl,--whole-archive -llibcharset $ENV{HOME}/src/gk/lib/libgloss-gk.a $ENV{HOME}/src/gk/lib/libgk.a -Wl,--no-whole-archive -Wl,-q"                           CACHE STRING "" FORCE)
 
 set(CMAKE_C_FLAGS_DEBUG     "-Og -g"          CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_DEBUG   "-Og -g"          CACHE STRING "" FORCE)

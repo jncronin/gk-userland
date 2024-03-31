@@ -401,10 +401,13 @@ SDL_RenderDriver GK_RenderDriver = {
     .info = {
         .name = "GK renderer",
         .flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC,
-        .num_texture_formats = 1,   // TODO: can we use more?
+        .num_texture_formats = 4,   // TODO: can we use more?
         .texture_formats = {
             [0] = SDL_PIXELFORMAT_ARGB8888,
-        },
+            [1] = SDL_PIXELFORMAT_RGB888,
+            [2] = SDL_PIXELFORMAT_RGB565,
+            [3] = SDL_PIXELFORMAT_INDEX8
+        },        
         .max_texture_width = 640,
         .max_texture_height = 480
     }

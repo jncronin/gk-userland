@@ -56,7 +56,14 @@ function(gk_generate_package)
     message("generating ${FNAME}")
 
     foreach(tname IN LISTS ARGV)
-        list(APPEND EXFNAMES "$<TARGET_FILE:${tname}>")
+        message("tname: ${tname}")
+        if(TARGET ${tname})
+            message("target")
+            list(APPEND EXFNAMES "$<TARGET_FILE:${tname}>")
+        else()
+            message("not target")
+            list(APPEND EXFNAMES "${tname}")
+        endif()
     endforeach()
 
     add_custom_target(create_gk_package

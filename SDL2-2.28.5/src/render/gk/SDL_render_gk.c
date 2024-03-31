@@ -108,6 +108,23 @@ static int GK_QueueFillRects(SDL_Renderer *renderer, SDL_RenderCommand *cmd, con
     return 0;
 }
 
+static uint32_t GK_GetPixelFormat(Uint32 sdl_pf)
+{
+    switch(sdl_pf)
+    {
+        case SDL_PIXELFORMAT_ARGB8888:
+            return GK_PIXELFORMAT_ARGB8888;
+        case SDL_PIXELFORMAT_RGB888:
+            return GK_PIXELFORMAT_RGB888;
+        case SDL_PIXELFORMAT_RGB565:
+            return GK_PIXELFORMAT_RGB565;
+        case SDL_PIXELFORMAT_INDEX8:
+            return GK_PIXELFORMAT_L8;
+        default:
+            return 0;
+    }
+}
+
 static int GK_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_Texture *texture,
                      const SDL_Rect *srcrect, const SDL_FRect *dstrect)
 {
@@ -179,10 +196,11 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                 {
                     struct gpu_message gmsg;
                     gmsg.dest_addr = 0;
-                    gmsg.dest_fbuf_relative = 1;
                     gmsg.dest_pf = 0;
-                    gmsg.row_width = 640;
-                    gmsg.nlines = 480;
+                    gmsg.dx = 0;
+                    gmsg.dy = 0;
+                    gmsg.w = 640;
+                    gmsg.h = 480;
                     gmsg.src_addr_color = GK_COLOR(cmd->data.color);
                     gmsg.src_pf = 0;
                     gmsg.type = BlitColor;
@@ -213,11 +231,11 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     {
                         struct gpu_message gmsg;
 
-                        gmsg.dest_addr = GK_DESTADDR(verts[i].x, verts[i].y);
-                        gmsg.dest_fbuf_relative = 1;
-                        gmsg.dest_pf = 0;
-                        gmsg.nlines = verts[i].h;
-                        gmsg.row_width = verts[i].w;
+                        gmsg.dest_addr = 0;
+                        gmsg.dx = data->startx + verts[i].x;
+                        gmsg.dy = data->starty + verts[i].y;
+                        gmsg.w = verts[i].w;
+                        gmsg.h = verts[i].h;
                         gmsg.src_addr_color = col;
                         gmsg.src_pf = 0;
                         gmsg.type = BlitColor;
@@ -255,16 +273,17 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                         src_x, src_y, (unsigned int)(uintptr_t)dstrect, dest_x, dest_y, rw, rh, (unsigned int)(uintptr_t)src);
 #endif
 
-                    src += src_x * 4 + src_y * 4 * texture->w;
-
                     gmsg.type = BlitImage;
-                    gmsg.dest_addr = GK_DESTADDR(dest_x, dest_y);
-                    gmsg.dest_fbuf_relative = 1;
-                    gmsg.dest_pf = 0;
-                    gmsg.nlines = rh;
-                    gmsg.row_width = rw;
+                    gmsg.dest_addr = 0;
+                    gmsg.dx = data->startx + dest_x;
+                    gmsg.dy = data->starty + dest_y;
+                    gmsg.w = rw;
+                    gmsg.h = rh;
                     gmsg.src_addr_color = (uint32_t)(uintptr_t)src;
-                    gmsg.src_pf = 0;
+                    gmsg.sx = src_x;
+                    gmsg.sy = src_y;
+                    gmsg.sp = texture->pitch;
+                    gmsg.src_pf = GK_GetPixelFormat(texture->format);
                     GK_GPUEnqueueMessages(&gmsg, 1);
                     //queue_msg(data, &gmsg);
                 }
@@ -328,23 +347,29 @@ static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     struct gpu_message gmsgs[3];
 
     char *dest = texture->driverdata;
-    dest = dest + rect->y * 640 * 4 +
-        rect->x * 4;
+    uint32_t tpf = GK_GetPixelFormat(texture->format);
     
     gmsgs[0].type = CleanCache;
-    gmsgs[0].dest_fbuf_relative = 0;
     gmsgs[0].dest_addr = (uint32_t)(uintptr_t)pixels;
-    gmsgs[0].row_width = rect->w;
-    gmsgs[0].nlines = rect->h;
+    gmsgs[0].dx = 0;
+    gmsgs[0].dy = 0;
+    gmsgs[0].w = rect->w;
+    gmsgs[0].h = rect->h;
+    gmsgs[0].dp = pitch;
+    gmsgs[0].dest_pf = tpf;
 
     gmsgs[1].type = BlitImage;
     gmsgs[1].dest_addr = (uint32_t)(uintptr_t)dest;
-    gmsgs[1].dest_fbuf_relative = 0;
-    gmsgs[1].dest_pf = 0;
-    gmsgs[1].row_width = rect->w;
-    gmsgs[1].nlines = rect->h;
+    gmsgs[1].dest_pf = tpf;
+    gmsgs[1].dx = rect->x;
+    gmsgs[1].dy = rect->y;
+    gmsgs[1].w = rect->w;
+    gmsgs[1].h = rect->h;
     gmsgs[1].src_addr_color = (uint32_t)(uintptr_t)pixels;
-    gmsgs[1].src_pf = 0;
+    gmsgs[1].src_pf = tpf;
+    gmsgs[1].sx = 0;
+    gmsgs[1].sy = 0;
+    gmsgs[1].sp = pitch;
     
     gmsgs[2].type = SignalThread;
 

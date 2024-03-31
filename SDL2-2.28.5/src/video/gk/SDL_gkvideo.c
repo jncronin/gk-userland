@@ -93,7 +93,30 @@ int GK_VideoInit(_THIS)
 
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
-    return 0;
+    int pf = (int)mode->driverdata;
+    if(!mode)
+    {
+        return -1;
+    }
+
+    switch(pf)
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 5:
+            // supported
+            {
+                struct gpu_message g;
+                g.type = SetBuffers;
+                g.dest_addr = 0;
+                g.src_addr_color = 0;
+                g.dest_pf = (uint32_t)pf;
+                GK_GPUEnqueueMessages(&g, 1);
+            }
+            return 0;
+    }
+    return -1;
 }
 
 void GK_VideoQuit(_THIS)
@@ -172,22 +195,27 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
     {
         return SDL_SetError("Couldn't find framebuffer for window");
     }
+    
 
     /* Send data to display */
     gmsg[0].type = CleanCache;
     gmsg[0].dest_addr = (uint32_t)(uintptr_t)_pixels;
-    gmsg[0].dest_fbuf_relative = 0;
-    gmsg[0].nlines = 480;
-    gmsg[0].row_width = 640;
+    gmsg[0].dest_pf = GK_PIXELFORMAT_ARGB8888;
+    gmsg[0].dx = 0;
+    gmsg[0].dy = 0;
+    gmsg[0].w = window->w;
+    gmsg[0].h = window->h;
+    gmsg[0].dp = window->w * 4;
 
     gmsg[1].type = BlitImage;
     gmsg[1].dest_addr = 0;
-    gmsg[1].dest_fbuf_relative = 1;
+    gmsg[1].dx = 0;
+    gmsg[1].dy = 0;
     gmsg[1].src_addr_color = (uint32_t)(uintptr_t)_pixels;
-    gmsg[1].nlines = 480;
-    gmsg[1].row_width = 640;
-    gmsg[1].dest_pf = 0;
+    gmsg[1].w = window->w;
+    gmsg[1].h = window->h;
     gmsg[1].src_pf = 0;
+    gmsg[1].sp = window->w * 4;
 
     gmsg[2].type = FlipBuffers;
 

@@ -66,12 +66,24 @@ int GK_VideoInit(_THIS)
     mode.format = SDL_PIXELFORMAT_ARGB8888;
     mode.w = 640;
     mode.h = 480;
-    mode.refresh_rate = 0;
-    mode.driverdata = NULL;
+    mode.refresh_rate = 60;
+    mode.driverdata = (void *)0;
     if(SDL_AddBasicVideoDisplay(&mode) < 0)
     {
         return -1;
     }
+
+    mode.format = SDL_PIXELFORMAT_RGB888;
+    mode.driverdata = (void *)1;
+    SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+    mode.format = SDL_PIXELFORMAT_RGB565;
+    mode.driverdata = (void *)2;
+    SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+    mode.format = SDL_PIXELFORMAT_INDEX8;
+    mode.driverdata = (void *)5;
+    SDL_AddDisplayMode(&_this->displays[0], &mode);
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);

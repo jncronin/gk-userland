@@ -135,6 +135,7 @@ static int GK_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_Text
     }
 
     cmd->data.draw.count = 1;
+    
 
     SDL_copyp(verts, srcrect);
     verts++;
@@ -332,8 +333,12 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
 
 static int GK_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 {
-    void *tmem = mmap(NULL, texture->w * texture->h * 4, PROT_READ | PROT_WRITE, 
+    void *tmem;
+    
+    texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + 3) & ~3);
+    tmem = mmap(NULL, texture->h * texture->pitch, PROT_READ | PROT_WRITE, 
         MAP_PRIVATE | MAP_ANON, 0, 0);
+
     if(tmem == MAP_FAILED)
         return -1;
     texture->driverdata = tmem;
@@ -363,6 +368,7 @@ static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     gmsgs[1].dest_pf = tpf;
     gmsgs[1].dx = rect->x;
     gmsgs[1].dy = rect->y;
+    gmsgs[1].dp = texture->pitch;
     gmsgs[1].w = rect->w;
     gmsgs[1].h = rect->h;
     gmsgs[1].src_addr_color = (uint32_t)(uintptr_t)pixels;

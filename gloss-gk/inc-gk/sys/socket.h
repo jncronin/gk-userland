@@ -44,6 +44,9 @@ struct msghdr
 
 #define INADDR_ANY      0
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int     accept(int, struct sockaddr *, socklen_t *);
 int     bind(int, const struct sockaddr *, socklen_t);
@@ -65,6 +68,10 @@ int     shutdown(int, int);
 int     socket(int, int, int);
 int     sockatmark(int);
 int     socketpair(int, int, int, int[2]);
+
+#ifdef __cplusplus
+}
+#endif
 
 #define SOL_SOCKET      1
 

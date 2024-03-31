@@ -2,6 +2,9 @@
 #include "syscalls.h"
 #include "deferred.h"
 
+extern "C"
+{
+
 int socket(int domain, int type, int protocol)
 {
     struct __syscall_socket_params p;
@@ -62,4 +65,6 @@ ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
 ssize_t recv(int sockfd, void *buf, size_t len, int flags)
 {
     return recvfrom(sockfd, buf, len, flags, nullptr, nullptr);
+}
+
 }

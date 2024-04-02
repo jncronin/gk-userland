@@ -204,7 +204,7 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     gmsg.h = 480;
                     gmsg.src_addr_color = GK_COLOR(cmd->data.color);
                     gmsg.src_pf = 0;
-                    gmsg.type = BlitColor;
+                    gmsg.type = ClearScreen;
                     //queue_msg(data, &gmsg);
                     GK_GPUEnqueueMessages(&gmsg, 1);
                 }
@@ -334,7 +334,7 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
 static int GK_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 {
     void *tmem;
-    
+
     texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + 3) & ~3);
     tmem = mmap(NULL, texture->h * texture->pitch, PROT_READ | PROT_WRITE, 
         MAP_PRIVATE | MAP_ANON, 0, 0);

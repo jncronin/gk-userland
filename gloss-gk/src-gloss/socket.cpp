@@ -41,6 +41,12 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
     return deferred_call(__syscall_accept, &p);
 }
 
+int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
+{
+    struct __syscall_bind_params p { sockfd, addr, addrlen };
+    return deferred_call(__syscall_connect, &p);
+}
+
 ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,
     const sockaddr *dest_addr, socklen_t addrlen)
 {

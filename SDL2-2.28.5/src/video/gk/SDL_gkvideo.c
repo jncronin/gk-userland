@@ -63,27 +63,32 @@ int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
 
-    mode.format = SDL_PIXELFORMAT_ARGB8888;
-    mode.w = 640;
-    mode.h = 480;
-    mode.refresh_rate = 60;
-    mode.driverdata = (void *)0;
-    if(SDL_AddBasicVideoDisplay(&mode) < 0)
+    /* Allow 640x480, 320x240, 160x120 at 32-/24-/16-/8-bpp */
+
+    for(int sdiv = 1; sdiv <= 3; sdiv++)
     {
-        return -1;
+        mode.format = SDL_PIXELFORMAT_ARGB8888;
+        mode.w = 640 / sdiv;
+        mode.h = 480 / sdiv;
+        mode.refresh_rate = 60;
+        mode.driverdata = (void *)0;
+        if(SDL_AddBasicVideoDisplay(&mode) < 0)
+        {
+            return -1;
+        }
+
+        mode.format = SDL_PIXELFORMAT_RGB888;
+        mode.driverdata = (void *)1;
+        SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+        mode.format = SDL_PIXELFORMAT_RGB565;
+        mode.driverdata = (void *)2;
+        SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+        mode.format = SDL_PIXELFORMAT_INDEX8;
+        mode.driverdata = (void *)5;
+        SDL_AddDisplayMode(&_this->displays[0], &mode);
     }
-
-    mode.format = SDL_PIXELFORMAT_RGB888;
-    mode.driverdata = (void *)1;
-    SDL_AddDisplayMode(&_this->displays[0], &mode);
-
-    mode.format = SDL_PIXELFORMAT_RGB565;
-    mode.driverdata = (void *)2;
-    SDL_AddDisplayMode(&_this->displays[0], &mode);
-
-    mode.format = SDL_PIXELFORMAT_INDEX8;
-    mode.driverdata = (void *)5;
-    SDL_AddDisplayMode(&_this->displays[0], &mode);
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);
@@ -99,22 +104,49 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
         return -1;
     }
 
+    int supported = 1;
+
     switch(pf)
     {
         case 0:
         case 1:
         case 2:
         case 5:
-            // supported
-            {
-                struct gpu_message g;
-                g.type = SetBuffers;
-                g.dest_addr = 0;
-                g.src_addr_color = 0;
-                g.dest_pf = (uint32_t)pf;
-                GK_GPUEnqueueMessages(&g, 1);
-            }
-            return 0;
+            break;
+        default:
+            supported = 0;
+            break;
+    }
+
+    if(mode->w == 640 && mode->h == 480)
+    {
+        // supported
+    }
+    else if(mode->w == 320 && mode->h == 240)
+    {
+        // supported
+    }
+    else if(mode->w == 160 && mode->h == 120)
+    {
+        // supported
+    }
+    else
+    {
+        supported = 0;
+    }
+
+    if(supported)
+    {
+        // supported
+        {
+            struct gpu_message g;
+            g.type = SetScreenMode;
+            g.w = mode->w;
+            g.h = mode->h;
+            g.dest_pf = (uint32_t)pf;
+            GK_GPUEnqueueMessages(&g, 1);
+        }
+        return 0;
     }
     return -1;
 }

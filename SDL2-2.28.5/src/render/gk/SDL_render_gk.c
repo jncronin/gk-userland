@@ -254,7 +254,8 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     SDL_Rect *dstrect = verts + 1;
                     SDL_Texture *texture = cmd->data.draw.texture;
                     char *src = texture->driverdata;
-                    int src_x = 0, src_y = 0, dest_x = 0, dest_y = 0, rw = 640, rh = 480;
+                    int src_x = 0, src_y = 0, dest_x = 0, dest_y = 0, rw = 0, rh = 0;
+                    int rdw = 0, rdh = 0;
                     
                     if(srcrect)
                     {
@@ -267,7 +268,10 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     {
                         dest_x = dstrect->x;
                         dest_y = dstrect->y;
+                        rdw = dstrect->w;
+                        rdh = dstrect->h;
                     }
+                    
 
 #if DEBUG_GK
                     printf("RENDERCMD_COPY: src->x %d, src->y %d, dstrect: %x, dest->x %d, dest->y %d, texture->w %d, texture->h %d, src %x\n",
@@ -278,6 +282,8 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     gmsg.dest_addr = 0;
                     gmsg.dx = data->startx + dest_x;
                     gmsg.dy = data->starty + dest_y;
+                    gmsg.dw = rdw;
+                    gmsg.dh = rdh;
                     gmsg.w = rw;
                     gmsg.h = rh;
                     gmsg.src_addr_color = (uint32_t)(uintptr_t)src;

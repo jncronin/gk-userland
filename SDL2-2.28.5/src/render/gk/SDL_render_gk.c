@@ -200,8 +200,8 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     gmsg.dest_pf = 0;
                     gmsg.dx = 0;
                     gmsg.dy = 0;
-                    gmsg.w = 640;
-                    gmsg.h = 480;
+                    gmsg.dw = 0;
+                    gmsg.dh = 0;
                     gmsg.src_addr_color = GK_COLOR(cmd->data.color);
                     gmsg.src_pf = 0;
                     gmsg.type = ClearScreen;
@@ -235,8 +235,8 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                         gmsg.dest_addr = 0;
                         gmsg.dx = data->startx + verts[i].x;
                         gmsg.dy = data->starty + verts[i].y;
-                        gmsg.w = verts[i].w;
-                        gmsg.h = verts[i].h;
+                        gmsg.dw = verts[i].w;
+                        gmsg.dh = verts[i].h;
                         gmsg.src_addr_color = col;
                         gmsg.src_pf = 0;
                         gmsg.type = BlitColor;

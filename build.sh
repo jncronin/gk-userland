@@ -38,3 +38,6 @@ ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DTINYGL_BUILD_EXAMPLES=OFF -S tinygl-main/ -B build/tinygl
 make -C build/tinygl install
+mkdir -p ~/src/gk/include/GL
+cp ~/src/gk/include/TGL/* ~/src/gk/include/GL
+

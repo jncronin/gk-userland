@@ -160,7 +160,7 @@ endif()
 SDL_DetectCMakePlatform()
 
 # Don't mistake osx for unix
-if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT RISCOS)
+if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT RISCOS AND NOT GAMEKID)
   set(UNIX_SYS ON)
 else()
   set(UNIX_SYS OFF)

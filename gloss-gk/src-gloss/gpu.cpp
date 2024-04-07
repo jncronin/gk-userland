@@ -164,7 +164,7 @@ int GK_GPUFlush(void *cmdlist)
     return ret;
 }
 
-int GK_GPUFlipBuffers(void *cmdlist)
+int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer)
 {
     auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);
     if(hdr->__ncmds >= hdr->__max_cmds)
@@ -173,6 +173,8 @@ int GK_GPUFlipBuffers(void *cmdlist)
     auto msg = &msgs[hdr->__ncmds++];
 
     msg->type = FlipBuffers;
+    msg->dest_addr = (uint32_t)(uintptr_t)next_buffer;
+    msg->src_addr_color = 0;
 
     return 0;
 }

@@ -28,7 +28,7 @@ int GK_GPUResetCommandList(void *cmdlist);
 int GK_GPUClearScreen(void *cmdlist);
 int GK_GPUBlitScreen(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride);
 int GK_GPUBlitScreenNoBlend(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride);
-int GK_GPUFlipBuffers(void *cmdlist);
+int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer);
 int GK_GPUFlush(void *cmdlist);
 int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride);
 

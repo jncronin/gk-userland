@@ -13,6 +13,8 @@ make -C build/libpng install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libiconv-cmake-master/ -B build/libiconv
 make -C build/libiconv install
+rm -rf ~/src/gk/lib/libiconv.a
+ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S rain-1-s-shell/ -B build/s
 make -C build/s install
@@ -31,13 +33,12 @@ tar -cf gk-`date +"%s"`.tar -C ~/src/gk bin/ls bin/tftpd bin/sh bin/echo
 #cd busybox-1.36.1
 #CFLAGS="-mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -ffast-math --specs=nano.specs -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS -I/home/jncronin/src/gk/include" LDFLAGS="-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L/home/jncronin/src/gk/lib -lm -Wl,--whole-archive /home/jncronin/src/gk/lib/libgloss-gk.a -Wl,--no-whole-archive -Wl,-q" CROSS_COMPILE="arm-none-eabi-" make
 
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL_LIBC=ON -DSDL_PTHREADS=ON -DSDL_THREADS=ON -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -S SDL2-2.28.5/ -B build/sdl2
-make -C build/sdl2 install
-rm -rf ~/src/gk/lib/libiconv.a
-ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
-
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DTINYGL_BUILD_EXAMPLES=OFF -S tinygl-main/ -B build/tinygl
 make -C build/tinygl install
 mkdir -p ~/src/gk/include/GL
 cp ~/src/gk/include/TGL/* ~/src/gk/include/GL
+
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m4.cmake -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL_LIBC=ON -DSDL_PTHREADS=ON -DSDL_THREADS=ON -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -S SDL2-2.28.5/ -B build/sdl2
+make -C build/sdl2 install
+
 

@@ -7,7 +7,8 @@
 #include "../SDL_sysvideo.h"
 #include <sys/mman.h>
 #include <gk.h>
-
+#include <zbuffer.h>
+#include <GL/gl.h>
 
 static int GK_VideoInit(_THIS);
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode);
@@ -20,9 +21,16 @@ static int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect 
 static void GK_DestroyWindowFramebuffer(_THIS, SDL_Window *window);
 static void GK_PumpEvents(_THIS);
 
+static SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window);
+static int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context);
+static int GK_GL_GetSwapInterval(_THIS);
+static int GK_GL_SwapWindow(_THIS, SDL_Window *window);
+static void GK_GL_DeleteContext(_THIS, SDL_GLContext context);
+
 typedef struct
 {
     SDL_Window *sdl_window;
+    ZBuffer *gl_fb;
 } GK_Window;
 
 
@@ -51,6 +59,15 @@ static SDL_VideoDevice *GK_CreateDevice(void)
     device->free = GK_DeleteDevice;
     device->CreateSDLWindow = GK_CreateWindow;
     device->DestroyWindow = GK_DestroyWindow;
+
+    device->GL_LoadLibrary = NULL;
+    device->GL_GetProcAddress = NULL;
+    device->GL_UnloadLibrary = NULL;
+    device->GL_CreateContext = GK_GL_CreateContext;
+    device->GL_MakeCurrent = GK_GL_MakeCurrent;
+    device->GL_GetSwapInterval = GK_GL_GetSwapInterval;
+    device->GL_SwapWindow = GK_GL_SwapWindow;
+    device->GL_DeleteContext = GK_GL_DeleteContext;
 
     return device;
 }
@@ -98,13 +115,13 @@ int GK_VideoInit(_THIS)
 
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
+    int supported = 1;
     int pf = (int)mode->driverdata;
     if(!mode)
     {
         return -1;
     }
 
-    int supported = 1;
 
     switch(pf)
     {
@@ -277,6 +294,61 @@ void GK_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
 void GK_PumpEvents(_THIS)
 {
 
+}
+
+SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
+{
+    ZBuffer *framebuffer;
+    void *firstfb;
+    GK_Window *gk_window = window->driverdata;
+    unsigned int pf = TGL_FEATURE_RENDER_BITS == 32 ? GK_PIXELFORMAT_ARGB8888 : GK_PIXELFORMAT_RGB565;
+    GK_GPU_CommandList(cmds, 4);
+
+    // Get the first framebuffer for the requested window size
+    GK_GPUSetScreenMode(&cmds, window->w, window->h, pf);
+    GK_GPUClearScreen(&cmds);
+    GK_GPUFlipBuffers(&cmds, &firstfb);
+    GK_GPUFlush(&cmds);
+
+    // Init a tinygl zbuffer with this
+    framebuffer = ZB_open(window->w, window->h,
+        ZB_MODE_5R6G5B, firstfb);
+    if(framebuffer)
+    {
+        glInit(framebuffer);
+        gk_window->gl_fb = framebuffer;
+    }
+    return framebuffer;
+}
+
+int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)
+{
+    GK_Window *gk_window = window->driverdata;
+    gk_window->gl_fb = (ZBuffer *)context;
+    return 0;
+}
+
+int GK_GL_GetSwapInterval(_THIS)
+{
+    return 1;       // always vsync
+}
+
+int GK_GL_SwapWindow(_THIS, SDL_Window *window)
+{
+    GK_Window *gk_window = window->driverdata;
+    GK_GPU_CommandList(cmds, 4);
+
+    GK_GPUFlipBuffers(&cmds, (void **)&gk_window->gl_fb->pbuf);
+    GK_GPUFlush(&cmds);
+    return 0;    
+}
+
+void GK_GL_DeleteContext(_THIS, SDL_GLContext context)
+{
+    ZBuffer *fb = (ZBuffer *)context;
+    fb->frame_buffer_allocated = 0;
+    fb->pbuf = 0;
+    ZB_close(fb);
 }
 
 #endif

@@ -13,6 +13,7 @@
     "files.associations": {
         "sdl_video.h": "c",
         "_gk_gpu.h": "c",
-        "gk.h": "c"
+        "gk.h": "c",
+        "zbuffer.h": "c"
     },
 }

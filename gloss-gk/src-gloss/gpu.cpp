@@ -179,6 +179,22 @@ int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer)
     return 0;
 }
 
+int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf)
+{
+    auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);
+    if(hdr->__ncmds >= hdr->__max_cmds)
+        return -1;
+    auto msgs = reinterpret_cast<gpu_message *>(&hdr[1]);
+    auto msg = &msgs[hdr->__ncmds++];
+
+    msg->type = SetScreenMode;
+    msg->w = w;
+    msg->h = h;
+    msg->dest_pf = pf;
+
+    return 0;
+}
+
 int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride)
 {
     uint32_t spf = 0;

@@ -26,6 +26,8 @@ static int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context);
 static int GK_GL_GetSwapInterval(_THIS);
 static int GK_GL_SwapWindow(_THIS, SDL_Window *window);
 static void GK_GL_DeleteContext(_THIS, SDL_GLContext context);
+static int GK_GL_LoadLibrary(_THIS, const char *path);
+static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
 typedef struct
 {
@@ -60,8 +62,8 @@ static SDL_VideoDevice *GK_CreateDevice(void)
     device->CreateSDLWindow = GK_CreateWindow;
     device->DestroyWindow = GK_DestroyWindow;
 
-    device->GL_LoadLibrary = NULL;
-    device->GL_GetProcAddress = NULL;
+    device->GL_LoadLibrary = GK_GL_LoadLibrary;
+    device->GL_GetProcAddress = GK_GL_GetProcAddress;
     device->GL_UnloadLibrary = NULL;
     device->GL_CreateContext = GK_GL_CreateContext;
     device->GL_MakeCurrent = GK_GL_MakeCurrent;
@@ -349,6 +351,18 @@ void GK_GL_DeleteContext(_THIS, SDL_GLContext context)
     fb->frame_buffer_allocated = 0;
     fb->pbuf = 0;
     ZB_close(fb);
+}
+
+int GK_GL_LoadLibrary(_THIS, const char *path)
+{
+    if(path == NULL)
+        return 0;
+    return -1;
+}
+
+void *GK_GL_GetProcAddress(_THIS, const char *name)
+{
+    return NULL;
 }
 
 #endif

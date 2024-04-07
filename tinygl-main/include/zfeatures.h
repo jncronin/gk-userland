@@ -113,8 +113,8 @@ Optimization hint- cost of branching.
 #endif
 
 
-#define TGL_FEATURE_16_BITS        0
-#define TGL_FEATURE_32_BITS        1
+#define TGL_FEATURE_16_BITS        1
+#define TGL_FEATURE_32_BITS        0
 
 #if TGL_FEATURE_32_BITS == 1
 #define TGL_FEATURE_RENDER_BITS    32

@@ -250,6 +250,8 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
     gmsg[1].sp = window->w * 4;
 
     gmsg[2].type = FlipBuffers;
+    gmsg[2].dest_addr = 0;
+    gmsg[2].src_addr_color = 0;
 
     gmsg[3].type = SignalThread;
 

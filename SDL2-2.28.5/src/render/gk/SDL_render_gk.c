@@ -329,6 +329,9 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
 #endif
     memset(gmsgs, 0, sizeof(gmsgs));
     gmsgs[0].type = FlipBuffers;
+    gmsgs[0].dest_addr = 0;
+    gmsgs[0].src_addr_color = 0;
+    
     gmsgs[1].type = SignalThread;
     GK_GPUEnqueueMessages(gmsgs, 2);
     //queue_msg((GK_RenderData *)renderer->driverdata, &gmsg);

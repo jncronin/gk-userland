@@ -50,6 +50,9 @@ set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS   ON)
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE           ON)
 
 
+set(CPACK_GENERATOR "TGZ")
+set(CPACK_SYSTEM_NAME "gk")
+
 function(gk_generate_package)
     string(TIMESTAMP TSTAMP %s)
     set(FNAME "${CMAKE_CURRENT_BINARY_DIR}/gk-${TSTAMP}.tar")

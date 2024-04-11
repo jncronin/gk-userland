@@ -115,7 +115,7 @@ static uint32_t GK_GetPixelFormat(Uint32 sdl_pf)
         case SDL_PIXELFORMAT_ARGB8888:
             return GK_PIXELFORMAT_ARGB8888;
         case SDL_PIXELFORMAT_RGB888:
-            return GK_PIXELFORMAT_RGB888;
+            return GK_PIXELFORMAT_XRGB8888;
         case SDL_PIXELFORMAT_RGB565:
             return GK_PIXELFORMAT_RGB565;
         case SDL_PIXELFORMAT_INDEX8:
@@ -331,7 +331,7 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
     gmsgs[0].type = FlipBuffers;
     gmsgs[0].dest_addr = 0;
     gmsgs[0].src_addr_color = 0;
-    
+
     gmsgs[1].type = SignalThread;
     GK_GPUEnqueueMessages(gmsgs, 2);
     //queue_msg((GK_RenderData *)renderer->driverdata, &gmsg);
@@ -377,6 +377,8 @@ static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     gmsgs[1].dest_pf = tpf;
     gmsgs[1].dx = rect->x;
     gmsgs[1].dy = rect->y;
+    gmsgs[1].dw = rect->w;
+    gmsgs[1].dh = rect->h;
     gmsgs[1].dp = texture->pitch;
     gmsgs[1].w = rect->w;
     gmsgs[1].h = rect->h;

@@ -7,6 +7,7 @@ extern "C"
 #endif
 
 #include "_gk_gpu.h"
+#include "_gk_event.h"
 
 #include <stdlib.h>
 
@@ -32,6 +33,7 @@ int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer);
 int GK_GPUFlush(void *cmdlist);
 int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride);
 int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf);
+int GK_EventPeek(struct Event *ev);
 
 #ifdef __cplusplus
 }

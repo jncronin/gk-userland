@@ -14,6 +14,7 @@
         "sdl_video.h": "c",
         "_gk_gpu.h": "c",
         "gk.h": "c",
-        "zbuffer.h": "c"
+        "zbuffer.h": "c",
+        "_gk_event.h": "c"
     },
 }

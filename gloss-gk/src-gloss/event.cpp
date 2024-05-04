@@ -4,7 +4,7 @@
 #include "gk.h"
 #include <errno.h>
 
-int GK_PeekEvent(Event *ev)
+int GK_EventPeek(Event *ev)
 {
     if(!ev)
     {

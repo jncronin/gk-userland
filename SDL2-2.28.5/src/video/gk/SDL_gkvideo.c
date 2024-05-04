@@ -10,6 +10,8 @@
 #include <zbuffer.h>
 #include <GL/gl.h>
 
+#include "../../events/SDL_keyboard_c.h"
+
 static int GK_VideoInit(_THIS);
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode);
 static void GK_VideoQuit(_THIS);
@@ -295,7 +297,21 @@ void GK_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
 
 void GK_PumpEvents(_THIS)
 {
-
+    struct Event ev;
+    while(GK_EventPeek(&ev) > 0)
+    {
+        switch(ev.type)
+        {
+            case KeyDown:
+                SDL_SendKeyboardKey(SDL_PRESSED, (SDL_Scancode)ev.key);
+                break;
+            case KeyUp:
+                SDL_SendKeyboardKey(SDL_RELEASED, (SDL_Scancode)ev.key);
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)

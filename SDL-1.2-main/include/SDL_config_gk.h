@@ -64,4 +64,6 @@ typedef unsigned long uintptr_t;
 /* Enable the dummy video driver (src/video/dummy/\*.c) */
 #define SDL_VIDEO_DRIVER_DUMMY	1
 
+#define SDL_VIDEO_DRIVER_GK     1
+
 #endif /* _SDL_config_minimal_h */

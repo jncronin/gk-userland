@@ -234,3 +234,12 @@ int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t 
 
     return 0;
 }
+
+int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf)
+{
+    __syscall_getscreenmode_params p;
+    p.x = (int *)w;
+    p.y = (int *)h;
+    p.pf = (int *)pf;
+    return deferred_call(__syscall_getscreenmode, &p);
+}

@@ -2,5 +2,9 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake"
     },
+    "files.associations": {
+        "sdl_video.h": "c",
+        "sdl_blit.h": "c"
+    },
 }
 

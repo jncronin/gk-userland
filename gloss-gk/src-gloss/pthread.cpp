@@ -308,3 +308,9 @@ int pthread_cond_signal(pthread_cond_t *cond)
         return 0;
     return errno;
 }
+
+void pthread_exit(void *retval)
+{
+    deferred_call(__syscall_pthread_exit, &retval);
+    while(true);
+}

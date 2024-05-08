@@ -47,23 +47,28 @@ typedef unsigned long uintptr_t;
 #define SDL_AUDIO_DRIVER_DUMMY	1
 
 /* Enable the stub cdrom driver (src/cdrom/dummy/\*.c) */
-#define SDL_CDROM_DISABLED	1
+#define SDL_CDROM_DUMMY	1
 
 /* Enable the stub joystick driver (src/joystick/dummy/\*.c) */
-#define SDL_JOYSTICK_DISABLED	1
+#define SDL_JOYSTICK_DUMMY	1
 
 /* Enable the stub shared object loader (src/loadso/dummy/\*.c) */
 #define SDL_LOADSO_DISABLED	1
 
 /* Enable the stub thread support (src/thread/generic/\*.c) */
-#define SDL_THREADS_DISABLED	1
+#define SDL_THREAD_PTHREAD	1
 
 /* Enable the stub timer support (src/timer/dummy/\*.c) */
-#define SDL_TIMERS_DISABLED	1
+#define SDL_TIMER_UNIX	1
 
 /* Enable the dummy video driver (src/video/dummy/\*.c) */
-#define SDL_VIDEO_DRIVER_DUMMY	1
-
 #define SDL_VIDEO_DRIVER_GK     1
+
+
+#define HAVE_MALLOC     1
+#define HAVE_CALLOC     1
+#define HAVE_REALLOC    1
+#define HAVE_FREE       1
+#define STDC_HEADERS    1
 
 #endif /* _SDL_config_minimal_h */

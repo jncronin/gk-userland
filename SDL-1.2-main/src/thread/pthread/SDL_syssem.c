@@ -22,7 +22,6 @@
 #include "SDL_config.h"
 
 #include <pthread.h>
-#include <semaphore.h>
 #include <errno.h>
 #include <sys/time.h>
 
@@ -31,10 +30,11 @@
 
 /* Wrapper around POSIX 1003.1b semaphores */
 
-#ifdef __MACOSX__
+#if defined(__MACOSX__) || defined(__GAMEKID__)
 /* Mac OS X doesn't support sem_getvalue() as of version 10.4 */
 #include "../generic/SDL_syssem.c"
 #else
+#include <semaphore.h>
 
 struct SDL_semaphore {
 	sem_t sem;

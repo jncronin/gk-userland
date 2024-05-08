@@ -154,9 +154,9 @@ int GK_VideoInit(_THIS, SDL_PixelFormat *vformat)
     return 0;
 }
 
-SDL_Rect mode640x480 = { 640, 480 };
-SDL_Rect mode320x240 = { 320, 240 };
-SDL_Rect mode160x120 = { 160, 120 };
+SDL_Rect mode640x480 = { 0, 0, 640, 480 };
+SDL_Rect mode320x240 = { 0, 0, 320, 240 };
+SDL_Rect mode160x120 = { 0, 0, 160, 120 };
 
 SDL_Rect *modes[] = { &mode640x480, &mode320x240, &mode160x120, NULL };
 
@@ -204,7 +204,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
 
     // Set mode
     {
-        GK_GPU_CommandList(gmsg, 1);
+        GK_GPU_CommandList(gmsg, 2);
         GK_GPUSetScreenMode(&gmsg, width, height, gk_pf);
         GK_GPUFlipBuffers(&gmsg, &current->pixels);
         GK_GPUFlush(&gmsg);

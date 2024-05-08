@@ -16,12 +16,12 @@ file(GLOB SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/thread/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/video/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio/disk/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/video/dummy/*.c
+#    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio/disk/*.c
+#    ${CMAKE_CURRENT_SOURCE_DIR}/src/video/dummy/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/joystick/dummy/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cdrom/dummy/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/thread/generic/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/dummy/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/thread/pthread/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/unix/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/loadso/dummy/*.c
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/video/gk/*.c

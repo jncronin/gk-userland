@@ -15,7 +15,7 @@ extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t
 
     // allocate the memory
     void *addrret;
-    __syscall_memalloc_params p { len, &addrret };
+    __syscall_memalloc_params p { len, &addrret, flags & MAP_SYNC };
     auto ret = deferred_call(__syscall_memalloc, &p);
     if(ret != 0)
     {

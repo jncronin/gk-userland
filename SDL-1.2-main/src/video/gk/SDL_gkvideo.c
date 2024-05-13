@@ -150,6 +150,17 @@ int GK_VideoInit(_THIS, SDL_PixelFormat *vformat)
     GK_GPUGetScreenMode(&w, &h, &gk_pf);
 
     fill_pformat(vformat, gk_pf);
+    this->info.hw_available = 1;
+    this->info.blit_hw = 1;
+    this->info.blit_hw_A = 1;
+    this->info.blit_sw = 1;
+    this->info.blit_sw_A = 1;
+    this->info.blit_fill = 1;
+    this->info.current_w = w;
+    this->info.current_h = h;
+    this->info.vfmt = NULL;
+    this->info.video_mem = 0;
+
 
     return 0;
 }
@@ -210,7 +221,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
         GK_GPUFlush(&gmsg);
     }
 
-    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
+    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL;
     current->w = width;
     current->h = height;
     current->pitch = ((width * pf.BytesPerPixel) + 3) & ~3;
@@ -229,12 +240,13 @@ static int GK_AllocHWSurface(_THIS, SDL_Surface *surface)
 
     surface->pitch = ((surface->w * surface->format->BytesPerPixel) + 3) & ~3;
     smem = mmap(NULL, surface->h * surface->pitch, PROT_READ | PROT_WRITE,
-        MAP_PRIVATE | MAP_ANON, 0, 0);
+        MAP_PRIVATE | MAP_ANON | MAP_SYNC, 0, 0);
     if(smem == MAP_FAILED)
     {
         return -1;
     }
     surface->pixels = smem;
+    surface->flags |= (SDL_HWSURFACE | SDL_PREALLOC | SDL_HWACCEL);
     return 0;
 }
 
@@ -336,6 +348,7 @@ int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)
     gmsg.dy = rect->y;
     gmsg.dw = rect->w;
     gmsg.dh = rect->h;
+    gmsg.dp = dst->pitch;
     gmsg.src_addr_color = color;
     gmsg.dest_pf = dpf;
     gmsg.src_pf = 0;

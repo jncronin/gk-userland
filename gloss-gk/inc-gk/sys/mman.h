@@ -23,6 +23,7 @@ int munmap(void *addr, size_t length);
 #define MAP_FIXED       4
 #define MAP_ANONYMOUS   8
 #define MAP_ANON        MAP_ANONYMOUS
+#define MAP_SYNC        16
 
 #define MAP_FAILED      ((void *)-1)
 

@@ -44,6 +44,8 @@ extern "C" DIR *opendir(const char *name)
     return dret;
 }
 
+extern "C" int _close(int file);
+
 extern "C" int closedir(DIR *dirp)
 {
     if(!dirp)
@@ -51,7 +53,7 @@ extern "C" int closedir(DIR *dirp)
         errno = EBADF;
         return -1;
     }
-    auto ret = deferred_call(__syscall_closedir, (void *)dirp->dd_fd);
+    int ret = _close(dirp->dd_fd);
     free(dirp);
     return ret;
 }

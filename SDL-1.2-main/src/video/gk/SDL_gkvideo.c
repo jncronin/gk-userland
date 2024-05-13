@@ -295,38 +295,51 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
                                 SDL_Surface *dst, SDL_Rect *dstrect)
 {
     struct gpu_message gmsgs[3];
+    unsigned int i = 0;
 
     uint32_t spf = pformat_to_gkpf(src->format);
     uint32_t dpf = pformat_to_gkpf(dst->format);
     
-    gmsgs[0].type = CleanCache;
-    gmsgs[0].dest_addr = (uint32_t)(uintptr_t)src->pixels;
-    gmsgs[0].dx = srcrect->x;
-    gmsgs[0].dy = srcrect->y;
-    gmsgs[0].w = srcrect->w;
-    gmsgs[0].h = srcrect->h;
-    gmsgs[0].dp = src->pitch;
-    gmsgs[0].dest_pf = spf;
+    if(!(src->flags & SDL_HWSURFACE))
+    {
+        gmsgs[i].type = CleanCache;
+        gmsgs[i].dest_addr = (uint32_t)(uintptr_t)src->pixels;
+        gmsgs[i].dx = srcrect->x;
+        gmsgs[i].dy = srcrect->y;
+        gmsgs[i].w = srcrect->w;
+        gmsgs[i].h = srcrect->h;
+        gmsgs[i].dp = src->pitch;
+        gmsgs[i].dest_pf = spf;
 
-    gmsgs[1].type = BlitImage;
-    gmsgs[1].dest_addr = (uint32_t)(uintptr_t)dst->pixels;
-    gmsgs[1].dest_pf = dpf;
-    gmsgs[1].dx = dstrect->x;
-    gmsgs[1].dy = dstrect->y;
-    gmsgs[1].dw = dstrect->w;
-    gmsgs[1].dh = dstrect->h;
-    gmsgs[1].dp = dst->pitch;
-    gmsgs[1].w = srcrect->w;
-    gmsgs[1].h = srcrect->h;
-    gmsgs[1].src_addr_color = (uint32_t)(uintptr_t)src->pixels;
-    gmsgs[1].src_pf = spf;
-    gmsgs[1].sx = srcrect->x;
-    gmsgs[1].sy = srcrect->y;
-    gmsgs[1].sp = src->pitch;
+        i++;
+    }
+
+    gmsgs[i].type = BlitImage;
+    gmsgs[i].dest_addr = (uint32_t)(uintptr_t)dst->pixels;
+    gmsgs[i].dest_pf = dpf;
+    gmsgs[i].dx = dstrect->x;
+    gmsgs[i].dy = dstrect->y;
+    gmsgs[i].dw = dstrect->w;
+    gmsgs[i].dh = dstrect->h;
+    gmsgs[i].dp = dst->pitch;
+    gmsgs[i].w = srcrect->w;
+    gmsgs[i].h = srcrect->h;
+    gmsgs[i].src_addr_color = (uint32_t)(uintptr_t)src->pixels;
+    gmsgs[i].src_pf = spf;
+    gmsgs[i].sx = srcrect->x;
+    gmsgs[i].sy = srcrect->y;
+    gmsgs[i].sp = src->pitch;
     
-    gmsgs[2].type = SignalThread;
+    i++;
 
-    GK_GPUEnqueueMessages(gmsgs, 3);
+    if(!(dst->flags & SDL_HWSURFACE))
+    {
+        gmsgs[i].type = SignalThread;
+
+        i++;
+    }
+
+    GK_GPUEnqueueMessages(gmsgs, i);
 
     return 0;
 }

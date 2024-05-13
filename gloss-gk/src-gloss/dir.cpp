@@ -2,7 +2,10 @@
 #include "deferred.h"
 
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 extern "C" int mkfifo(const char *pathname, mode_t mode)
 {
@@ -25,4 +28,50 @@ extern "C" int chmod(const char *pathname, mode_t mode)
 {
     __syscall_mkdir_params p { pathname, mode };
     return deferred_call(__syscall_chmod, &p);
+}
+
+extern "C" DIR *opendir(const char *name)
+{
+    auto ret = deferred_call(__syscall_opendir, (void *)name);
+    if(ret < 0)
+    {
+        return nullptr;
+    }
+
+    auto dret = (DIR *)malloc(sizeof(DIR));
+    dret->dd_fd = ret;
+    
+    return dret;
+}
+
+extern "C" int closedir(DIR *dirp)
+{
+    if(!dirp)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    auto ret = deferred_call(__syscall_closedir, (void *)dirp->dd_fd);
+    free(dirp);
+    return ret;
+}
+
+extern "C" struct dirent *readdir(DIR *dirp)
+{
+    if(!dirp)
+    {
+        errno = EBADF;
+        return nullptr;
+    }
+    __syscall_readdir_params p { dirp->dd_fd, &dirp->dd_dirent };
+    auto ret = deferred_call(__syscall_readdir, &p);
+    if(ret <= 0)
+    {
+        // end-of-stream (errno not set) or error (errno set)
+        return nullptr;
+    }
+    else
+    {
+        return &dirp->dd_dirent;
+    }
 }

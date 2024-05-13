@@ -23,12 +23,7 @@
 
 typedef struct {
     int dd_fd;		/* directory file */
-    int dd_loc;		/* position in buffer */
-    int dd_seek;
-    char *dd_buf;	/* buffer */
-    int dd_len;		/* buffer length */
-    int dd_size;	/* amount of data in buffer */
-    _LOCK_RECURSIVE_T dd_lock;
+    struct dirent dd_dirent;
 } DIR;
 
 

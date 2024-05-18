@@ -179,6 +179,21 @@ int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer)
     return 0;
 }
 
+int GK_GPUFlipBuffersEx(void *cmdlist, void **next_buffer, void **old_buffer)
+{
+    auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);
+    if(hdr->__ncmds >= hdr->__max_cmds)
+        return -1;
+    auto msgs = reinterpret_cast<gpu_message *>(&hdr[1]);
+    auto msg = &msgs[hdr->__ncmds++];
+
+    msg->type = FlipBuffers;
+    msg->dest_addr = (uint32_t)(uintptr_t)next_buffer;
+    msg->src_addr_color = (uint32_t)(uintptr_t)old_buffer;
+
+    return 0;
+}
+
 int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf)
 {
     auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);

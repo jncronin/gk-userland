@@ -2,7 +2,8 @@
     "files.associations": {
         "syscalls.h": "c",
         "types.h": "c",
-        "_sys_dirent.h": "c"
+        "_sys_dirent.h": "c",
+        "fcntl.h": "c"
     },
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake"

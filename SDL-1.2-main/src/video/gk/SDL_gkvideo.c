@@ -221,7 +221,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
         GK_GPUFlush(&gmsg);
     }
 
-    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL;
+    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_HWACCEL;
     current->w = width;
     current->h = height;
     current->pitch = ((width * pf.BytesPerPixel) + 3) & ~3;
@@ -278,7 +278,65 @@ static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
 
 static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 {
-    return;
+    void *orig_buf;
+    SDL_Rect act_rect;
+
+    if(numrects <= 0)
+    {
+        act_rect.x = 0;
+        act_rect.y = 0;
+        act_rect.w = this->info.current_w;
+        act_rect.h = this->info.current_h;
+    }
+    else if(numrects == 1)
+    {
+        act_rect.x = rects[0].x;
+        act_rect.y = rects[0].y;
+        act_rect.w = rects[0].w;
+        act_rect.h = rects[0].h;
+    }
+    else
+    {
+        int l = 640;
+        int r = 0;
+        int t = 480;
+        int b = 0;
+
+        for(int i = 0; i < numrects; i++)
+        {
+            if(rects[i].x < l) l = rects[i].x;
+            if(rects[i].y < t) t = rects[i].y;
+            if((rects[i].x + rects[i].w) > r) r = rects[i].x + rects[i].w;
+            if((rects[i].y + rects[i].h) > b) b = rects[i].y + rects[i].h;
+        }
+        act_rect.x = l;
+        act_rect.y = t;
+        act_rect.w = r - l;
+        act_rect.h = b - t;
+    }
+
+    GK_GPU_CommandList(gmsg, 1);
+    GK_GPUFlipBuffersEx(&gmsg, &this->screen->pixels, &orig_buf);
+    GK_GPUFlush(&gmsg);
+
+    GK_GPUResetCommandList(&gmsg);
+    gmsg.msgs[0].dest_addr = 0;
+    gmsg.msgs[0].dx = act_rect.x;
+    gmsg.msgs[0].dy = act_rect.y;
+    gmsg.msgs[0].dw = act_rect.w;
+    gmsg.msgs[0].dh = act_rect.h;
+    gmsg.msgs[0].dest_pf = pformat_to_gkpf(this->info.vfmt);
+    gmsg.msgs[0].dp = this->info.current_w * this->info.vfmt->BytesPerPixel;
+    gmsg.msgs[0].src_addr_color = (uint32_t)(uintptr_t)orig_buf;
+    gmsg.msgs[0].sx = act_rect.x;
+    gmsg.msgs[0].sy = act_rect.y;
+    gmsg.msgs[0].w = act_rect.w;
+    gmsg.msgs[0].h = act_rect.h;
+    gmsg.msgs[0].src_pf = gmsg.msgs[0].dest_pf;
+    gmsg.msgs[0].sp = gmsg.msgs[0].dp;
+    gmsg.msgs[0].type = BlitImageNoBlend;
+    gmsg.hdr.__ncmds = 1;
+    GK_GPUFlush(&gmsg);
 }
 
 int GK_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)

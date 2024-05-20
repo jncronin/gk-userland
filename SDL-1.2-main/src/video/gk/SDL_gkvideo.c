@@ -7,6 +7,8 @@
 #include "gk.h"
 #include <sys/mman.h>
 
+/* keymap from scancodes (i.e. SDL2 keys) to SDL1 SDLKey */
+static SDLKey keymap[256];
 
 /* Hidden "this" pointer for the video functions */
 #define _THIS	SDL_VideoDevice *this
@@ -429,6 +431,21 @@ int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)
 
 void GK_InitOSKeymap(_THIS)
 {
+    for(int i = 0; i < 256; i++)
+    {
+        keymap[i] = i;
+    }
+
+    keymap[224] = SDLK_LCTRL;
+    keymap[44] = SDLK_SPACE;
+    keymap[40] = SDLK_RETURN;
+    keymap[41] = SDLK_ESCAPE;
+
+    keymap[79] = SDLK_RIGHT;
+    keymap[80] = SDLK_LEFT;
+    keymap[81] = SDLK_DOWN;
+    keymap[82] = SDLK_UP;
+
     return;
 }
 
@@ -445,7 +462,7 @@ void GK_PumpEvents(_THIS)
                     SDL_keysym keysym;
                     keysym.mod = KMOD_NONE;
                     keysym.scancode = ev.key;
-                    keysym.sym = ev.key;
+                    keysym.sym = ev.key < 256 ? keymap[ev.key] : ev.key;
                     SDL_PrivateKeyboard(ev.type == KeyDown ? SDL_PRESSED : SDL_RELEASED, &keysym);
                 }
                 break;

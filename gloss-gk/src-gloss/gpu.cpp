@@ -258,3 +258,13 @@ int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf)
     p.pf = (int *)pf;
     return deferred_call(__syscall_getscreenmode, &p);
 }
+
+int GK_WindowSetTitle(const char *title)
+{
+    if(!title)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    return deferred_call(__syscall_setwindowtitle, (void *)title);
+}

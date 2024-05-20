@@ -36,6 +36,8 @@ static int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color);
 static void GK_InitOSKeymap(_THIS);
 static void GK_PumpEvents(_THIS);
 
+static void GK_SetCaption(_THIS, const char *caption, const char *icon_caption);
+
 static int GK_Available(void)
 {
     return 1;
@@ -78,7 +80,7 @@ static SDL_VideoDevice *GK_CreateDevice(int devindex)
     device->UnlockHWSurface = GK_UnlockHWSurface;
     device->FlipHWSurface = GK_FlipHWSurface;
     device->FreeHWSurface = GK_FreeHWSurface;
-    device->SetCaption = NULL;
+    device->SetCaption = GK_SetCaption;
     device->SetIcon = NULL;
     device->IconifyWindow = NULL;
     device->GrabInput = NULL;
@@ -470,4 +472,9 @@ void GK_PumpEvents(_THIS)
                 break;
         }
     }
+}
+
+void GK_SetCaption(_THIS, const char *caption, const char *icon_caption)
+{
+    GK_WindowSetTitle(caption);
 }

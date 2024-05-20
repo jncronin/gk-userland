@@ -37,6 +37,7 @@ int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t 
 int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf);
 int GK_EventPeek(struct Event *ev);
 int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf);
+int GK_WindowSetTitle(const char *title);
 
 #ifdef __cplusplus
 }

@@ -225,7 +225,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
         GK_GPUFlush(&gmsg);
     }
 
-    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_HWACCEL;
+    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_HWACCEL | SDL_PREALLOC;
     current->w = width;
     current->h = height;
     current->pitch = ((width * pf.BytesPerPixel) + 3) & ~3;
@@ -277,6 +277,7 @@ static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
     GK_GPU_CommandList(gmsg, 1);
     GK_GPUFlipBuffers(&gmsg, &surface->pixels);
     GK_GPUFlush(&gmsg);
+    surface->flags |= SDL_PREALLOC;
     return 0;
 }
 
@@ -322,6 +323,7 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
     GK_GPU_CommandList(gmsg, 1);
     GK_GPUFlipBuffersEx(&gmsg, &this->screen->pixels, &orig_buf);
     GK_GPUFlush(&gmsg);
+    this->screen->flags |= SDL_PREALLOC;
 
     GK_GPUResetCommandList(&gmsg);
     gmsg.msgs[0].dest_addr = 0;

@@ -38,6 +38,7 @@ int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf);
 int GK_EventPeek(struct Event *ev);
 int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf);
 int GK_WindowSetTitle(const char *title);
+int GK_CacheFlush(void *addr, size_t len, int is_exec);
 
 #ifdef __cplusplus
 }

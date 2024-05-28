@@ -302,9 +302,9 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
     }
     else
     {
-        int l = 640;
+        int l = this->screen->w;
         int r = 0;
-        int t = 480;
+        int t = this->screen->h;
         int b = 0;
 
         for(int i = 0; i < numrects; i++)

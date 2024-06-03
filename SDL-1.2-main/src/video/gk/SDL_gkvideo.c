@@ -451,6 +451,30 @@ void GK_PumpEvents(_THIS)
                     SDL_PrivateKeyboard(ev.type == KeyDown ? SDL_PRESSED : SDL_RELEASED, &keysym);
                 }
                 break;
+            case MouseMove:
+                {
+                    SDL_PrivateMouseMotion(ev.mouse_data.buttons, ev.mouse_data.is_rel,
+                        ev.mouse_data.x, ev.mouse_data.y);                    
+                }
+                break;
+            case MouseDown:
+                for(int i = 0; i < 2; i++)
+                {
+                    if(ev.mouse_data.buttons & (1U << i))
+                    {
+                        SDL_PrivateMouseButton(SDL_PRESSED, i+1, ev.mouse_data.x, ev.mouse_data.y);
+                    }
+                }
+                break;
+            case MouseUp:
+                for(int i = 0; i < 2; i++)
+                {
+                    if(ev.mouse_data.buttons & (1U << i))
+                    {
+                        SDL_PrivateMouseButton(SDL_RELEASED, i+1, ev.mouse_data.x, ev.mouse_data.y);
+                    }
+                }
+                break;
             default:
                 break;
         }

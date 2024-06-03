@@ -283,7 +283,6 @@ static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
 
 static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 {
-    void *orig_buf;
     SDL_Rect act_rect;
 
     if(numrects <= 0)
@@ -320,29 +319,11 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
         act_rect.h = b - t;
     }
 
-    GK_GPU_CommandList(gmsg, 1);
-    GK_GPUFlipBuffersEx(&gmsg, &this->screen->pixels, &orig_buf);
+    GK_GPU_CommandList(gmsg, 2);
+    GK_GPUFlipBuffers(&gmsg, &this->screen->pixels);
+    GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
     GK_GPUFlush(&gmsg);
     this->screen->flags |= SDL_PREALLOC;
-
-    GK_GPUResetCommandList(&gmsg);
-    gmsg.msgs[0].dest_addr = 0;
-    gmsg.msgs[0].dx = act_rect.x;
-    gmsg.msgs[0].dy = act_rect.y;
-    gmsg.msgs[0].dw = act_rect.w;
-    gmsg.msgs[0].dh = act_rect.h;
-    gmsg.msgs[0].dest_pf = pformat_to_gkpf(this->info.vfmt);
-    gmsg.msgs[0].dp = this->info.current_w * this->info.vfmt->BytesPerPixel;
-    gmsg.msgs[0].src_addr_color = (uint32_t)(uintptr_t)orig_buf;
-    gmsg.msgs[0].sx = act_rect.x;
-    gmsg.msgs[0].sy = act_rect.y;
-    gmsg.msgs[0].w = act_rect.w;
-    gmsg.msgs[0].h = act_rect.h;
-    gmsg.msgs[0].src_pf = gmsg.msgs[0].dest_pf;
-    gmsg.msgs[0].sp = gmsg.msgs[0].dp;
-    gmsg.msgs[0].type = BlitImageNoBlend;
-    gmsg.hdr.__ncmds = 1;
-    GK_GPUFlush(&gmsg);
 }
 
 int GK_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)

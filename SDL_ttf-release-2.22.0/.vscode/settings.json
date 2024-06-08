@@ -1,0 +1,6 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake",
+        "SDL2TTF_SAMPLES": "OFF"
+    },
+}

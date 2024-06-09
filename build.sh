@@ -50,6 +50,9 @@ make -C build/jpeg install
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON SDL_image-release-2.8.2/ -B build/sdl2_image
 make -C build/sdl2_image install
 
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_SAMPLES=OFF SDL_mixer-release-2.8.0/ -B build/sdl2_mixer
+make -C build/sdl2_mixer install
+
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON freetype-2.13.2/ -B build/freetype2
 make -C build/freetype2 install
 

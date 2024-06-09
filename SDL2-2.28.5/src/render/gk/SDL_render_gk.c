@@ -25,6 +25,12 @@ typedef struct GK_RenderData_t
     unsigned int startx, starty;
 } GK_RenderData;
 
+typedef struct GK_TextureData_t
+{
+    void *addr;
+    int is_mmap;
+} GK_TextureData;
+
 /*static void send_msgs(GK_RenderData *data)
 {
     GK_GPUEnqueueMessages(data->msgs, data->nmsgs);
@@ -253,7 +259,7 @@ static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, vo
                     const SDL_Rect *srcrect = verts;
                     SDL_Rect *dstrect = verts + 1;
                     SDL_Texture *texture = cmd->data.draw.texture;
-                    char *src = texture->driverdata;
+                    char *src = ((GK_TextureData *)texture->driverdata)->addr;
                     int src_x = 0, src_y = 0, dest_x = 0, dest_y = 0, rw = 0, rh = 0;
                     int rdw = 0, rdh = 0;
                     
@@ -334,8 +340,6 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
 
     gmsgs[1].type = SignalThread;
     GK_GPUEnqueueMessages(gmsgs, 2);
-    //queue_msg((GK_RenderData *)renderer->driverdata, &gmsg);
-    //send_msgs((GK_RenderData *)renderer->driverdata);
 
     return 0;
 }
@@ -343,16 +347,63 @@ static int GK_RenderPresent(SDL_Renderer *renderer)
 static int GK_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 {
     void *tmem;
+    GK_TextureData *td;
+    int is_mmap = 1;
+
+    int flags = MAP_PRIVATE | MAP_ANON;
+    if(texture->access == SDL_TEXTUREACCESS_STATIC ||
+        texture->access == SDL_TEXTUREACCESS_TARGET)
+        flags |= MAP_SYNC;
 
     texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + 3) & ~3);
     tmem = mmap(NULL, texture->h * texture->pitch, PROT_READ | PROT_WRITE, 
-        MAP_PRIVATE | MAP_ANON, 0, 0);
+        flags, 0, 0);
 
     if(tmem == MAP_FAILED)
+    {
+        // Probably out of MPU slots - it's first come first served on GK
+        tmem = malloc(texture->h * texture->pitch);
+        is_mmap = 0;
+    }
+    if(!tmem)
+    {
         return -1;
-    texture->driverdata = tmem;
+    }
+
+    td = (GK_TextureData *)SDL_calloc(1, sizeof(GK_TextureData));
+    if(!td)
+    {
+        if(is_mmap)
+        {
+            munmap(tmem, texture->h * texture->pitch);
+            return -1;
+        }
+        else
+        {
+            free(tmem);
+            return -1;
+        }
+    }
+    td->addr = tmem;
+    td->is_mmap = is_mmap;
+    texture->driverdata = td;
 
     return 0;
+}
+
+static void GK_DestroyTexture(SDL_Renderer *renderer, SDL_Texture *texture)
+{
+    GK_TextureData *td = (GK_TextureData *)texture->driverdata;
+    if(td->is_mmap)
+    {
+        munmap(td->addr, texture->pitch * texture->h);
+    }
+    else
+    {
+        free(td->addr);
+    }
+    SDL_free(td);
+    texture->driverdata = NULL;
 }
 
 static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
@@ -360,7 +411,7 @@ static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
 {
     struct gpu_message gmsgs[3];
 
-    char *dest = texture->driverdata;
+    char *dest = ((GK_TextureData *)texture->driverdata)->addr;
     uint32_t tpf = GK_GetPixelFormat(texture->format);
     
     gmsgs[0].type = CleanCache;
@@ -430,6 +481,7 @@ static SDL_Renderer *GK_CreateRenderer(SDL_Window *window, Uint32 flags)
     renderer->RenderPresent = GK_RenderPresent;
     renderer->CreateTexture = GK_CreateTexture;
     renderer->UpdateTexture = GK_UpdateTexture;
+    renderer->DestroyTexture = GK_DestroyTexture;
 
     renderer->info = GK_RenderDriver.info;
     renderer->driverdata = data;

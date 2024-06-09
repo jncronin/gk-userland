@@ -75,6 +75,11 @@ int pthread_sigmask(int how, const sigset_t *set, sigset_t *oldset)
     return deferred_call(__syscall_pthread_sigmask, &p);
 }
 
+extern "C" int sigprocmask(int how, const sigset_t *set, sigset_t *oldset)
+{
+    return pthread_sigmask(how, set, oldset);
+}
+
 int pthread_setcanceltype(int type, int *oldtype)
 {
     if(oldtype)

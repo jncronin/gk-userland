@@ -37,6 +37,22 @@ typedef struct
     ZBuffer *gl_fb;
 } GK_Window;
 
+static uint32_t gkpf_to_pformat(unsigned int gkpf)
+{
+    switch(gkpf)
+    {
+        case GK_PIXELFORMAT_ARGB8888:
+            return SDL_PIXELFORMAT_XRGB8888;
+        case GK_PIXELFORMAT_RGB888:
+            return SDL_PIXELFORMAT_RGB888;
+        case GK_PIXELFORMAT_RGB565:
+            return SDL_PIXELFORMAT_RGB565;
+        case GK_PIXELFORMAT_L8:
+            return SDL_PIXELFORMAT_INDEX8;
+        default:
+            return 0;
+    }
+}
 
 static void GK_DeleteDevice(SDL_VideoDevice * device)
 {
@@ -216,83 +232,93 @@ void GK_DestroyWindow(_THIS, SDL_Window *window)
 int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
     void **pixels, int *pitch)
 {
-    const Uint32 surface_format = SDL_PIXELFORMAT_ARGB8888;
-    int w, h;
-    void *_pixels;
+    size_t w, h;
+    unsigned int gkpf;
+    GK_GPU_CommandList(gmsg, 1);
 
-    GK_DestroyWindowFramebuffer(_this, window);
+    GK_GPUGetScreenMode(&w, &h, &gkpf);
+    *format = gkpf_to_pformat(gkpf);
+    *pitch = w * SDL_BYTESPERPIXEL(*format);
 
-    SDL_GetWindowSizeInPixels(window, &w, &h);
+    GK_GPUFlipBuffers(&gmsg, pixels);
+    GK_GPUFlush(&gmsg);
 
-    _pixels = mmap(NULL, w*h*4, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
-    if(_pixels == MAP_FAILED)
+    if(window->surface)
     {
-        return -1;
+        window->surface->w = w;
+        window->surface->h = h;
+        window->surface->pitch = *pitch;
+        window->surface->pixels = *pixels;
     }
-
-    SDL_SetWindowData(window, "_GK_pixels", _pixels);
-    *format = surface_format;
-    *pixels = _pixels;
-    *pitch = w*4;
 
     return 0;
 }
 
 int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
-    void *_pixels;
-    struct gpu_message gmsg[4];
+    /* We are allowed to update the window's surface's pixels member here */
+    const unsigned int nmsgs = 8;
+    unsigned int msg_in_block = 0;
+    struct gpu_message gmsg[nmsgs];
 
-    _pixels = SDL_GetWindowData(window, "_GK_pixels");
-    if(!_pixels)
+    for(int cur_msg = 0; cur_msg < (numrects + 2); cur_msg++)
     {
-        return SDL_SetError("Couldn't find framebuffer for window");
+        struct gpu_message *cgmsg = &gmsg[msg_in_block++];
+
+        if(cur_msg == 0)
+        {
+            /* First message is to flip buffers */
+            cgmsg->type = FlipBuffers;
+            cgmsg->dest_addr = (uint32_t)(uintptr_t)&window->surface->pixels;
+            cgmsg->src_addr_color = 0;
+        }
+        else if(cur_msg < (numrects + 1))
+        {
+            const SDL_Rect *crect = &rects[cur_msg - 1];
+
+            /* Next 'n' messages are update rects, from front to backbuffer */
+            cgmsg->type = BlitImage;
+            cgmsg->dest_addr = 0;
+            cgmsg->dest_pf = 0;
+            cgmsg->dp = 0;
+            cgmsg->dx = crect->x;
+            cgmsg->dy = crect->y;
+            cgmsg->dw = crect->w;
+            cgmsg->dh = crect->h;
+            cgmsg->src_addr_color = 0;
+            cgmsg->src_pf = 0;
+            cgmsg->sp = 0;
+            cgmsg->sx = crect->x;
+            cgmsg->sy = crect->y;
+            cgmsg->w = crect->w;
+            cgmsg->h = crect->h;
+        }
+        else
+        {
+            /* Final message is to wait for completion, so we can continue updating the
+                surface on the next frame */
+            cgmsg->type = SignalThread;
+            cgmsg->dest_addr = 0;
+            cgmsg->src_addr_color = 0;
+        }
+
+        if(msg_in_block == nmsgs)
+        {
+            /* Need to send this batch of messages */
+            GK_GPUEnqueueMessages(gmsg, msg_in_block);
+            msg_in_block = 0;
+        }
     }
-    
 
-    /* Send data to display */
-    gmsg[0].type = CleanCache;
-    gmsg[0].dest_addr = (uint32_t)(uintptr_t)_pixels;
-    gmsg[0].dest_pf = GK_PIXELFORMAT_ARGB8888;
-    gmsg[0].dx = 0;
-    gmsg[0].dy = 0;
-    gmsg[0].w = window->w;
-    gmsg[0].h = window->h;
-    gmsg[0].dp = window->w * 4;
-
-    gmsg[1].type = BlitImage;
-    gmsg[1].dest_addr = 0;
-    gmsg[1].dx = 0;
-    gmsg[1].dy = 0;
-    gmsg[1].src_addr_color = (uint32_t)(uintptr_t)_pixels;
-    gmsg[1].w = window->w;
-    gmsg[1].h = window->h;
-    gmsg[1].src_pf = 0;
-    gmsg[1].sp = window->w * 4;
-
-    gmsg[2].type = FlipBuffers;
-    gmsg[2].dest_addr = 0;
-    gmsg[2].src_addr_color = 0;
-
-    gmsg[3].type = SignalThread;
-
-    GK_GPUEnqueueMessages(gmsg, 4);
+    /* Send any messages remaining */
+    GK_GPUEnqueueMessages(gmsg, msg_in_block);
 
     return 0;
 }
 
 void GK_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
 {
-    void *_pixels;
-    int w, h;
-
-    SDL_GetWindowSizeInPixels(window, &w, &h);
-    _pixels = SDL_GetWindowData(window, "_GK_pixels");
-    if(_pixels)
-    {
-        munmap(_pixels, w*h*4);
-        SDL_SetWindowData(window, "_GK_pixels", NULL);
-    }
+    /* Nothing here - we didn't allocate the pixels for the framebuffer */
 }
 
 void GK_PumpEvents(_THIS)

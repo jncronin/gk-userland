@@ -2633,7 +2633,7 @@ static SDL_Surface *SDL_CreateWindowFramebuffer(SDL_Window *window)
             attempt_texture_framebuffer = SDL_FALSE;
         }
 #endif
-#if defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) || defined(__GAMEKID__)
         else {
             attempt_texture_framebuffer = SDL_FALSE;
         }

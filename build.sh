@@ -69,5 +69,11 @@ cp -dpR glm/ ~/src/gk/include
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S mojoAL-main/ -B build/mojoAL
 make -C build/mojoAL install
-cp -dp lib/libmojoal.a lib/libal.a
+cp -dp ~/src/gk/lib/libmojoal.a ~/src/gk/lib/libal.a
+
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libogg-1.3.5/ -B build/ogg
+make -C build/ogg install
+
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libvorbis-1.3.7/ -B build/vorbis
+make -C build/vorbis install
 

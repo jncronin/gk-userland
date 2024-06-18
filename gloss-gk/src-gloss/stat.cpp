@@ -35,4 +35,3 @@ extern "C" int _stat(char *file, struct stat *st)
 
 	return ret;
 }
-

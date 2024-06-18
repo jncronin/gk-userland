@@ -1,0 +1,11 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m7.cmake",
+        "BOOST_EXCLUDE_LIBRARIES": [ "fiber", "wave", "asio", "log" ],
+        "BOOST_RUNTIME_LINK": "static",
+    },
+    "files.associations": {
+        "mutex": "cpp"
+    }
+}
+

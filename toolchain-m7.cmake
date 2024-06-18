@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 set(TARGET_CPU "cortex-m7")
 
 set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR ${TARGET_CPU})
+set(CMAKE_SYSTEM_PROCESSOR arm)
 
 set(GAMEKID ON)
 set(UNIX ON)
@@ -17,7 +17,7 @@ set(CMAKE_C_STANDARD_LIBRARIES "-lm")
 set(CMAKE_CXX_STANDARD_LIBRARIES "-lm")
 
 set(COMMON_FLAGS "-mthumb -mcpu=${TARGET_CPU} -mfloat-abi=hard -mfpu=fpv5-d16 -ffast-math")
-set(C_CXX_FLAGS  "-include sys/gk.h -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS -I$ENV{HOME}/src/gk/include")
+set(C_CXX_FLAGS  "-include sys/gk.h -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS=1  -Dunix -DUNIX -D_POSIX_MONOTONIC_CLOCK -D_POSIX_TIMERS=1 -D_POSIX_READER_WRITER_LOCKS=1 -I$ENV{HOME}/src/gk/include")
 set(CXX_FLAGS    "-fno-threadsafe-statics -Wno-psabi")
 
 set(CMAKE_C_FLAGS_INIT          "${COMMON_FLAGS} ${C_CXX_FLAGS}"              CACHE STRING "" FORCE)

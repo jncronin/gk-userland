@@ -19,4 +19,7 @@
 #define PRIx64		__PRI64(x)
 #define PRIX64		__PRI64(X)
 
+struct stat;
+int     lstat (const char * __path, struct stat * __buf );
+
 #endif

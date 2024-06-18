@@ -77,3 +77,6 @@ make -C build/ogg install
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libvorbis-1.3.7/ -B build/vorbis
 make -C build/vorbis install
 
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DPHYSFS_BUILD_TEST=OFF -S physfs-main/ -B build/physfs
+make -C build/physfs install
+

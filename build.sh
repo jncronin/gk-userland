@@ -65,4 +65,5 @@ make -C build/sdl12 install
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log -DBOOST_RUNTIME_LINK=static -S boost-1.85.0/ -B build/boost
 make -C build/boost install
 
+cp -dpR glm/ ~/src/gk/include
 

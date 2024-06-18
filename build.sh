@@ -31,7 +31,7 @@ arm-none-eabi-strip -S ~/src/gk/bin/tftpd
 arm-none-eabi-strip -S ~/src/gk/bin/sh
 arm-none-eabi-strip -S ~/src/gk/bin/echo
 
-tar -cf gk-`date +"%s"`.tar -C ~/src/gk bin/ls bin/tftpd bin/sh bin/echo
+#tar -cf gk-`date +"%s"`.tar -C ~/src/gk bin/ls bin/tftpd bin/sh bin/echo
 
 #cd busybox-1.36.1
 #CFLAGS="-mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -ffast-math --specs=nano.specs -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS -I/home/jncronin/src/gk/include" LDFLAGS="-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L/home/jncronin/src/gk/lib -lm -Wl,--whole-archive /home/jncronin/src/gk/lib/libgloss-gk.a -Wl,--no-whole-archive -Wl,-q" CROSS_COMPILE="arm-none-eabi-" make

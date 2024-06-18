@@ -67,7 +67,7 @@
 #include <stdio.h>
 
 #ifndef __socklen_t_defined
-typedef unsigned int socklen_t;
+#include <_netinet_in.h>
 #define __socklen_t_defined 1
 #endif
 

@@ -80,3 +80,6 @@ make -C build/vorbis install
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DPHYSFS_BUILD_TEST=OFF -S physfs-main/ -B build/physfs
 make -C build/physfs install
 
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DHTTP_ONLY=ON -DCURL_ENABLE_SSL=OFF -DENABLE_IPV6=OFF -DBUILD_CURL_EXE=OFF -S curl-8.8.0/ -B build/curl
+make -C build/curl install
+

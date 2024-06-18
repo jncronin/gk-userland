@@ -67,3 +67,7 @@ make -C build/boost install
 
 cp -dpR glm/ ~/src/gk/include
 
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S mojoAL-main/ -B build/mojoAL
+make -C build/mojoAL install
+cp -dp lib/libmojoal.a lib/libal.a
+

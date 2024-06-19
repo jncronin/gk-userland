@@ -12,6 +12,8 @@
 
 #include "tclInt.h"
 
+#if !defined(__GAMEKID__)
+
 /*
  * The table below is used to convert from ASCII digits to a numerical
  * equivalent. It maps from '0' through 'z' to integers (100 for non-digit
@@ -212,3 +214,5 @@ strtoul(
     }
     return result;
 }
+
+#endif

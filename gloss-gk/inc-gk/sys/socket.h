@@ -78,5 +78,12 @@ int     socketpair(int, int, int, int[2]);
 #define SO_BROADCAST    2
 #define SO_KEEPALIVE    3
 #define SO_REUSEADDR    4
+#define SO_SNDBUF       5
+#define SO_RCVBUF       6
+#define SO_ERROR        7
+
+#define SHUT_RD         1
+#define SHUT_WR         2
+#define SHUT_RDWR       3
 
 #endif

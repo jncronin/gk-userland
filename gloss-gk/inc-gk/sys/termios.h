@@ -91,6 +91,8 @@ int     tcsetattr(int, int, const struct termios *);
 #define VEOF            9
 #define VMIN            10
 #define VTIME           11
+#define VSTART          12
+#define VSTOP           13
 
 #define B0              0
 #define B50             1

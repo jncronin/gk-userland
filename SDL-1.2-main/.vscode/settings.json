@@ -4,7 +4,8 @@
     },
     "files.associations": {
         "sdl_video.h": "c",
-        "sdl_blit.h": "c"
+        "sdl_blit.h": "c",
+        "sdl_nxvideo.h": "c"
     },
 }
 

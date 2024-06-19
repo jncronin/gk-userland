@@ -1,3 +1,6 @@
+#define SDL_PrivateGLData osmesa_context
+
+
 #include "SDL_config.h"
 #include "SDL.h"
 #include "SDL_video.h"
@@ -6,6 +9,7 @@
 #include "../../events/SDL_events_c.h"
 #include "gk.h"
 #include <sys/mman.h>
+#include <GL/osmesa.h>
 
 /* keymap from scancodes (i.e. SDL2 keys) to SDL1 SDLKey */
 static SDLKey keymap[256];
@@ -37,6 +41,11 @@ static void GK_InitOSKeymap(_THIS);
 static void GK_PumpEvents(_THIS);
 
 static void GK_SetCaption(_THIS, const char *caption, const char *icon_caption);
+
+static int GK_GL_MakeCurrent(_THIS);
+static void GK_GL_SwapWindow(_THIS);
+static int GK_GL_LoadLibrary(_THIS, const char *path);
+static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
 static int GK_Available(void)
 {
@@ -93,6 +102,13 @@ static SDL_VideoDevice *GK_CreateDevice(int devindex)
     device->info.blit_sw_A = 1;
     device->info.blit_fill = 1;
     device->free = GK_DeleteDevice;
+
+    device->GL_LoadLibrary = GK_GL_LoadLibrary;
+    device->GL_GetProcAddress = GK_GL_GetProcAddress;
+    device->GL_MakeCurrent = GK_GL_MakeCurrent;
+    device->GL_SwapBuffers = GK_GL_SwapWindow;
+    device->gl_data = NULL;
+
     return device;
 }
 
@@ -484,4 +500,88 @@ void GK_PumpEvents(_THIS)
 void GK_SetCaption(_THIS, const char *caption, const char *icon_caption)
 {
     GK_WindowSetTitle(caption);
+}
+
+int GK_GL_LoadLibrary(_THIS, const char *path)
+{
+    if(path == NULL)
+        return 0;
+    return -1;
+}
+
+void *GK_GL_GetProcAddress(_THIS, const char *name)
+{
+    return NULL;
+}
+
+int GK_GL_MakeCurrent(_THIS)
+{
+    if(this->gl_data == NULL)
+    {
+        void *firstfb;
+        unsigned int gkpf;
+        GLenum glpf;
+        GK_GPU_CommandList(cmds, 4);
+
+        // Get current pixel format of the display - SDL doesn't specify here
+        GK_GPUGetScreenMode(NULL, NULL, &gkpf);
+
+        // Get the first framebuffer for the requested window size
+        GK_GPUSetScreenMode(&cmds, this->screen->w, this->screen->h, gkpf);
+        GK_GPUClearScreen(&cmds);
+        GK_GPUFlipBuffers(&cmds, &firstfb);
+        GK_GPUFlush(&cmds);
+
+        // Create a context
+        switch(gkpf)
+        {
+            case GK_PIXELFORMAT_ARGB8888:
+            case GK_PIXELFORMAT_XRGB8888:
+                glpf = OSMESA_ARGB;
+                break;
+            case GK_PIXELFORMAT_RGB888:
+                glpf = OSMESA_RGB;
+                break;
+            case GK_PIXELFORMAT_RGB565:
+                glpf = OSMESA_RGB_565;
+                break;
+            default:
+                SDL_SetError("Invalid pixel format");
+                return -1;
+        }
+        this->gl_data = OSMesaCreateContext(glpf, NULL);
+
+        if(!this->gl_data)
+        {
+            SDL_SetError("Couldn't allocate OSMesa context");
+            return -1;
+        }
+
+        // Set first framebuffer
+        GK_GPUGetScreenMode((size_t *)&this->screen->w, (size_t *)&this->screen->h, NULL);
+        OSMesaMakeCurrent(this->gl_data, firstfb,
+            this->screen->format->BitsPerPixel == 16 ? GL_UNSIGNED_SHORT_5_6_5 : GL_UNSIGNED_BYTE,
+            this->screen->w, this->screen->h);
+        OSMesaPixelStore(OSMESA_Y_UP, 0);
+    }
+    else
+    {
+        GK_GL_SwapWindow(this);
+    }
+
+    return 0;
+}
+
+static void GK_GL_SwapWindow(_THIS)
+{
+    void *next_fb;
+    GK_GPU_CommandList(cmds, 4);
+
+    GK_GPUFlipBuffers(&cmds, &next_fb);
+    GK_GPUFlush(&cmds);
+
+    OSMesaMakeCurrent(this->gl_data, next_fb,
+        this->screen->format->BitsPerPixel == 16 ? GL_UNSIGNED_SHORT_5_6_5 : GL_UNSIGNED_BYTE,
+        this->screen->w, this->screen->h);
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
 }

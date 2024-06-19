@@ -35,6 +35,7 @@ typedef struct
 {
     SDL_Window *sdl_window;
     OSMesaContext gl_ctx;
+    GLenum gl_dformat;
 } GK_Window;
 
 static uint32_t gkpf_to_pformat(unsigned int gkpf)
@@ -363,12 +364,15 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
         case GK_PIXELFORMAT_ARGB8888:
         case GK_PIXELFORMAT_XRGB8888:
             glpf = OSMESA_ARGB;
+            gk_window->gl_dformat = GL_UNSIGNED_BYTE;
             break;
         case GK_PIXELFORMAT_RGB888:
             glpf = OSMESA_RGB;
+            gk_window->gl_dformat = GL_UNSIGNED_BYTE;
             break;
         case GK_PIXELFORMAT_RGB565:
             glpf = OSMESA_RGB_565;
+            gk_window->gl_dformat = GL_UNSIGNED_SHORT_5_6_5;
             break;
         default:
             return NULL;
@@ -377,7 +381,8 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 
     // Set first framebuffer
     GK_GPUGetScreenMode((size_t *)&window->w, (size_t *)&window->h, NULL);
-    OSMesaMakeCurrent(gk_window->gl_ctx, firstfb, GL_UNSIGNED_BYTE, window->w, window->h);
+    OSMesaMakeCurrent(gk_window->gl_ctx, firstfb, gk_window->gl_dformat, window->w, window->h);
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
 
     return gk_window->gl_ctx;
 }
@@ -403,7 +408,9 @@ int GK_GL_SwapWindow(_THIS, SDL_Window *window)
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);
 
-    OSMesaMakeCurrent(gk_window->gl_ctx, next_fb, GL_UNSIGNED_BYTE, window->w, window->h);
+    OSMesaMakeCurrent(gk_window->gl_ctx, next_fb, gk_window->gl_dformat,   
+        window->w, window->h);
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
 
     return 0;    
 }

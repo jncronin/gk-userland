@@ -15,6 +15,7 @@
         "_gk_gpu.h": "c",
         "gk.h": "c",
         "zbuffer.h": "c",
-        "_gk_event.h": "c"
+        "_gk_event.h": "c",
+        "sdl_keyboard_c.h": "c"
     },
 }

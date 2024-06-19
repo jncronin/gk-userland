@@ -7,8 +7,8 @@
 #include "../SDL_sysvideo.h"
 #include <sys/mman.h>
 #include <gk.h>
-#include <zbuffer.h>
 #include <GL/gl.h>
+#include <GL/osmesa.h>
 
 #include "../../events/SDL_keyboard_c.h"
 
@@ -34,7 +34,7 @@ static void *GK_GL_GetProcAddress(_THIS, const char *name);
 typedef struct
 {
     SDL_Window *sdl_window;
-    ZBuffer *gl_fb;
+    OSMesaContext gl_ctx;
 } GK_Window;
 
 static uint32_t gkpf_to_pformat(unsigned int gkpf)
@@ -342,33 +342,50 @@ void GK_PumpEvents(_THIS)
 
 SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 {
-    ZBuffer *framebuffer;
     void *firstfb;
     GK_Window *gk_window = window->driverdata;
-    unsigned int pf = TGL_FEATURE_RENDER_BITS == 32 ? GK_PIXELFORMAT_ARGB8888 : GK_PIXELFORMAT_RGB565;
+    unsigned int gkpf;
+    GLenum glpf;
     GK_GPU_CommandList(cmds, 4);
 
+    // Get current pixel format of the display - SDL doesn't specify here
+    GK_GPUGetScreenMode(NULL, NULL, &gkpf);
+
     // Get the first framebuffer for the requested window size
-    GK_GPUSetScreenMode(&cmds, window->w, window->h, pf);
+    GK_GPUSetScreenMode(&cmds, window->w, window->h, gkpf);
     GK_GPUClearScreen(&cmds);
     GK_GPUFlipBuffers(&cmds, &firstfb);
     GK_GPUFlush(&cmds);
 
-    // Init a tinygl zbuffer with this
-    framebuffer = ZB_open(window->w, window->h,
-        ZB_MODE_5R6G5B, firstfb);
-    if(framebuffer)
+    // Create a context
+    switch(gkpf)
     {
-        glInit(framebuffer);
-        gk_window->gl_fb = framebuffer;
+        case GK_PIXELFORMAT_ARGB8888:
+        case GK_PIXELFORMAT_XRGB8888:
+            glpf = OSMESA_ARGB;
+            break;
+        case GK_PIXELFORMAT_RGB888:
+            glpf = OSMESA_RGB;
+            break;
+        case GK_PIXELFORMAT_RGB565:
+            glpf = OSMESA_RGB_565;
+            break;
+        default:
+            return NULL;
     }
-    return framebuffer;
+    gk_window->gl_ctx = OSMesaCreateContext(glpf, NULL);
+
+    // Set first framebuffer
+    GK_GPUGetScreenMode((size_t *)&window->w, (size_t *)&window->h, NULL);
+    OSMesaMakeCurrent(gk_window->gl_ctx, firstfb, GL_UNSIGNED_BYTE, window->w, window->h);
+
+    return gk_window->gl_ctx;
 }
 
 int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)
 {
     GK_Window *gk_window = window->driverdata;
-    gk_window->gl_fb = (ZBuffer *)context;
+    gk_window->gl_ctx = (OSMesaContext)context;
     return 0;
 }
 
@@ -379,20 +396,21 @@ int GK_GL_GetSwapInterval(_THIS)
 
 int GK_GL_SwapWindow(_THIS, SDL_Window *window)
 {
+    void *next_fb;
     GK_Window *gk_window = window->driverdata;
     GK_GPU_CommandList(cmds, 4);
 
-    GK_GPUFlipBuffers(&cmds, (void **)&gk_window->gl_fb->pbuf);
+    GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);
+
+    OSMesaMakeCurrent(gk_window->gl_ctx, next_fb, GL_UNSIGNED_BYTE, window->w, window->h);
+
     return 0;    
 }
 
 void GK_GL_DeleteContext(_THIS, SDL_GLContext context)
 {
-    ZBuffer *fb = (ZBuffer *)context;
-    fb->frame_buffer_allocated = 0;
-    fb->pbuf = 0;
-    ZB_close(fb);
+    OSMesaDestroyContext((OSMesaContext)context);
 }
 
 int GK_GL_LoadLibrary(_THIS, const char *path)

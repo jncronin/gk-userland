@@ -77,3 +77,12 @@ extern "C" struct dirent *readdir(DIR *dirp)
         return &dirp->dd_dirent;
     }
 }
+
+extern "C" void rewinddir(DIR *dirp)
+{
+    if(!dirp)
+    {
+        return;
+    }
+    deferred_call(__syscall_rewinddir, (void *)dirp->dd_fd);
+}

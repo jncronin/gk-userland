@@ -1,11 +1,15 @@
 #include <sys/types.h>
 #include <pwd.h>
+#include <grp.h>
 #include <unistd.h>
 
 #include <string.h>
 #include <errno.h>
 
 static struct passwd retval;
+static struct group grp;
+static const char *grp_0_members[] = { "root", 0 };
+static const char *grp_1_members[] = { "user", 0 };
 
 struct passwd *getpwuid(uid_t uid)
 {
@@ -67,7 +71,45 @@ uid_t getuid()
     return 1;
 }
 
+uid_t geteuid()
+{
+    return 1;
+}
+
 int issetugid()
 {
     return 0;
+}
+
+struct group *getgrgid(gid_t gid)
+{
+    switch(gid)
+    {
+        case 0:
+            grp.gr_name = "root";
+            grp.gr_passwd = 0;
+            grp.gr_gid = 0;
+            grp.gr_mem = (char **)grp_0_members;
+            return &grp;
+
+        case 1:
+            grp.gr_name = "user";
+            grp.gr_passwd = 0;
+            grp.gr_gid = 1;
+            grp.gr_mem = (char **)grp_1_members;
+            return &grp;
+
+        default:
+            return NULL;
+    }
+}
+
+struct group *getgrnam(const char *name)
+{
+    if(!strcmp("root", name))
+        return getgrgid(0);
+    else if(!strcmp("user", name))
+        return getgrgid(1);
+    else
+        return NULL;
 }

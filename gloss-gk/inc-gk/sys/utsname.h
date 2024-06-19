@@ -1,6 +1,10 @@
 #ifndef _SYS_UTSNAME_H
 #define _SYS_UTSNAME_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct utsname
 {
     char        sysname[32];
@@ -11,5 +15,9 @@ struct utsname
 };
 
 int uname(struct utsname *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

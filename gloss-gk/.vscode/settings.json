@@ -3,7 +3,9 @@
         "syscalls.h": "c",
         "types.h": "c",
         "_sys_dirent.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "type_traits": "c",
+        "exception": "c"
     },
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake"

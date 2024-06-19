@@ -22,6 +22,16 @@ int cfsetispeed(struct termios *termios_p, speed_t speed)
     return 0;
 }
 
+speed_t cfgetospeed(const struct termios *termios_p)
+{
+    return B115200;
+}
+
+speed_t cfgetispeed(const struct termios *termios_p)
+{
+    return B115200;
+}
+
 
 
 

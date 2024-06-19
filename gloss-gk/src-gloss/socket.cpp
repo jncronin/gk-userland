@@ -1,6 +1,7 @@
 #include <errno.h>
 #include "syscalls.h"
 #include "deferred.h"
+#include <cstring>
 
 extern "C"
 {
@@ -71,6 +72,56 @@ ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
 ssize_t recv(int sockfd, void *buf, size_t len, int flags)
 {
     return recvfrom(sockfd, buf, len, flags, nullptr, nullptr);
+}
+
+int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)
+{
+    errno = ENOPROTOOPT;
+    return -1;
+}
+
+int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen)
+{
+    errno = ENOPROTOOPT;
+    return -1;
+}
+
+int getsockname(int sockfd, sockaddr *addr, socklen_t *len)
+{
+    errno = ENOBUFS;
+    return -1;
+}
+
+int shutdown(int sockfd, int how)
+{
+    return 0;
+}
+
+int getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+    if(!addr)
+    {
+        errno = EFAULT;
+        return -1;
+    }
+    if(!addrlen)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    // stub
+    sockaddr_in sret;
+    sret.sin_family = AF_INET;
+    sret.sin_addr.s_addr = 0;
+    sret.sin_port = 0;
+
+    socklen_t copylen = sizeof(sret);
+    if(*addrlen < copylen) copylen = *addrlen;
+
+    memcpy(addr, &sret, copylen);
+    *addrlen = sizeof(sret);
+    return 0;
 }
 
 }

@@ -57,6 +57,11 @@ int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stacksize)
     return 0;
 }
 
+extern "C" int pthread_attr_setscope(pthread_attr_t *attr, int scope)
+{
+    return 0;
+}
+
 pthread_t pthread_self()
 {
     auto taddr = __syscall_GetThreadHandle();
@@ -312,6 +317,11 @@ int pthread_cond_signal(pthread_cond_t *cond)
     if(ret == 0)
         return 0;
     return errno;
+}
+
+extern "C" int pthread_cond_broadcast(pthread_cond_t *cond)
+{
+    return pthread_cond_signal(cond);
 }
 
 void pthread_exit(void *retval)

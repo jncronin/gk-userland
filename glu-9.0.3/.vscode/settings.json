@@ -1,0 +1,6 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake",
+        "CMAKE_FIND_ROOT_PATH": "~/src/gk"
+    }
+}

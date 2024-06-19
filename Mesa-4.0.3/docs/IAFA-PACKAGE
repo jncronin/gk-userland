@@ -1,0 +1,9 @@
+Title:          The Mesa 3-D graphics library
+Version:        4.0.2
+Description:    A 3-D graphics library which uses the OpenGL API.
+Author:         Brian Paul
+Maintained-by:  Brian Paul
+Maintained-at:  www.mesa3d.org
+Platforms:      Almost anything with an ANSI C compiler.
+Copying-Policy: Freely Redistributable
+Keywords:       Mesa, OpenGL, 3-D graphics library

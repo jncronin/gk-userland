@@ -1,0 +1,132 @@
+			Mesa 4.0 DOS/DJGPP Port v1.0
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Description:
+~~~~~~~~~~~~
+
+Well, guess what... this is the DOS port of MESA 4.0, for DJGPP fans... Whoa!
+
+
+
+Legal:
+~~~~~~
+
+MESA copyright applies.
+
+
+
+Installation:
+~~~~~~~~~~~~~
+
+Type "make -f Makefile.DJ" to compile the libraries. Make accepts some options
+which are passed to compiler: the target cpu (CPU=..., default=`pentium') and
+X86 specific options (HAVE_X86=1, HAVE_MMX=1, HAVE_SSE=1, HAVE_3DNOW=1). The
+core library (libGL) requires LFN support during compilation. Also, you must
+have the DXE2 package (available on SimTel.Net, courtesy of Andrew Zabolotny)
+installed in order to build the dynamic modules; if you encounter errors, you
+can fetch a patched version from my web page.
+The demos are not built automagically (see Pitfalls below). To make them, use
+one of the following rules:
+	Static:
+	    gcc -o OUT.exe IN.c -lglut -lglu -lgl
+	Dynamic:
+	    gcc -o OUT.exe -include dmesadxe.h IN.c -ligl -liglu -liglut -ldl
+Usage of the dynamic modules requires three things:
+	- include DMESADXE.H in one of the sources, so references inside
+	  dynamic modules will get resolved (or use `-include' directive)
+	- link against import libraries (libIgl*.a) and LIBDL.A, which will do
+	  the dynamic linkage job for you
+	- put the DXEs somewhere along the library path (LD_LIBRARY_PATH) or
+	  in the current directory
+
+Tested on:
+	CPU:		Intel Pentium w/ MMX @166 MHz
+	Mainboard:	ViA Apollo VP2 w/ 128 MB SDRAM
+	Video card:	Matrox Millenium 2064W w/ 2048 kB WRAM, BIOS v3.0
+	DJGPP:		djdev 2.03 + gcc v3.0.3 + make v3.79
+
+
+
+libGL (the core):
+~~~~~~~~~~~~~~~~~
+
+Of course, MESA 4.0 core sources are required. It will probably work with
+MESA 3.5, but not a chance with earlier versions due to major changes to the
+MESA driver interface and the directory tree. All should compile succesfully.
+
+The driver has its origins in ddsample.c, written by Brian Paul and found by
+me in MESA 3.4.2. I touched almost all the functions, changing the coding
+style :-( Sorry!
+
+Pitfalls:
+1. The current version supports only RGB[A] modes, for it made no sense to me
+   to endorse color-index (aka palette) modes.
+2. Single-buffered is not allowed at all. Until I can find a way to use *REAL*
+   hardware acceleration, it won't get implemented.
+3. Another weird "feature" is that buffer width must be multiple of 4 (I'm a
+   lazy programmer and I found that the easiest way to keep buffer handling at
+   peak performance ;-).
+
+
+
+libGLU:
+~~~~~~~
+
+Mesa GLU sources are required.
+
+
+
+libGLUT (the toolkit):
+~~~~~~~~~~~~~~~~~~~~~~
+
+Well, this "skeletal" GLUT implementation is not mine. Thanks should go to
+Bernhard Tschirren, Mark Kilgard, Brian Paul and probably others (or probably
+not ;-). I only changed it to be self-standing (Allegro-free). The keyboard,
+mouse and timer drivers were inspired from an old project of mine (D3Xl) and
+fixed with some Allegro "infusions"; I deeply thank to Shawn Hargreaves et co.
+
+My keyboard driver used only scancodes, but since GLUT requires ASCII values
+for keys, I borrowed the translation tables (and maybe more) from Allegro.
+Ctrl-Alt-Del (plus Ctrl-Alt-End, for Windows users) will shut down the GLUT
+engine unconditionally: it will raise SIGINT, which in turn will call the
+destructors (let's hope), thus cleaning up your/my mess ;-) NB: since the
+DJGPP guys ensured signal handlers won't go beyond program's space (and since
+dynamic modules shall) the SIGINT can't be hooked (well, it can, but it is
+useless), therefore you must live with the 'Exiting due to signal SIGINT'
+message...
+
+The mouse driver is far from complete (lack of positioning, drawing, etc),
+but is enough to make almost all the demos work.
+
+The timer is pretty versatile for it supports multiple timers with different
+frequencies. It may not be the most accurate timer in the known universe, but
+I think it's OK. Take this example: you have timer A with a very high rate,
+and then you have timer B with very low rate compared to A; now, A ticks OK,
+but timer B will probably loose precision!
+
+As an addition, stdout and stderr are redirected and dumped upon exit. This
+means that printf can be safely called during graphics, but all messages come
+in bulk! A bit of a hack, I know, but I think it's better than to miss them
+at all. "Borrowed" from RHIDE (Robert Hoehne) or SETEDIT (Salvador Eduardo
+Tropea)... I'm not sure.
+
+Window creating defaults: 640x480x16 at (0,0), 8-bit stencil, 16-bit accum.
+However, the video mode is chosen in such a way that first window will fit.
+
+
+
+History:
+~~~~~~~~
+
+v1.0	mar-2002	initial release
+
+
+
+Contact:
+~~~~~~~~
+
+Name:   Borca Daniel
+E-mail: dborca@yahoo.com
+WWW:    http://www.geocities.com/dborca/

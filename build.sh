@@ -15,6 +15,7 @@ ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -S zlib-1.3 -B build/zlib
 make -C build/zlib install
+cp ~/src/gk/lib/libzlib.a ~/src/gk/lib/libz.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libpng-1.6.40 -B build/libpng
 make -C build/libpng install

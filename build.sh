@@ -6,25 +6,25 @@ mkdir -p ~/src/gk/include/sys
 touch ~/src/gk/include/sys/gk.h
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -S gloss-gk -B build/gloss-gk
-make -C build/gloss-gk install
+make -C build/gloss-gk -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libiconv-cmake-master/ -B build/libiconv
-make -C build/libiconv install
+make -C build/libiconv -j16 install
 rm -rf ~/src/gk/lib/libiconv.a
 ln -s ~/src/gk/lib/liblibiconv.a ~/src/gk/lib/libiconv.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -S zlib-1.3 -B build/zlib
-make -C build/zlib install
+make -C build/zlib -j16 install
 cp ~/src/gk/lib/libzlib.a ~/src/gk/lib/libz.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libpng-1.6.40 -B build/libpng
-make -C build/libpng install
+make -C build/libpng -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S rain-1-s-shell/ -B build/s
-make -C build/s install
+make -C build/s -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S tools/ -B build/tools
-make -C build/tools install
+make -C build/tools -j16 install
 
 # strip bin files for gk
 arm-none-eabi-strip -S ~/src/gk/bin/ls
@@ -38,7 +38,7 @@ arm-none-eabi-strip -S ~/src/gk/bin/echo
 #CFLAGS="-mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -ffast-math --specs=nano.specs -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS -I/home/jncronin/src/gk/include" LDFLAGS="-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L/home/jncronin/src/gk/lib -lm -Wl,--whole-archive /home/jncronin/src/gk/lib/libgloss-gk.a -Wl,--no-whole-archive -Wl,-q" CROSS_COMPILE="arm-none-eabi-" make
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DTINYGL_BUILD_EXAMPLES=OFF -S tinygl-main/ -B build/tinygl
-make -C build/tinygl install
+make -C build/tinygl -j16 install
 mkdir -p ~/src/gk/include/GL
 #cp ~/src/gk/include/TGL/* ~/src/gk/include/GL
 
@@ -51,49 +51,49 @@ cd src-glu && make install && cd ..
 cd ../..
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL_LIBC=ON -DSDL_PTHREADS=ON -DSDL_THREADS=ON -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -S SDL2-2.28.5/ -B build/sdl2
-make -C build/sdl2 install
+make -C build/sdl2 -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON jpeg-9f/ -B build/jpeg
-make -C build/jpeg install
+make -C build/jpeg -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON SDL_image-release-2.8.2/ -B build/sdl2_image
-make -C build/sdl2_image install
+make -C build/sdl2_image -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_SAMPLES=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=OFF SDL_mixer-release-2.8.0/ -B build/sdl2_mixer
-make -C build/sdl2_mixer install
+make -C build/sdl2_mixer -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON freetype-2.13.2/ -B build/freetype2
-make -C build/freetype2 install
+make -C build/freetype2 -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DUNIX=ON -DSDL2TTF_SAMPLES=OFF SDL_ttf-release-2.22.0/ -B build/sdl2_ttf
-make -C build/sdl2_ttf install
+make -C build/sdl2_ttf -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S SDL-1.2-main/ -B build/sdl12
-make -C build/sdl12 install
+make -C build/sdl12 -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log -DBOOST_RUNTIME_LINK=static -S boost-1.85.0/ -B build/boost
-make -C build/boost install
+make -C build/boost -j16 install
 
 cp -dpR glm/ ~/src/gk/include
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S mojoAL-main/ -B build/mojoAL
-make -C build/mojoAL install
+make -C build/mojoAL -j16 install
 cp -dp ~/src/gk/lib/libmojoal.a ~/src/gk/lib/libal.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libogg-1.3.5/ -B build/ogg
-make -C build/ogg install
+make -C build/ogg -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libvorbis-1.3.7/ -B build/vorbis
-make -C build/vorbis install
+make -C build/vorbis -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DPHYSFS_BUILD_TEST=OFF -S physfs-main/ -B build/physfs
-make -C build/physfs install
+make -C build/physfs -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DHTTP_ONLY=ON -DCURL_ENABLE_SSL=OFF -DENABLE_IPV6=OFF -DBUILD_CURL_EXE=OFF -S curl-8.8.0/ -B build/curl
-make -C build/curl install
+make -C build/curl -j16 install
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -DDISABLE_DYNAMIC=ON -DSQ_DISABLE_INTERPRETER=ON -S squirrel3/ -B build/squirrel3
-make -C build/squirrel3 install
+make -C build/squirrel3 -j16 install
 
 mkdir -p build/tcl8
 cd build/tcl8

@@ -51,6 +51,31 @@ template<typename T> int deferred_call_with_retry(syscall_no sno, T arg)
     }
 }
 
+#include <time.h>
+
+template<typename T> int deferred_call_with_retry(syscall_no sno, T arg, const timespec *abstime)
+{
+    while(true)
+    {
+        int _errno = 0, ret = 0;
+        __syscall(sno, &ret, reinterpret_cast<void *>(arg), &_errno);
+        auto drret = deferred_return(ret, _errno);
+        if(drret != -3)
+            return ret;
+        
+        timespec curt;
+        __syscall_clock_gettime_params p { CLOCK_REALTIME, &curt };
+        deferred_call(__syscall_clock_gettime, &p);
+
+        if((curt.tv_sec > abstime->tv_sec) ||
+            ((curt.tv_sec == abstime->tv_sec) && (curt.tv_nsec > abstime->tv_nsec)))
+        {
+            errno = ETIMEDOUT;
+            return -1;
+        }
+    }
+}
+
 
 #endif
 

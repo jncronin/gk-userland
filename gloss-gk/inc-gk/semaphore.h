@@ -5,7 +5,10 @@
 extern "C" {
 #endif
 
-struct sem_t;
+struct sem_t
+{
+    void *opaque;
+};
 
 int    sem_close(sem_t *);
 int    sem_destroy(sem_t *);

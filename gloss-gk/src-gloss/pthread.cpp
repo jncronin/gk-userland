@@ -1,3 +1,6 @@
+#define _POSIX_READER_WRITER_LOCKS
+#define _UNIX98_THREAD_MUTEX_ATTRIBUTES
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
@@ -165,6 +168,112 @@ int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
     return 0;
 }
 
+int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
+{
+    if(!attr)
+        return EINVAL;
+    attr->type = type;
+    return 0;
+}
+
+int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type)
+{
+    if(!attr || !type)
+        return EINVAL;
+    *type = attr->type;
+    return 0;
+}
+
+extern "C" int pthread_rwlockattr_init(pthread_rwlockattr_t *attr)
+{
+    attr->is_initialized = 1;
+    return 0;
+}
+
+extern "C" int pthread_rwlock_init(pthread_rwlock_t *lock,
+    const pthread_rwlockattr_t *attr)
+{
+    pthread_rwlockattr_t defattr;
+    if(!attr)
+    {
+        pthread_rwlockattr_init(&defattr);
+        attr = &defattr;
+    }
+    if(!attr->is_initialized)
+    {
+        return EINVAL;
+    }
+    __syscall_pthread_rwlock_init_params p { lock, attr };
+    int ret = deferred_call(__syscall_pthread_rwlock_init, &p);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_destroy(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call(__syscall_pthread_rwlock_destroy, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_rdlock(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_timedrdlock(pthread_rwlock_t *lock, const timespec *abstime)
+{
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, lock, abstime);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_tryrdlock(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call(__syscall_pthread_rwlock_tryrdlock, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_wrlock(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_timedwrlock(pthread_rwlock_t *lock, const timespec *abstime)
+{
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, lock, abstime);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_trywrlock(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call(__syscall_pthread_rwlock_trywrlock, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+extern "C" int pthread_rwlock_unlock(pthread_rwlock_t *lock)
+{
+    int ret = deferred_call(__syscall_pthread_rwlock_unlock, lock);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
 int pthread_mutex_init(pthread_mutex_t *mutex, 
     const pthread_mutexattr_t *attr)
 {
@@ -257,14 +366,54 @@ int pthread_setspecific(pthread_key_t key, const void *value)
     return errno;
 }
 
+extern "C" int pthread_condattr_init(pthread_condattr_t *attr)
+{
+    if(!attr)
+    {
+        return EINVAL;
+    }
+    attr->clock = 0;
+    attr->is_initialized = 1;
+    return 0;
+}
+
+extern "C" int pthread_condattr_setclock(pthread_condattr_t *attr, clockid_t clock)
+{
+    if(!attr)
+    {
+        return EINVAL;
+    }
+    attr->clock = clock;
+    return 0;
+}
+
+extern "C" int pthread_condattr_getclock(const pthread_condattr_t *attr, clockid_t *clock)
+{
+    if(!attr || !clock)
+    {
+        return EINVAL;
+    }
+    *clock = attr->clock;
+    return 0;
+}
+
+extern "C" int pthread_condattr_destroy(pthread_condattr_t *attr)
+{
+    if(!attr)
+    {
+        return EINVAL;
+    }
+    attr->is_initialized = 0;
+    return 0;
+}
+
 int pthread_cond_init(pthread_cond_t *cond,
     const pthread_condattr_t *attr)
 {
     pthread_condattr_t defattr;
     if(!attr)
     {
-        defattr.clock = 0;
-        defattr.is_initialized = 1;
+        pthread_condattr_init(&defattr);
         attr = &defattr;
     }
     if(!attr->is_initialized)

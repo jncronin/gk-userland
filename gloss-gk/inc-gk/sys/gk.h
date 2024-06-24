@@ -55,16 +55,16 @@ int     lstat (const char * __path, struct stat * __buf );
 #endif
 
 #ifndef PTHREAD_MUTEX_NORMAL
-#define PTHREAD_MUTEX_NORMAL 1
+#define PTHREAD_MUTEX_NORMAL 0
 #endif
 #ifndef PTHREAD_MUTEX_ERRORCHECK
 #define PTHREAD_MUTEX_ERRORCHECK 2
 #endif
 #ifndef PTHREAD_MUTEX_RECURSIVE
-#define PTHREAD_MUTEX_RECURSIVE 3
+#define PTHREAD_MUTEX_RECURSIVE 1
 #endif
 #ifndef PTHREAD_MUTEX_DEFAULT
-#define PTHREAD_MUTEX_DEFAULT 0
+#define PTHREAD_MUTEX_DEFAULT 3
 #endif
 
 #endif

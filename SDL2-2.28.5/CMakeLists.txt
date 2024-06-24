@@ -1481,6 +1481,13 @@ elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
       list(APPEND EXTRA_LIBS OSMesa GL)
       set(HAVE_SDL_VIDEO TRUE)
     endif()
+
+    if(SDL_AUDIO)
+      set(SDL_AUDIO_DRIVER_GK 1)
+      file(GLOB GK_AUDIO_SOURCES ${SDL2_SOURCE_DIR}/src/audio/gk/*.c)
+      list(APPEND SOURCE_FILES ${GK_AUDIO_SOURCES})
+      set(HAVE_SDL_AUDIO TRUE)
+    endif()
   endif()
 
   if(UNIX)

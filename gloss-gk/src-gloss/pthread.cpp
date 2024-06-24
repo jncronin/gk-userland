@@ -156,6 +156,7 @@ int pthread_mutexattr_init(pthread_mutexattr_t *attr)
         return EINVAL;
     attr->recursive = 0;
     attr->is_initialized = 1;
+    attr->type = PTHREAD_MUTEX_DEFAULT;
     return 0;
 }
 
@@ -173,6 +174,7 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
     if(!attr)
         return EINVAL;
     attr->type = type;
+    attr->recursive = (type == PTHREAD_MUTEX_RECURSIVE) ? 1 : 0;
     return 0;
 }
 

@@ -45,7 +45,7 @@ static uint32_t gkpf_to_pformat(unsigned int gkpf)
         case GK_PIXELFORMAT_ARGB8888:
             return SDL_PIXELFORMAT_XRGB8888;
         case GK_PIXELFORMAT_RGB888:
-            return SDL_PIXELFORMAT_RGB888;
+            return SDL_PIXELFORMAT_RGB24;
         case GK_PIXELFORMAT_RGB565:
             return SDL_PIXELFORMAT_RGB565;
         case GK_PIXELFORMAT_L8:
@@ -100,22 +100,39 @@ VideoBootStrap GK_bootstrap = {
 int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
+    unsigned int gkpf;
+
+    /* Get current mode */
+    GK_GPUGetScreenMode((size_t *)&mode.w, (size_t *)&mode.h, &gkpf);
+    mode.format = gkpf_to_pformat(gkpf);
+    mode.driverdata = (void *)gkpf;
+    if(SDL_AddBasicVideoDisplay(&mode) < 0)
+    {
+        return -1;
+    }
 
     /* Allow 640x480, 320x240, 160x120 at 32-/24-/16-/8-bpp */
-
     for(int sdiv = 1; sdiv <= 3; sdiv++)
     {
-        mode.format = SDL_PIXELFORMAT_ARGB8888;
         mode.w = 640 / sdiv;
         mode.h = 480 / sdiv;
         mode.refresh_rate = 60;
+
+        mode.format = SDL_PIXELFORMAT_ARGB8888;
         mode.driverdata = (void *)0;
-        if(SDL_AddBasicVideoDisplay(&mode) < 0)
+        SDL_AddDisplayMode(&_this->displays[0], &mode);
+        if(sdiv == 1)
         {
-            return -1;
+            if(SDL_AddBasicVideoDisplay(&mode) < 0)
+            {
+                return -1;
+            }
+        }
+        else
+        {
         }
 
-        mode.format = SDL_PIXELFORMAT_RGB888;
+        mode.format = SDL_PIXELFORMAT_RGB24;
         mode.driverdata = (void *)1;
         SDL_AddDisplayMode(&_this->displays[0], &mode);
 

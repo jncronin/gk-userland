@@ -54,7 +54,7 @@ target_sources(jpeg
         "${CMAKE_CURRENT_SOURCE_DIR}/jmemansi.c"
 )
 
-set_target_properties(jpeg PROPERTIES PUBLIC_HEADER "jerror.h;jmorecfg.h;jpeglib.h")
+set_target_properties(jpeg PROPERTIES PUBLIC_HEADER "jerror.h;jmorecfg.h;jpeglib.h;jconfig.h;jpegint.h")
 
 INSTALL(TARGETS jpeg
     LIBRARY DESTINATION lib

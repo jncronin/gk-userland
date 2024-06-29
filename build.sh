@@ -107,3 +107,6 @@ cp tclConfig.sh /home/jncronin/src/gk/lib
 cp ../../tcl8.6.14/unix/tclooConfig.sh /home/jncronin/src/gk/lib
 mkdir -p /home/jncronin/src/gk/lib/pkgconfig
 cp tcl.pc /home/jncronin/src/gk/lib/pkgconfig
+
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S lvgl-9.1.0/ -B build/lvgl9
+make -C build/lvgl9/ -j 16 install

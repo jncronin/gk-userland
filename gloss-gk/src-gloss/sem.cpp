@@ -64,12 +64,13 @@ extern "C" int sem_post(sem_t *sem)
 
 extern "C" int sem_timedwait(sem_t *sem, const timespec *abstime)
 {
-    if(!sem)
+    if(!sem || !abstime)
     {
         errno = EINVAL;
         return -1;
     }
-    return deferred_call_with_retry(__syscall_sem_trywait, (void *)sem, abstime);
+    __syscall_trywait_params p { .sync = sem, .clock_id = CLOCK_REALTIME, .until = abstime };
+    return deferred_call_with_retry(__syscall_sem_trywait, &p, abstime);
 }
 
 extern "C" int sem_trywait(sem_t *sem)
@@ -79,7 +80,8 @@ extern "C" int sem_trywait(sem_t *sem)
         errno = EINVAL;
         return -1;
     }
-    return deferred_call(__syscall_sem_trywait, (void *)sem);
+    __syscall_trywait_params p { .sync = sem, .clock_id = CLOCK_TRY_ONCE };
+    return deferred_call(__syscall_sem_trywait, &p);
 }
 
 extern "C" int sem_unlink(const char *name)
@@ -95,5 +97,6 @@ extern "C" int sem_wait(sem_t *sem)
         errno = EINVAL;
         return -1;
     }
-    return deferred_call_with_retry(__syscall_sem_trywait, (void *)sem);
+    __syscall_trywait_params p { .sync = sem, .clock_id = CLOCK_WAIT_FOREVER };
+    return deferred_call_with_retry(__syscall_sem_trywait, &p);
 }

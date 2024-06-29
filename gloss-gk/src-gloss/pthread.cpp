@@ -222,7 +222,13 @@ extern "C" int pthread_rwlock_destroy(pthread_rwlock_t *lock)
 
 extern "C" int pthread_rwlock_rdlock(pthread_rwlock_t *lock)
 {
-    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, lock);
+    if(!lock)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_WAIT_FOREVER };
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, &p);
     if(ret == 0)
         return 0;
     return errno;
@@ -230,7 +236,13 @@ extern "C" int pthread_rwlock_rdlock(pthread_rwlock_t *lock)
 
 extern "C" int pthread_rwlock_timedrdlock(pthread_rwlock_t *lock, const timespec *abstime)
 {
-    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, lock, abstime);
+    if(!lock || !abstime)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_REALTIME, .until = abstime };
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_tryrdlock, &p, abstime);
     if(ret == 0)
         return 0;
     return errno;
@@ -238,7 +250,13 @@ extern "C" int pthread_rwlock_timedrdlock(pthread_rwlock_t *lock, const timespec
 
 extern "C" int pthread_rwlock_tryrdlock(pthread_rwlock_t *lock)
 {
-    int ret = deferred_call(__syscall_pthread_rwlock_tryrdlock, lock);
+    if(!lock)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_TRY_ONCE };
+    int ret = deferred_call(__syscall_pthread_rwlock_tryrdlock, &p);
     if(ret == 0)
         return 0;
     return errno;
@@ -246,7 +264,13 @@ extern "C" int pthread_rwlock_tryrdlock(pthread_rwlock_t *lock)
 
 extern "C" int pthread_rwlock_wrlock(pthread_rwlock_t *lock)
 {
-    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, lock);
+    if(!lock)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_WAIT_FOREVER };
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, &p);
     if(ret == 0)
         return 0;
     return errno;
@@ -254,7 +278,13 @@ extern "C" int pthread_rwlock_wrlock(pthread_rwlock_t *lock)
 
 extern "C" int pthread_rwlock_timedwrlock(pthread_rwlock_t *lock, const timespec *abstime)
 {
-    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, lock, abstime);
+    if(!lock || !abstime)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_REALTIME, .until = abstime };
+    int ret = deferred_call_with_retry(__syscall_pthread_rwlock_trywrlock, &p, abstime);
     if(ret == 0)
         return 0;
     return errno;
@@ -262,7 +292,13 @@ extern "C" int pthread_rwlock_timedwrlock(pthread_rwlock_t *lock, const timespec
 
 extern "C" int pthread_rwlock_trywrlock(pthread_rwlock_t *lock)
 {
-    int ret = deferred_call(__syscall_pthread_rwlock_trywrlock, lock);
+    if(!lock)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = lock, .clock_id = CLOCK_TRY_ONCE };
+    int ret = deferred_call(__syscall_pthread_rwlock_trywrlock, &p);
     if(ret == 0)
         return 0;
     return errno;
@@ -306,7 +342,13 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex)
 
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
-    int ret = deferred_call_with_retry(__syscall_pthread_mutex_trylock, mutex);
+    if(!mutex)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = mutex, .clock_id = CLOCK_WAIT_FOREVER };
+    int ret = deferred_call_with_retry(__syscall_pthread_mutex_trylock, &p);
     if(ret == 0)
         return 0;
     return errno;
@@ -314,7 +356,13 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
-    int ret = deferred_call(__syscall_pthread_mutex_trylock, mutex);
+    if(!mutex)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = mutex, .clock_id = CLOCK_TRY_ONCE };
+    int ret = deferred_call(__syscall_pthread_mutex_trylock, &p);
     if(ret == 0)
         return 0;
     if(ret == -3)

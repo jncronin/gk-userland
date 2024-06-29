@@ -18,6 +18,9 @@ extern "C" {
 #include "sdl/lv_sdl_mousewheel.h"
 #include "sdl/lv_sdl_keyboard.h"
 
+#include "gk/lv_gk_display.h"
+#include "gk/lv_gk_input.h"
+
 #include "x11/lv_x11.h"
 
 #include "display/drm/lv_linux_drm.h"

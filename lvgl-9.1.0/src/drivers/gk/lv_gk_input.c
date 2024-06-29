@@ -98,11 +98,11 @@ void gk_update_state()
         switch(ev.type)
         {
             case KeyDown:
-                d_kbd.btn_id = gk_key_to_lv(ev.key);
+                d_kbd.key = gk_key_to_lv(ev.key);
                 d_kbd.state = LV_INDEV_STATE_PRESSED;
                 break;
             case KeyUp:
-                d_kbd.btn_id = gk_key_to_lv(ev.key);
+                d_kbd.key = gk_key_to_lv(ev.key);
                 d_kbd.state = LV_INDEV_STATE_RELEASED;
                 break;
             case MouseDown:

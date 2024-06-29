@@ -19,6 +19,7 @@ cp ~/src/gk/lib/libzlib.a ~/src/gk/lib/libz.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S libpng-1.6.40 -B build/libpng
 make -C build/libpng -j16 install
+cp ~/src/gk/lib/liblibpng16.a ~/src/lib/libpng16.a
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-m7.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/src/gk -DCMAKE_FIND_ROOT_PATH=~/src/gk -S rain-1-s-shell/ -B build/s
 make -C build/s -j16 install

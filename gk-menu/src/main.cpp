@@ -53,12 +53,35 @@ int main()
     init_games();       // example list for now
     /* populate games list */
     auto list = lv_list_create(lv_screen_active());
+    lv_obj_set_size(list, 640, 480);
 
     for(auto &g : games)
     {
         auto lbtn = lv_list_add_button(list, NULL, g.name.c_str());
         lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, &g);
         lv_group_add_obj(grp, lbtn);
+
+        lv_obj_set_height(lbtn, 200);
+        lv_obj_update_layout(list);
+
+        /* Add extra children to buttons */
+        auto lbtn_text = lv_obj_get_child_by_type(lbtn, 0, &lv_label_class);
+        lv_obj_set_style_text_font(lbtn_text, &lv_font_montserrat_24, 0);
+        
+        auto lbtn_extra_text = lv_label_create(lbtn);
+        lv_obj_set_pos(lbtn_extra_text, lv_obj_get_x(lbtn_text), lv_obj_get_y(lbtn_text) + 48);
+        lv_obj_update_layout(list);
+        lv_obj_set_size(lbtn_extra_text, 240 - lv_obj_get_x(lbtn_extra_text),
+            lv_obj_get_height(lbtn) - 16 - lv_obj_get_y(lbtn_extra_text));
+        lv_label_set_text(lbtn_extra_text, g.desc.c_str());
+
+        printf("gkmenu: lbtn of class %s\n", lv_obj_get_class(lbtn)->name);
+        printf("text at %d, %d, size %d, %d",
+            lv_obj_get_x(lbtn_text), lv_obj_get_y(lbtn_text),
+            lv_obj_get_width(lbtn_text), lv_obj_get_height(lbtn_text));
+        printf("extra text at %d, %d, size %d, %d\n", 
+            lv_obj_get_x(lbtn_extra_text), lv_obj_get_y(lbtn_extra_text),
+            lv_obj_get_width(lbtn_extra_text), lv_obj_get_height(lbtn_extra_text));
     }
 
     while(1)
@@ -135,4 +158,34 @@ void init_games()
     g_cvania.args.push_back("/usr/share/mednafen/games/Castlevania (E).nes");
 
     games.push_back(g_cvania);
+
+    Game g_blight;
+    g_blight.name = "Blue Lightning";
+    g_blight.desc = "Atari Lynx version";
+    g_blight.fname = "/mednafen-gk/bin/mednafen";
+    g_blight.cwd = "/mednafen-gk";
+    g_blight.args.push_back("-video.driver");
+    g_blight.args.push_back("softfb");
+    g_blight.args.push_back("-video.fs");
+    g_blight.args.push_back("1");
+    g_blight.args.push_back("-sound");
+    g_blight.args.push_back("0");
+    g_blight.args.push_back("-sound.rate");
+    g_blight.args.push_back("22050");
+    g_blight.args.push_back("-gb.stretch");
+    g_blight.args.push_back("aspect_int");
+    g_blight.args.push_back("-osd.alpha_blend");
+    g_blight.args.push_back("0");
+    g_blight.args.push_back("-video.blit_timesync");
+    g_blight.args.push_back("0");
+    g_blight.args.push_back("-fps.autoenable");
+    g_blight.args.push_back("1");
+    g_blight.args.push_back("-fps.scale");
+    g_blight.args.push_back("2");
+    g_blight.args.push_back("-md.videoip");
+    g_blight.args.push_back("0");
+    g_blight.args.push_back("/usr/share/mednafen/games/Blue Lightning (1989) [a1].lnx");
+
+    games.push_back(g_blight);
+
 }

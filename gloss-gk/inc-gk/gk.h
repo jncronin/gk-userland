@@ -8,6 +8,7 @@ extern "C"
 
 #include "_gk_gpu.h"
 #include "_gk_event.h"
+#include "_gk_proccreate.h"
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -40,6 +41,7 @@ int GK_EventPeek(struct Event *ev);
 int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf);
 int GK_WindowSetTitle(const char *title);
 int GK_CacheFlush(void *addr, size_t len, int is_exec);
+int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo);
 
 #ifdef __cplusplus
 }

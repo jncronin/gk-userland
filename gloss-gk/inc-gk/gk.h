@@ -9,6 +9,7 @@ extern "C"
 #include "_gk_gpu.h"
 #include "_gk_event.h"
 #include "_gk_proccreate.h"
+#include "_gk_scancodes.h"
 
 #include <stdlib.h>
 #include <sys/types.h>

@@ -72,6 +72,7 @@ file(GLOB HEADERS_GK_USERLAND CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_gpu.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_proccreate.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_event.h
+	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_scancodes.h
 )
 
 install(FILES 

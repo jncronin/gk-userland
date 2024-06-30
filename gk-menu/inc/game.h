@@ -16,15 +16,19 @@ class Game
         std::vector<std::string> args;
         std::string cwd;
 
-        int screen_x = 640;
-        int screen_y = 320;
+        int screen_w = 640;
+        int screen_h = 320;
         int screen_pf = GK_PIXELFORMAT_RGB565;
 
-        bool screen_ignore_vsync;
+        bool screen_ignore_vsync = true;
 
         size_t stack_size = 64*1024;
+        size_t heap_size = 32*1024*1024;
+
+        prockeymap_t keymap;
 
         void Load() const;
+        Game();
 };
 
 

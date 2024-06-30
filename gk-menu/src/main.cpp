@@ -41,47 +41,45 @@ int main()
     auto display = lv_gk_display_create();
     lv_display_set_default(display);
     auto kbd = lv_gk_kbd_create();
-    auto mouse = lv_gk_mouse_create();
 
     auto grp = lv_group_create();
     lv_indev_set_group(kbd, grp);
 
-    auto cursor = lv_label_create(lv_screen_active());
-    lv_label_set_text(cursor, "<");
-    lv_indev_set_cursor(mouse, cursor);
-
     init_games();       // example list for now
-    /* populate games list */
-    auto list = lv_list_create(lv_screen_active());
-    lv_obj_set_size(list, 640, 480);
 
-    for(auto &g : games)
+    /* populate games list */
+    auto list = lv_obj_create(lv_screen_active());
+    lv_obj_set_size(list, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+
+    for(int i = 0; i < games.size(); i++)
     {
-        auto lbtn = lv_list_add_button(list, NULL, g.name.c_str());
-        lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, &g);
+        const auto &g = games[i];
+
+        auto lbtn = lv_button_create(list);
+        lv_obj_set_flex_flow(lbtn, LV_FLEX_FLOW_COLUMN);
+        lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)i);
+        lv_obj_set_size(lbtn, LV_PCT(100), LV_SIZE_CONTENT);
         lv_group_add_obj(grp, lbtn);
 
-        lv_obj_set_height(lbtn, 200);
-        lv_obj_update_layout(list);
-
-        /* Add extra children to buttons */
-        auto lbtn_text = lv_obj_get_child_by_type(lbtn, 0, &lv_label_class);
+        auto lbtn_text = lv_label_create(lbtn);
         lv_obj_set_style_text_font(lbtn_text, &lv_font_montserrat_24, 0);
-        
-        auto lbtn_extra_text = lv_label_create(lbtn);
-        lv_obj_set_pos(lbtn_extra_text, lv_obj_get_x(lbtn_text), lv_obj_get_y(lbtn_text) + 48);
-        lv_obj_update_layout(list);
-        lv_obj_set_size(lbtn_extra_text, 240 - lv_obj_get_x(lbtn_extra_text),
-            lv_obj_get_height(lbtn) - 16 - lv_obj_get_y(lbtn_extra_text));
+        lv_obj_set_size(lbtn_text, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_label_set_text(lbtn_text, g.name.c_str());
+
+        auto lbtn_row2_cont = lv_obj_create(lbtn);
+        lv_obj_set_flex_flow(lbtn_row2_cont, LV_FLEX_FLOW_ROW);
+        lv_obj_set_size(lbtn_row2_cont, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_obj_set_flex_align(lbtn_row2_cont, LV_FLEX_ALIGN_SPACE_BETWEEN,
+            LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+
+        auto lbtn_extra_text = lv_label_create(lbtn_row2_cont);
+        lv_obj_set_height(lbtn_extra_text, LV_SIZE_CONTENT);
+        lv_obj_set_flex_grow(lbtn_extra_text, 1);
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());
 
-        printf("gkmenu: lbtn of class %s\n", lv_obj_get_class(lbtn)->name);
-        printf("text at %d, %d, size %d, %d",
-            lv_obj_get_x(lbtn_text), lv_obj_get_y(lbtn_text),
-            lv_obj_get_width(lbtn_text), lv_obj_get_height(lbtn_text));
-        printf("extra text at %d, %d, size %d, %d\n", 
-            lv_obj_get_x(lbtn_extra_text), lv_obj_get_y(lbtn_extra_text),
-            lv_obj_get_width(lbtn_extra_text), lv_obj_get_height(lbtn_extra_text));
+        auto limg = lv_obj_create(lbtn_row2_cont);
+        lv_obj_set_size(limg, 160, 120);
     }
 
     while(1)
@@ -94,8 +92,8 @@ int main()
 
 void game_click(lv_event_t *e)
 {
-    auto g = reinterpret_cast<const Game *>(e->param);
-    g->Load();
+    const auto &g = games[(int)e->user_data];
+    g.Load();
 }
 
 void init_games()
@@ -161,7 +159,7 @@ void init_games()
 
     Game g_blight;
     g_blight.name = "Blue Lightning";
-    g_blight.desc = "Atari Lynx version";
+    g_blight.desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean facilisis odio ac lorem ultricies, eget viverra massa laoreet. Morbi feugiat ullamcorper tortor ac efficitur. In viverra egestas lectus laoreet facilisis. Vestibulum tempus diam sapien, sit amet placerat massa posuere nec. Vestibulum in augue arcu. Quisque nec risus non ligula finibus dapibus. Curabitur vitae scelerisque velit. Vestibulum interdum molestie justo eu viverra. Quisque molestie massa eu ante sagittis, vitae dictum leo varius. Quisque non leo feugiat, pellentesque nunc ac, malesuada libero. Nam quis lacus nec massa sodales bibendum. Pellentesque id tincidunt libero. Donec tincidunt nisl elementum tortor congue volutpat.";
     g_blight.fname = "/mednafen-gk/bin/mednafen";
     g_blight.cwd = "/mednafen-gk";
     g_blight.args.push_back("-video.driver");

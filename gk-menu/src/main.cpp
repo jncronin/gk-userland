@@ -76,6 +76,13 @@ int main()
         lv_obj_set_flex_flow(lbtn, LV_FLEX_FLOW_COLUMN);
         lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)i);
         lv_obj_set_size(lbtn, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 0), 0);
+        lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 0), 0);
+        lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUSED);
+        lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUS_KEY);
+        lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUSED);
+        lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUS_KEY);
+        
         lv_group_add_obj(grp, lbtn);
 
         auto lbtn_text = lv_label_create(lbtn);

@@ -18,13 +18,36 @@ int main()
 
     auto grp = lv_group_create();
     lv_indev_set_group(kbd, grp);
+    lv_group_set_wrap(grp, false);
 
     load_games();
+
+    /* blank style for container objects */
+    lv_style_t style_cont;
+    lv_style_init(&style_cont);
+    lv_style_set_bg_opa(&style_cont, LV_OPA_TRANSP);
+    //lv_style_set_opa(&style_cont, LV_OPA_TRANSP);
+    lv_style_set_border_width(&style_cont, 0);
+    lv_style_set_border_opa(&style_cont, LV_OPA_TRANSP);
+
+    /* background style */
+    lv_style_t style_bg;
+    lv_style_init(&style_bg);
+    lv_style_set_bg_color(&style_bg, lv_color_black());
+    lv_style_set_border_width(&style_bg, 0);
+
+    /* text styles */
+    lv_style_t style_text;
+    lv_style_init(&style_text);
+    lv_style_set_opa(&style_text, LV_OPA_100);
+    lv_style_set_text_color(&style_text, lv_color_white());
 
     /* populate games list */
     auto list = lv_obj_create(lv_screen_active());
     lv_obj_set_size(list, LV_PCT(100), LV_PCT(100));
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+    lv_obj_add_style(list, &style_bg, 0);
+    lv_obj_set_style_radius(list, 0, 0);
 
     for(int i = 0; i < games.size(); i++)
     {
@@ -40,17 +63,24 @@ int main()
         lv_obj_set_style_text_font(lbtn_text, &lv_font_montserrat_24, 0);
         lv_obj_set_size(lbtn_text, LV_PCT(100), LV_SIZE_CONTENT);
         lv_label_set_text(lbtn_text, g.name.c_str());
+        lv_obj_add_style(lbtn_text, &style_text, 0);
 
         auto lbtn_row2_cont = lv_obj_create(lbtn);
         lv_obj_set_flex_flow(lbtn_row2_cont, LV_FLEX_FLOW_ROW);
         lv_obj_set_size(lbtn_row2_cont, LV_PCT(100), LV_SIZE_CONTENT);
         lv_obj_set_flex_align(lbtn_row2_cont, LV_FLEX_ALIGN_SPACE_BETWEEN,
             LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+        lv_obj_set_style_pad_row(lbtn_row2_cont, 0, 0);
+        lv_obj_set_style_pad_column(lbtn_row2_cont, 0, 0);
+        lv_obj_set_style_pad_all(lbtn_row2_cont, 0, 0);
+        lv_obj_add_style(lbtn_row2_cont, &style_cont, 0);
 
         auto lbtn_extra_text = lv_label_create(lbtn_row2_cont);
         lv_obj_set_height(lbtn_extra_text, LV_SIZE_CONTENT);
         lv_obj_set_flex_grow(lbtn_extra_text, 1);
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());
+        lv_obj_add_style(lbtn_extra_text, &style_text, 0);
+
 
         auto limg = lv_obj_create(lbtn_row2_cont);
         lv_obj_set_size(limg, 160, 120);

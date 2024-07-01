@@ -1,6 +1,7 @@
 #include "game.h"
 #include <gk.h>
 #include <cstring>
+#include <sys/wait.h>
 
 void Game::Load() const
 {
@@ -24,7 +25,17 @@ void Game::Load() const
     pcinfo.with_focus = 1;
     pcinfo.keymap = keymap;
 
-    printf("create process: %d\n", GK_CreateProcess(fname.c_str(), &pcinfo));
+    pid_t cpid;
+    if(GK_CreateProcess(fname.c_str(), &pcinfo, &cpid) < 0)
+    {
+        printf("process creation failed %d\n", errno);
+    }
+    else
+    {
+        int retno;
+        waitpid(cpid, &retno, 0);
+        printf("process returned %d\n", retno);
+    }
 }
 
 Game::Game()

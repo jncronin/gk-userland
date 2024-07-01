@@ -42,7 +42,7 @@ int GK_EventPeek(struct Event *ev);
 int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf);
 int GK_WindowSetTitle(const char *title);
 int GK_CacheFlush(void *addr, size_t len, int is_exec);
-int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo);
+int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo, pid_t *pid);
 
 #ifdef __cplusplus
 }

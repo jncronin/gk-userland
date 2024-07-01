@@ -2,6 +2,7 @@
 #include <lvgl.h>
 #include <lvgl/src/drivers/lv_drivers.h>
 #include "game.h"
+#include <algorithm>
 
 std::vector<Game> games;
 
@@ -21,6 +22,24 @@ int main()
     lv_group_set_wrap(grp, false);
 
     load_games();
+    std::sort(games.begin(), games.end(),
+        [](const Game &ga, const Game &gb)
+        {
+            const auto &a = ga.name;
+            const auto &b = gb.name;
+
+            const auto result = std::mismatch(a.cbegin(), a.cend(),
+                b.cbegin(), b.cend(),
+                [](const char ca, const char cb)
+                {
+                    return std::tolower(ca) == tolower(cb);
+                });
+
+            return result.second != b.cend() &&
+                (result.first == a.cend() || 
+                std::tolower(*result.first) < tolower(*result.second));
+        });
+            
 
     /* blank style for container objects */
     lv_style_t style_cont;

@@ -33,6 +33,7 @@ target_link_libraries(gkmenu
     PRIVATE
 #        SDL2::SDL2
         squirrel::squirrel_static
+        squirrel::sqstdlib_static
         ${LVGL_LIBRARIES}
         freetype
         ${PNG_LIBRARIES}

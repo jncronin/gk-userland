@@ -1,4 +1,4 @@
-local ret = {};
+ret = {};
 
 ret.name <- "After Burner";
 ret.exec <- "/mednafen-gk/bin/mednafen";

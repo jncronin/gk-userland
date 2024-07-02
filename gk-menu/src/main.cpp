@@ -6,6 +6,8 @@
 
 std::vector<Game> games;
 
+static lv_obj_t *list;
+
 int load_games();
 static void game_click(lv_event_t *e);
 
@@ -62,7 +64,7 @@ int main()
     lv_style_set_text_color(&style_text, lv_color_white());
 
     /* populate games list */
-    auto list = lv_obj_create(lv_screen_active());
+    list = lv_obj_create(lv_screen_active());
     lv_obj_set_size(list, LV_PCT(100), LV_PCT(100));
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
     lv_obj_add_style(list, &style_bg, 0);
@@ -124,4 +126,5 @@ void game_click(lv_event_t *e)
 {
     const auto &g = games[(int)e->user_data];
     g.Load();
+    lv_obj_invalidate(list);    // redraw screen after the game is finished
 }

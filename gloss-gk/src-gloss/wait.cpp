@@ -12,7 +12,7 @@ extern "C" pid_t waitpid(pid_t pid, int *status, int options)
 	}
 
 	__syscall_waitpid_params p { .pid = pid, .stat_loc = status, .options = options };
-	auto ret = deferred_call(__syscall_waitpid, &p);
+	auto ret = deferred_call_with_retry(__syscall_waitpid, &p);
 	if(ret < -1)
 		return -1;
 	return ret;

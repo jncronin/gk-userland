@@ -38,6 +38,12 @@ typedef struct
     GLenum gl_dformat;
 } GK_Window;
 
+typedef struct
+{
+    unsigned int gkpf;
+} GK_ModeData;
+
+
 static uint32_t gkpf_to_pformat(unsigned int gkpf)
 {
     switch(gkpf)
@@ -105,7 +111,12 @@ int GK_VideoInit(_THIS)
     /* Get current mode */
     GK_GPUGetScreenMode((size_t *)&mode.w, (size_t *)&mode.h, &gkpf);
     mode.format = gkpf_to_pformat(gkpf);
-    mode.driverdata = (void *)gkpf;
+    mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+    if(!mode.driverdata)
+    {
+        return -1;
+    }
+    ((GK_ModeData *)mode.driverdata)->gkpf = gkpf;
     if(SDL_AddBasicVideoDisplay(&mode) < 0)
     {
         return -1;
@@ -119,7 +130,12 @@ int GK_VideoInit(_THIS)
         mode.refresh_rate = 60;
 
         mode.format = SDL_PIXELFORMAT_ARGB8888;
-        mode.driverdata = (void *)0;
+        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+        if(!mode.driverdata)
+        {
+            return -1;
+        }
+        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_ARGB8888;        
         SDL_AddDisplayMode(&_this->displays[0], &mode);
         if(sdiv == 1)
         {
@@ -133,15 +149,30 @@ int GK_VideoInit(_THIS)
         }
 
         mode.format = SDL_PIXELFORMAT_RGB24;
-        mode.driverdata = (void *)1;
+        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+        if(!mode.driverdata)
+        {
+            return -1;
+        }
+        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB888;        
         SDL_AddDisplayMode(&_this->displays[0], &mode);
 
         mode.format = SDL_PIXELFORMAT_RGB565;
-        mode.driverdata = (void *)2;
+        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+        if(!mode.driverdata)
+        {
+            return -1;
+        }
+        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB565;        
         SDL_AddDisplayMode(&_this->displays[0], &mode);
 
         mode.format = SDL_PIXELFORMAT_INDEX8;
-        mode.driverdata = (void *)5;
+        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+        if(!mode.driverdata)
+        {
+            return -1;
+        }
+        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_L8;        
         SDL_AddDisplayMode(&_this->displays[0], &mode);
     }
 
@@ -154,7 +185,7 @@ int GK_VideoInit(_THIS)
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
     int supported = 1;
-    int pf = (int)mode->driverdata;
+    unsigned int pf = ((GK_ModeData *)mode->driverdata)->gkpf;
     if(!mode)
     {
         return -1;

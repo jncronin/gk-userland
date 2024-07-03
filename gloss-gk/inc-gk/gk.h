@@ -44,6 +44,12 @@ int GK_WindowSetTitle(const char *title);
 int GK_CacheFlush(void *addr, size_t len, int is_exec);
 int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo, pid_t *pid);
 
+int GK_AudioSetMode(int nchan, int nbits, int freq, size_t buf_size_bytes);
+int GK_AudioEnable(int enable);
+int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
+
+#define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)
+
 #ifdef __cplusplus
 }
 #endif

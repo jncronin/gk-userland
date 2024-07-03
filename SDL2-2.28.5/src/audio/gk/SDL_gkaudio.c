@@ -53,6 +53,7 @@ static void GKAUDIO_UnlockAudio(_THIS)
 
 static int GKAUDIO_OpenDevice(_THIS, const char *devname)
 {
+    int bytes_per_sample = 0;
     this->hidden = (struct SDL_PrivateAudioData *)SDL_calloc(1, sizeof(*this->hidden));
 
     if(this->hidden == NULL)
@@ -66,15 +67,67 @@ static int GKAUDIO_OpenDevice(_THIS, const char *devname)
         this->spec.channels = 2;
     }
 
+    // only allow supported formats
+    if(this->spec.format == AUDIO_U8)
+    {
+        this->spec.format = AUDIO_S8;
+    }
+    if(this->spec.format == AUDIO_U16)
+    {
+        this->spec.format = AUDIO_S16;
+    }
+    switch(this->spec.format)
+    {
+        case AUDIO_S8:
+            bytes_per_sample = 1;
+            break;
+        case AUDIO_S16:
+            bytes_per_sample = 2;
+            break;
+        case AUDIO_S32:
+            bytes_per_sample = 4;
+            break;
+        default:
+            this->spec.format = AUDIO_S16;
+            bytes_per_sample = 2;
+            break;
+    }
+
+    // only allow supported audio frequencies
+    if(this->spec.freq < 11250)
+        this->spec.freq = 8000;
+    else if(this->spec.freq < 16000)
+        this->spec.freq = 11250;
+    else if(this->spec.freq < 22050)
+        this->spec.freq = 16000;
+    else if(this->spec.freq < 32000)
+        this->spec.freq = 22050;
+    else if(this->spec.freq < 44100)
+        this->spec.freq = 32000;
+    else if(this->spec.freq < 48000)
+        this->spec.freq = 44100;
+    else
+        this->spec.freq = 48000;
+
+    // cap nsamps if required - hard limit of 32 kiB/2 = 16 kiB buffer in GK
+    if((bytes_per_sample * this->spec.channels * this->spec.samples) > 16*1024)
+    {
+        this->spec.samples = 16 * 1024 / bytes_per_sample / this->spec.channels;
+    }
+
     /* Update the fragment size as size in bytes */
     SDL_CalculateAudioSpec(&this->spec);
-
-    /* Allocate mixing buffer */
-    this->hidden->mixbuf = (Uint8 *)SDL_malloc(this->spec.size);
-    if(this->hidden->mixbuf == NULL)
+    
+    /* Check this is okay with GK */
+    if(GK_AudioSetMode(this->spec.channels, bytes_per_sample * 8,
+        this->spec.freq, this->spec.size) != 0)
     {
-        return SDL_OutOfMemory();
+        SDL_free(this->hidden);
+        return -1;
     }
+
+    /* Get the first buffer */
+    GK_AudioQueueBuffer(NULL, &this->hidden->mixbuf);
 
     SDL_memset(this->hidden->mixbuf, this->spec.silence, this->spec.size);
 
@@ -93,7 +146,8 @@ static int GKAUDIO_CaptureFromDevice(_THIS, void *buffer, int buflen)
 
 static void GKAUDIO_PlayDevice(_THIS)
 {
-    // TODO
+    GK_AudioEnable(1);
+    GK_AudioQueueBuffer(this->hidden->mixbuf, (void**)&this->hidden->mixbuf);
 }
 
 static void GKAUDIO_WaitDevice(_THIS)

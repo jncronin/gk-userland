@@ -10,6 +10,7 @@ static lv_obj_t *list;
 
 int load_games();
 static void game_click(lv_event_t *e);
+int nrefresh = 0;
 
 int main()
 {
@@ -78,13 +79,26 @@ int main()
         lv_obj_set_flex_flow(lbtn, LV_FLEX_FLOW_COLUMN);
         lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)i);
         lv_obj_set_size(lbtn, LV_PCT(100), LV_SIZE_CONTENT);
-        lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 0), 0);
-        lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 0), 0);
-        lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUSED);
-        lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUS_KEY);
+        if(i & 1)
+        {
+            lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 0), 0);
+            lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 0), 0);
+            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUS_KEY);
+        }
+        else
+        {
+            // 160, 0, 0 -> Hue - 15deg -> 160, 0, 40
+            // 120, 0, 0 -> Hue - 15deg -> 120, 0, 30
+            // 255, 40, 40 -> Hue - 15deg -> 255, 40, 94
+            lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 40), 0);
+            lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 30), 0);
+            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 94), LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 94), LV_STATE_FOCUS_KEY);
+        }
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUSED);
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUS_KEY);
-        
+
         lv_group_add_obj(grp, lbtn);
 
         auto lbtn_text = lv_label_create(lbtn);
@@ -116,6 +130,11 @@ int main()
 
     while(1)
     {
+        if(nrefresh)
+        {
+            lv_obj_invalidate(lv_scr_act());
+            nrefresh--;
+        }
         usleep(lv_timer_handler() * 1000);
     }
 
@@ -126,5 +145,6 @@ void game_click(lv_event_t *e)
 {
     const auto &g = games[(int)e->user_data];
     g.Load();
-    lv_obj_invalidate(list);    // redraw screen after the game is finished
+    lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames
+    nrefresh = 3;
 }

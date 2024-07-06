@@ -22,3 +22,8 @@ int GK_AudioQueueBuffer(const void *buffer, void **next_buffer)
     __syscall_audioqueuebuffer_params p { .buffer = buffer, .next_buffer = next_buffer };
     return deferred_call(__syscall_audioqueuebuffer, &p);
 }
+
+int GK_AudioWaitFree()
+{
+    return deferred_call(__syscall_audiowaitfree, (void*)NULL);
+}

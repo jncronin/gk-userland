@@ -94,14 +94,18 @@ static int GKAUDIO_OpenDevice(_THIS, const char *devname)
     }
 
     // only allow supported audio frequencies
-    if(this->spec.freq < 11250)
+    if(this->spec.freq < 11025)
         this->spec.freq = 8000;
+    else if(this->spec.freq < 12000)
+        this->spec.freq = 11025;
     else if(this->spec.freq < 16000)
-        this->spec.freq = 11250;
+        this->spec.freq = 12000;
     else if(this->spec.freq < 22050)
         this->spec.freq = 16000;
-    else if(this->spec.freq < 32000)
+    else if(this->spec.freq < 24000)
         this->spec.freq = 22050;
+    else if(this->spec.freq < 32000)
+        this->spec.freq = 24000;
     else if(this->spec.freq < 44100)
         this->spec.freq = 32000;
     else if(this->spec.freq < 48000)
@@ -152,7 +156,7 @@ static void GKAUDIO_PlayDevice(_THIS)
 
 static void GKAUDIO_WaitDevice(_THIS)
 {
-    // TODO
+    GK_AudioWaitFree();
 }
 
 static Uint8 *GKAUDIO_GetDeviceBuf(_THIS)

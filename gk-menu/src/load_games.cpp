@@ -308,6 +308,14 @@ static int parse_game()
     read_bool("gamepad_is_joystick", &gij);
     g.keymap.gamepad_is_joystick = gij ? 1 : 0;
 
+    bool tik = g.keymap.tilt_is_keyboard != 0;
+    read_bool("tilt_is_keyboard", &tik);
+    g.keymap.tilt_is_keyboard = tik ? 1 : 0;
+
+    bool tij = g.keymap.tilt_is_joystick != 0;
+    read_bool("tilt_is_joystick", &tij);
+    g.keymap.tilt_is_joystick = tij ? 1 : 0;
+
     read_string_array("params", &g.args);
 
     /* Load keymap */

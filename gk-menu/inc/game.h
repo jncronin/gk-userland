@@ -25,7 +25,7 @@ class Game
         size_t stack_size = 64*1024;
         size_t heap_size = 32*1024*1024;
 
-        prockeymap_t keymap;
+        prockeymap_t keymap = { 0 };
 
         void Load() const;
         Game();

@@ -68,7 +68,7 @@ extern "C" int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 pthread_t pthread_self()
 {
     auto taddr = __syscall_GetThreadHandle();
-    return (pthread_t)((uint32_t)(uintptr_t)taddr - 0x38000000U);
+    return (pthread_t)((uint32_t)(uintptr_t)taddr);
 }
 
 extern "C" int pthread_setname_np(pthread_t thread, const char *name)
@@ -106,7 +106,7 @@ extern "C" int pthread_getschedparam(pthread_t t, int *policy, sched_param *para
 {
     if(policy)
         *policy = SCHED_RR;
-    int sched_priority = deferred_call(__syscall_get_thread_priority, (void *)((uint32_t)t + 0x38000000U));
+    int sched_priority = deferred_call(__syscall_get_thread_priority, (void *)((uint32_t)t));
     if(sched_priority > 0)
     {
         if(param)
@@ -124,7 +124,7 @@ extern "C" int pthread_setschedparam(pthread_t t, int policy, const sched_param 
         return EINVAL;
     if(param->sched_priority > 9)
         return EINVAL;
-    __syscall_set_thread_priority_params p { (void *)((uint32_t)t + 0x38000000U), param->sched_priority };
+    __syscall_set_thread_priority_params p { (void *)((uint32_t)t), param->sched_priority };
     int ret = deferred_call(__syscall_set_thread_priority, &p);
     if(ret == 0)
         return 0;
@@ -143,7 +143,7 @@ extern "C" int sched_get_priority_max(int policy)
 
 int pthread_join(pthread_t thread, void **retval)
 {
-    __syscall_pthread_join_params p { (void *)((uint32_t)thread + 0x38000000U), retval };
+    __syscall_pthread_join_params p { (void *)((uint32_t)thread), retval };
     int ret = deferred_call(__syscall_pthread_join, &p);
     if(ret == 0)
         return 0;

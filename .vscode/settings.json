@@ -6,7 +6,8 @@
         "errno.h": "c",
         "pthread.h": "c",
         "types.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "malloc.h": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

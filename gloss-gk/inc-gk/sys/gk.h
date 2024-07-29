@@ -19,8 +19,12 @@
 #define PRIx64		__PRI64(x)
 #define PRIX64		__PRI64(X)
 
+#ifndef __ASSEMBLER__
+
 struct stat;
 int     lstat (const char * __path, struct stat * __buf );
+
+#endif
 
 #ifndef SSIZE_MAX
 #define SSIZE_MAX       INT_MAX

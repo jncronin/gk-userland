@@ -7,6 +7,9 @@ long sysconf(int name)
     {
         case _SC_ARG_MAX:
             return 4096;
+
+        case _SC_PAGESIZE:
+            return 4096;
         
         default:
             errno = EINVAL;

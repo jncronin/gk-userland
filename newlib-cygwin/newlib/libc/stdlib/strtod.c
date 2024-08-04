@@ -308,7 +308,7 @@ _strtod_l (struct _reent *ptr, const char *__restrict s00, char **__restrict se,
                            0 is still valid.  */
 			s00 = s + 1;
 			{
-#if defined(FE_DOWNWARD) && defined(FE_TONEAREST) && defined(FE_TOWARDZERO) && defined(FE_UPWARD)
+#if defined(FE_DOWNWARD) && defined(FE_TONEAREST) && defined(FE_TOWARDZERO) && defined(FE_UPWARD) && !defined(__GAMEKID__)
 			FPI fpi1 = fpi;
 			switch(fegetround()) {
 			  case FE_TOWARDZERO:	fpi1.rounding = 0; break;

@@ -26,6 +26,7 @@ extern "C" {
 #endif
 
 #include <_newlib_version.h>
+#include <newlib.h>
 
 /* Macro to test version of GCC.  Returns 0 for non-GCC or too old GCC. */
 #ifndef __GNUC_PREREQ
@@ -404,6 +405,36 @@ extern "C" {
 
 /* POSIX 1003.26-2003 defined device control method */
 #define _POSIX_26_VERSION			200312L
+
+#endif
+
+#ifdef __GAMEKID__
+#define _POSIX_VERSION 199009L
+#define _POSIX_THREADS				1
+#define _POSIX_THREAD_ATTR_STACKADDR		1
+#define _POSIX_THREAD_ATTR_STACKSIZE		1
+#define _POSIX_THREAD_PRIORITY_SCHEDULING	1
+#define _POSIX_THREAD_PRIO_INHERIT		1
+#define _POSIX_THREAD_PRIO_PROTECT		1
+#define _POSIX_THREAD_PROCESS_SHARED		1
+#define _POSIX_THREAD_SAFE_FUNCTIONS		1
+
+#define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
+#define _POSIX_MONOTONIC_CLOCK		200112L
+#define _POSIX_READER_WRITER_LOCKS      200112L
+
+#define _POSIX_TIMERS			1
+#define _POSIX_SEMAPHORES		1
+
+#define HAVE_STRLCPY 1
+
+#ifndef unix
+#define unix
+#endif
+
+#ifndef UNIX
+#define UNIX
+#endif
 
 #endif
 

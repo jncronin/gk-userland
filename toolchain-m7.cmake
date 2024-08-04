@@ -17,19 +17,20 @@ set(CMAKE_C_STANDARD_LIBRARIES "-lm")
 set(CMAKE_CXX_STANDARD_LIBRARIES "-lm")
 
 set(COMMON_FLAGS "-mthumb -mcpu=${TARGET_CPU} -mfloat-abi=hard -mfpu=fpv5-d16 -ffast-math")
-set(C_CXX_FLAGS  "-include sys/gk.h -ffunction-sections -fdata-sections -ffreestanding -D__GAMEKID__ -D_POSIX_THREADS=1  -Dunix -DUNIX -D_POSIX_MONOTONIC_CLOCK -D_POSIX_TIMERS=1 -D_POSIX_READER_WRITER_LOCKS=1 -D_POSIX_READER_WRITER_LOCKS=1 -D_UNIX98_THREAD_MUTEX_ATTRIBUTES=1 -I$ENV{HOME}/src/gk/include")
-set(CXX_FLAGS    "-fno-threadsafe-statics -Wno-psabi")
+set(C_CXX_FLAGS  "-ftls-model=local-exec -include sys/gk.h -ffunction-sections -fdata-sections -D__GAMEKID__ -Dunix  -isystem $ENV{HOME}/src/gk/include -isystem $ENV{HOME}/src/gk/arm-none-eabi/include")
+set(CXX_FLAGS    "-Wno-psabi -isystem $ENV{HOME}/src/gk/include/c++/13.3.1 -isystem $ENV{HOME}/src/gk/include/c++/13.3.1/arm-none-eabi")
 
 set(CMAKE_C_FLAGS_INIT          "${COMMON_FLAGS} ${C_CXX_FLAGS}"              CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_INIT        "${COMMON_FLAGS} ${C_CXX_FLAGS} ${CXX_FLAGS}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_INIT        "${COMMON_FLAGS} ${CXX_FLAGS} ${C_CXX_FLAGS}" CACHE STRING "" FORCE)
 set(CMAKE_ASM_FLAGS_INIT        "${COMMON_FLAGS} -x assembler-with-cpp"       CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L$ENV{HOME}/src/gk/lib -lm -Wl,--whole-archive -llibcharset $ENV{HOME}/src/gk/lib/libgloss-gk.a $ENV{HOME}/src/gk/lib/libgk.a -Wl,--no-whole-archive -Wl,-q"                           CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,--entry,_mainCRTStartup -Wl,--section-start,.init=0 -Wl,-Ttext,0x32 -Wl,-z,max-page-size=32 -Wl,--gc-sections -L$ENV{HOME}/src/gk/arm-none-eabi/lib -L$ENV{HOME}/src/gk/lib -Wl,--whole-archive -llibcharset $ENV{HOME}/src/gk/lib/libgloss-gk.a $ENV{HOME}/src/gk/lib/libgk.a -Wl,--no-whole-archive -Wl,-q"                           CACHE STRING "" FORCE)
 
 set(CMAKE_C_FLAGS_DEBUG     "-Og -g"          CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_DEBUG   "-Og -g"          CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "" FORCE)
 
+set(CMAKE_SYSROOT "$ENV{HOME}/src/gk")
 set(CMAKE_FIND_ROOT_PATH "$ENV{HOME}/src/gk")
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
@@ -52,30 +53,3 @@ set(CMAKE_NINJA_FORCE_RESPONSE_FILE           ON)
 
 set(CPACK_GENERATOR "TGZ")
 set(CPACK_SYSTEM_NAME "gk")
-
-function(gk_generate_package)
-    string(TIMESTAMP TSTAMP %s)
-    set(FNAME "${CMAKE_CURRENT_BINARY_DIR}/gk-${TSTAMP}.tar")
-    message("generating ${FNAME}")
-
-    foreach(tname IN LISTS ARGV)
-        message("tname: ${tname}")
-        if(TARGET ${tname})
-            message("target")
-            list(APPEND EXFNAMES "$<TARGET_FILE:${tname}>")
-        else()
-            message("not target")
-            list(APPEND EXFNAMES "${tname}")
-        endif()
-    endforeach()
-
-    add_custom_target(create_gk_package
-        ALL
-        COMMAND ${CMAKE_COMMAND} -E echo "generating ${FNAME} from $<JOIN:${EXFNAMES},,>"
-        COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${FNAME}" ${EXFNAMES}
-        VERBATIM
-    )
-
-    add_custom_target(RerunCmake ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR})
-    add_dependencies(create_gk_package RerunCmake)
-endfunction()

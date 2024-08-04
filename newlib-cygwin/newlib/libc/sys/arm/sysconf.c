@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifndef __GAMEKID__
+
 long sysconf(int name)
 {
   switch (name)
@@ -32,3 +34,5 @@ long sysconf(int name)
   }
   return -1; /* Can't get here */
 }
+
+#endif

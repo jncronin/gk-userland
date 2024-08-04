@@ -1,6 +1,3 @@
-#define _POSIX_READER_WRITER_LOCKS
-#define _UNIX98_THREAD_MUTEX_ATTRIBUTES
-
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>

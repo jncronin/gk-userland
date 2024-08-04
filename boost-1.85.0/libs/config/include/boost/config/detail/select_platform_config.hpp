@@ -12,7 +12,6 @@
 // Note that we define the headers to include using "header_name" not
 // <header_name> in order to prevent macro expansion within the header
 // name (for example "linux" is a macro on linux systems).
-
 #if (defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)) && !defined(_CRAYC)
 // linux, also other platforms (Hurd etc) that use GLIBC, should these really have their own config headers though?
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/linux.hpp"
@@ -36,7 +35,6 @@
 #elif defined(__CYGWIN__)
 // cygwin is not win32:
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/cygwin.hpp"
-
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 // win32:
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/win32.hpp"
@@ -92,9 +90,7 @@
 #elif defined (__wasm__)
 // Web assembly:
 #  define BOOST_PLATFORM_CONFIG "boost/config/platform/wasm.hpp"
-
 #else
-
 #  if defined(unix) \
       || defined(__unix) \
       || defined(_XOPEN_SOURCE) \

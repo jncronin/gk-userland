@@ -5,21 +5,21 @@
 extern "C" {
 #endif
 
-struct sem_t
+typedef struct _sem_t
 {
     void *opaque;
-};
+} sem_t;
 
-int    sem_close(struct sem_t *);
-int    sem_destroy(struct sem_t *);
-int    sem_getvalue(struct sem_t *, int *);
-int    sem_init(struct sem_t *, int, unsigned);
-struct sem_t *sem_open(const char *, int, ...);
-int    sem_post(struct sem_t *);
-int    sem_timedwait(struct sem_t *, const struct timespec *);
-int    sem_trywait(struct sem_t *);
+int    sem_close(sem_t *);
+int    sem_destroy(sem_t *);
+int    sem_getvalue(sem_t *, int *);
+int    sem_init(sem_t *, int, unsigned);
+sem_t *sem_open(const char *, int, ...);
+int    sem_post(sem_t *);
+int    sem_timedwait(sem_t *, const struct timespec *);
+int    sem_trywait(sem_t *);
 int    sem_unlink(const char *);
-int    sem_wait(struct sem_t *);
+int    sem_wait(sem_t *);
 
 #define SEM_FAILED (-1)
 

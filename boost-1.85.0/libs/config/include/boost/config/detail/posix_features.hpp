@@ -13,7 +13,6 @@
 // _XOPEN_SOURCE have been defined to the right value (it's up
 // to the user to do this *before* including any header, although
 // in most cases the compiler will do this for you).
-
 #  if defined(BOOST_HAS_UNISTD_H)
 #     include <unistd.h>
 

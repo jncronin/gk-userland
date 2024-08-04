@@ -1397,6 +1397,9 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
 
+#ifdef __GAMEKID__
+#define MALLOC_ALIGNMENT      32
+#endif
 
 /*  sizes, alignments */
 
@@ -2377,7 +2380,7 @@ Void_t* mALLOc(RARG bytes) RDECL size_t bytes;
     q = bin_at(idx);
     victim = last(q);
 
-#if MALLOC_ALIGN != 16
+#if MALLOC_ALIGN < 16
     /* Also scan the next one, since it would have a remainder < MINSIZE */
     if (victim == q)
     {
@@ -2526,7 +2529,7 @@ Void_t* mALLOc(RARG bytes) RDECL size_t bytes;
 
        bin = next_bin(bin);
 
-#if MALLOC_ALIGN == 16
+#if MALLOC_ALIGN >= 32
        if (idx < MAX_SMALLBIN)
          {
            bin = next_bin(bin);

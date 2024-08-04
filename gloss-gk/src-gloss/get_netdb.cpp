@@ -1,5 +1,5 @@
 #include <netdb.h>
-#include <cstring>
+#include <string.h>
 #include <errno.h>
 
 extern "C" struct servent *getservent(void)

@@ -2,7 +2,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include "deferred.h"
-#include <cstring>
+#include <string.h>
 #include <unistd.h>
 
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)

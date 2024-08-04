@@ -1,6 +1,6 @@
 #include <sys/utsname.h>
 #include <errno.h>
-#include <cstring>
+#include <string.h>
 
 extern "C" int uname(struct utsname *buf)
 {

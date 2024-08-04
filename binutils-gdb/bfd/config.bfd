@@ -426,6 +426,10 @@ case "${targ}" in
     targ_defvec=arm_elf32_le_vec
     targ_selvecs="arm_elf32_fdpic_le_vec arm_elf32_be_vec arm_elf32_fdpic_be_vec"
     ;;
+  arm*-*-gkos*)
+    targ_defvec=arm_elf32_le_vec
+    targ_selvecs=
+    ;;
   arm*-*-vxworks | arm*-*-windiss)
     targ_defvec=arm_elf32_vxworks_le_vec
     targ_selvecs=arm_elf32_vxworks_be_vec

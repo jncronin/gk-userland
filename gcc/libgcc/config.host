@@ -492,6 +492,12 @@ arm*-*-fuchsia*)
 	tm_file="${tm_file} arm/bpabi-lib.h"
 	unwind_header=config/arm/unwind-arm.h
 	;;
+arm*-*-gkos*)
+	extra_parts="$extra_parts crti.o crtbegin.o crtend.o crtn.o crtfastmath.o"
+	tmake_file="${tmake_file} arm/t-arm arm/t-elf arm/t-bpabi t-crtfm"
+	tm_file="${tm_file} arm/bpabi-lib.h"
+	unwind_header=config/arm/unwind-arm.h
+	;;
 arm*-*-netbsdelf*)
 	tmake_file="$tmake_file arm/t-arm"
 	case ${host} in

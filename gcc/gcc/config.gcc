@@ -843,6 +843,12 @@ case ${target} in
 *-*-fuchsia*)
   native_system_header_dir=/include
   ;;
+*-*-gkos*)
+  gas=yes
+  gnu_ld=yes
+  default_use_cxa_atexit=yes
+  use_gcc_stdint=wrap
+  ;;
 *-*-linux* | frv-*-*linux* | *-*-kfreebsd*-gnu | *-*-gnu* | *-*-kopensolaris*-gnu | *-*-uclinuxfdpiceabi)
   extra_options="$extra_options gnu-user.opt"
   gas=yes
@@ -1314,6 +1320,11 @@ arm*-*-freebsd*)                # ARM FreeBSD EABI
 	    ;;
 	esac
 	with_tls=${with_tls:-gnu}
+	;;
+arm*-*-gkos*)
+	tm_file="elfos.h arm/unknown-elf.h arm/elf.h arm/bpabi.h newlib-stdint.h arm/aout.h arm/arm.h arm/gkos.h"
+	tmake_file="${tmake_file} arm/t-arm arm/t-gk arm/t-bpabi"
+	target_cpu_cname="cortex-m7"
 	;;
 arm*-*-netbsdelf*)
 	target_cpu_cname="strongarm"

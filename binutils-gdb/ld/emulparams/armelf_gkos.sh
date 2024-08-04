@@ -1,0 +1,8 @@
+source_sh ${srcdir}/emulparams/armelf.sh
+
+INIT_ADDR=0
+TEXT_START_ADDR=32
+GENERATE_PIE_SCRIPT=no
+GENERATE_SHLIB_SCRIPT=no
+MAXPAGESIZE=32
+ENTRY=_mainCRTStartup

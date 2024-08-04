@@ -167,6 +167,7 @@ ALL_EMULATION_SOURCES = \
 	earmelf.c \
 	earmelf_fbsd.c \
 	earmelf_fuchsia.c \
+	earmelf_gkos.c \
 	earmelf_haiku.c \
 	earmelf_linux.c \
 	earmelf_linux_eabi.c \

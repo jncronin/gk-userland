@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <errno.h>
-#include <cstring>
+#include <string.h>
 
 extern "C" ssize_t readlink(const char *pathname, char *buf, size_t bufsize)
 {

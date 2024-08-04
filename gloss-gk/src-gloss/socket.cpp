@@ -1,7 +1,7 @@
 #include <errno.h>
 #include "syscalls.h"
 #include "deferred.h"
-#include <cstring>
+#include <string.h>
 
 extern "C"
 {

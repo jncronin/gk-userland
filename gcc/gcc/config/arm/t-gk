@@ -1,0 +1,23 @@
+# Custom RTEMS multilibs for ARM
+
+# Reset all MULTILIB variables
+
+MULTILIB_OPTIONS	=
+MULTILIB_DIRNAMES	=
+MULTILIB_EXCEPTIONS	=
+MULTILIB_REUSE		=
+MULTILIB_MATCHES	=
+MULTILIB_REQUIRED	=
+
+# Enumeration of multilibs
+
+MULTILIB_OPTIONS	+= mthumb
+MULTILIB_DIRNAMES	+= thumb
+
+MULTILIB_OPTIONS 	+= march=armv7e-m+fp.dp
+MULTILIB_DIRNAMES   += v7e-m+dp
+
+MULTILIB_OPTIONS	+= mfloat-abi=hard
+MULTILIB_DIRNAMES	+= hard
+
+MULTILIB_REQUIRED	+= mthumb/march=armv7e-m+fp.dp/mfloat-abi=hard

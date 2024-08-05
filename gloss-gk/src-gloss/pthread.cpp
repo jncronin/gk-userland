@@ -147,6 +147,14 @@ int pthread_join(pthread_t thread, void **retval)
     return errno;
 }
 
+extern "C" int pthread_detach(pthread_t thread)
+{
+    int ret = deferred_call(__syscall_pthread_detach, (void *)thread);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
 int pthread_mutexattr_init(pthread_mutexattr_t *attr)
 {
     if(!attr)

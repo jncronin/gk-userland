@@ -101,6 +101,12 @@ endforeach()
 set(${libname}_sources
   ${Libiconv_SOURCE_DIR}/lib/iconv.c
   ${Libiconv_BINARY_DIR}/iconv.h
+
+# for GK:
+  ${libcharset_source_dir}/lib/relocatable.c
+  ${libcharset_source_dir}/lib/relocatable.h
+  ${libcharset_source_dir}/lib/localcharset.c
+  ${Libiconv_BINARY_DIR}/localcharset.h
 )
 
 add_library(${libname} ${${libname}_sources})

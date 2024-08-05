@@ -1,10 +1,12 @@
 #!/bin/sh
 
-if [ -z "${SYSROOT}"]; then
+set -e
+
+if [ -z "${SYSROOT}" ]; then
     SYSROOT=$HOME/opt/gk
 fi
 
-if [ -z "${TOOLSDIR}"]; then
+if [ -z "${TOOLSDIR}" ]; then
     TOOLSDIR=$HOME/opt/gk-build
 fi
 

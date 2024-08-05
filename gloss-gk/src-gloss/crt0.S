@@ -12,6 +12,7 @@ _mainCRTStartup:
     mov r5, r1
 
     ldr r0, =.L_fini_addr
+    ldr r0, [r0]
     bl atexit
 
     bl __libc_init_array
@@ -25,4 +26,5 @@ _mainCRTStartup:
 
 .L0: b .L0
 
+.short 0x0000
 .L_fini_addr: .word __libc_fini_array

@@ -29,4 +29,4 @@
 #define ASM_SPEC "-mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -meabi=5"
 
 #undef LIB_SPEC
-#define LIB_SPEC "--start-group -lc -lgloss-gk -lgk --end-group"
+#define LIB_SPEC "--start-group -lc -lgloss-gk -lgk -lm --end-group"

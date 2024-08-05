@@ -52,13 +52,9 @@ cd ../..
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkos.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr -S gloss-gk -B build/gloss-gk
 make -C build/gloss-gk -j16 install
 
-# build newlib start files
-cd build/newlib
-make configure-target-libgloss
-cd arm-none-gkos/libgloss
-make arm/crt0.o
-cp arm/crt0.o $SYSROOT/usr/lib
-cd ../../../..
+# build start file
+arm-none-gkos-gcc -c -o build/gloss-gk/crt0.o gloss-gk/src-gloss/crt0.S
+cp -dp build/gloss-gk/crt0.o $SYSROOT/usr/lib
 
 # build libgcc
 cd build/gcc

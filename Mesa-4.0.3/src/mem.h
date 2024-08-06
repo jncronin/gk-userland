@@ -160,7 +160,7 @@ extern void _mesa_memset16( GLushort *dst, GLushort val, size_t n );
 
 #  define CHECKARRAY(NAME,CMD)				do {if (!(NAME)) {CMD;}} while (0)
 #  define UNDEFARRAY(NAME)          			do {if ((NAME)) {FREE((char*)NAME);}  }while (0)
-#elif defined(__BEOS__)
+#elif defined(__BEOS__) 
 #  define DEFARRAY(TYPE,NAME,SIZE)  			TYPE *NAME = (TYPE*)malloc(sizeof(TYPE)*(SIZE))
 #  define DEFMARRAY(TYPE,NAME,SIZE1,SIZE2)  		TYPE (*NAME)[SIZE2] = (TYPE(*)[SIZE2])malloc(sizeof(TYPE)*(SIZE1)*(SIZE2))
 #  define DEFMNARRAY(TYPE,NAME,SIZE1,SIZE2,SIZE3)	TYPE (*NAME)[SIZE2][SIZE3] = (TYPE(*)[SIZE2][SIZE3])malloc(sizeof(TYPE)*(SIZE1)*(SIZE2)*(SIZE3))

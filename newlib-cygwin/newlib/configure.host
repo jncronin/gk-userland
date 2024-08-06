@@ -641,6 +641,10 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
 	syscall_dir=syscalls
 	newlib_cflags="${newlib_cflags} -DHAVE_SYSCONF_PAGESIZE"
 	;;
+  arm*-*-gkos*)
+    syscall_dir=syscalls
+	newlib_cflags="${newlib_cflags} -DHAVE_SYSCONF_PAGESIZE -DMALLOC_PROVIDED"
+	;;
   arm*-*-*)
 	syscall_dir=syscalls
 # If newlib is supplying syscalls, select which debug protocol is being used.

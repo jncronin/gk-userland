@@ -11,6 +11,8 @@ _mainCRTStartup:
     mov r4, r0
     mov r5, r1
 
+    bl prvHeapInit
+
     ldr r0, =.L_fini_addr
     ldr r0, [r0]
     bl atexit

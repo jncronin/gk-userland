@@ -12,7 +12,7 @@
   } while(0);
 
 #undef LINK_SPEC
-#define LINK_SPEC "--section-start .init=0 -Ttext 0x32 -z max-page-size=32 --gc-sections -q " BPABI_LINK_SPEC
+#define LINK_SPEC "--section-start .init=0 -Ttext 0x20 -z max-page-size=32 --gc-sections -q " BPABI_LINK_SPEC
 
 #undef  STARTFILE_SPEC
 #define STARTFILE_SPEC	\

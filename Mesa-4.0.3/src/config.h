@@ -112,8 +112,8 @@
 #define MAX_TEXTURE_UNITS 8
 
 /* Maximum viewport/image size: */
-#define MAX_WIDTH 2048
-#define MAX_HEIGHT 2048
+#define MAX_WIDTH 640
+#define MAX_HEIGHT 480
 
 /* Maxmimum size for CVA.  May be overridden by the drivers.  */
 #define MAX_ARRAY_LOCK_SIZE 3000

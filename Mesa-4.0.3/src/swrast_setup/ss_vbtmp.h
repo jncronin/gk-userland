@@ -28,7 +28,7 @@
  */
 
 
-static void TAG(emit)(GLcontext *ctx, GLuint start, GLuint end, 
+__attribute__((hot)) static void TAG(emit)(GLcontext *ctx, GLuint start, GLuint end, 
 		      GLuint newinputs )
 {
    TNLcontext *tnl = TNL_CONTEXT(ctx);

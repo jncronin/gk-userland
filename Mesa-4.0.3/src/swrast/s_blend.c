@@ -90,7 +90,7 @@ blend_replace( GLcontext *ctx, GLuint n, const GLubyte mask[],
 /*
  * Common transparency blending mode.
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_transparency( GLcontext *ctx, GLuint n, const GLubyte mask[],
                     GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -173,7 +173,7 @@ blend_transparency( GLcontext *ctx, GLuint n, const GLubyte mask[],
 /*
  * Add src and dest.
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_add( GLcontext *ctx, GLuint n, const GLubyte mask[],
            GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -202,7 +202,7 @@ blend_add( GLcontext *ctx, GLuint n, const GLubyte mask[],
 /*
  * Blend min function  (for GL_EXT_blend_minmax)
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_min( GLcontext *ctx, GLuint n, const GLubyte mask[],
            GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -225,7 +225,7 @@ blend_min( GLcontext *ctx, GLuint n, const GLubyte mask[],
 /*
  * Blend max function  (for GL_EXT_blend_minmax)
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_max( GLcontext *ctx, GLuint n, const GLubyte mask[],
            GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -248,7 +248,7 @@ blend_max( GLcontext *ctx, GLuint n, const GLubyte mask[],
 /*
  * Modulate:  result = src * dest
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_modulate( GLcontext *ctx, GLuint n, const GLubyte mask[],
                 GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -285,7 +285,7 @@ blend_modulate( GLcontext *ctx, GLuint n, const GLubyte mask[],
  * In/Out:  rgba - the incoming and modified pixels
  * Input:  dest - the pixels from the dest color buffer
  */
-static void _BLENDAPI
+__attribute__((hot)) static void _BLENDAPI
 blend_general( GLcontext *ctx, GLuint n, const GLubyte mask[],
                GLchan rgba[][4], CONST GLchan dest[][4] )
 {
@@ -670,7 +670,7 @@ void _swrast_choose_blend_func( GLcontext *ctx )
  *         mask - boolean mask indicating which pixels to blend.
  * In/Out:  rgba - pixel values
  */
-void
+__attribute__((hot)) void
 _mesa_blend_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
                   GLchan rgba[][4], const GLubyte mask[] )
 {
@@ -698,7 +698,7 @@ _mesa_blend_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
  *         mask - boolean mask indicating which pixels to blend.
  * In/Out:  rgba - pixel values
  */
-void
+__attribute__((hot)) void
 _mesa_blend_pixels( GLcontext *ctx,
                     GLuint n, const GLint x[], const GLint y[],
                     GLchan rgba[][4], const GLubyte mask[] )

@@ -534,7 +534,7 @@ depth_test_span32( GLcontext *ctx, GLuint n, GLint x, GLint y,
 /*
  * Apply depth test to span of fragments.  Hardware or software z buffer.
  */
-GLuint
+__attribute__((hot)) GLuint
 _mesa_depth_test_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
                        const GLdepth z[], GLubyte mask[] )
 {

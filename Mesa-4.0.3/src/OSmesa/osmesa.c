@@ -688,7 +688,7 @@ static void set_read_buffer( GLcontext *ctx, GLframebuffer *buffer, GLenum mode 
 }
 
 
-static void clear( GLcontext *ctx, GLbitfield mask, GLboolean all,
+__attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboolean all,
 		   GLint x, GLint y, GLint width, GLint height )
 {
    OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
@@ -900,7 +900,7 @@ static void buffer_size( GLframebuffer *buffer, GLuint *width, GLuint *height )
 /**********************************************************************/
 
 /* Write RGBA pixels to an RGBA (or permuted) buffer. */
-static void
+__attribute__((hot)) static void
 write_rgba_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                  CONST GLchan rgba[][4], const GLubyte mask[] )
 {
@@ -925,7 +925,7 @@ write_rgba_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 /* Write RGBA pixels to an RGBA buffer.  This is the fastest span-writer. */
-static void
+__attribute__((hot)) static void
 write_rgba_span_rgba( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                       CONST GLchan rgba[][4], const GLubyte mask[] )
 {
@@ -948,7 +948,7 @@ write_rgba_span_rgba( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 /* Write RGB pixels to an RGBA (or permuted) buffer. */
-static void
+__attribute__((hot)) static void
 write_rgb_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                 CONST GLchan rgb[][3], const GLubyte mask[] )
 {
@@ -971,7 +971,7 @@ write_rgb_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 
-static void
+__attribute__((hot)) static void
 write_monocolor_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                       const GLchan color[4], const GLubyte mask[] )
 {
@@ -987,7 +987,7 @@ write_monocolor_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 
-static void
+__attribute__((hot)) static void
 write_rgba_pixels( const GLcontext *ctx, GLuint n,
                    const GLint x[], const GLint y[],
                    CONST GLchan rgba[][4], const GLubyte mask[] )
@@ -1005,7 +1005,7 @@ write_rgba_pixels( const GLcontext *ctx, GLuint n,
 
 
 
-static void
+__attribute__((hot)) static void
 write_monocolor_pixels( const GLcontext *ctx, GLuint n,
                         const GLint x[], const GLint y[],
                         const GLchan color[4], const GLubyte mask[] )
@@ -1021,7 +1021,7 @@ write_monocolor_pixels( const GLcontext *ctx, GLuint n,
 }
 
 
-static void
+__attribute__((hot)) static void
 read_rgba_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                 GLchan rgba[][4] )
 {
@@ -1038,7 +1038,7 @@ read_rgba_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 /* Read RGBA pixels from an RGBA buffer */
-static void
+__attribute__((hot)) static void
 read_rgba_span_rgba( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                      GLchan rgba[][4] )
 {
@@ -1048,7 +1048,7 @@ read_rgba_span_rgba( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 
-static void
+__attribute__((hot)) static void
 read_rgba_pixels( const GLcontext *ctx,
                   GLuint n, const GLint x[], const GLint y[],
                   GLchan rgba[][4], const GLubyte mask[] )
@@ -1071,7 +1071,7 @@ read_rgba_pixels( const GLcontext *ctx,
 /**********************************************************************/
 
 /* Write RGBA pixels to an RGB buffer. */
-static void
+__attribute__((hot)) static void
 write_rgba_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                      CONST GLchan rgba[][4], const GLubyte mask[] )
 {
@@ -1093,7 +1093,7 @@ write_rgba_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 /* Write RGBA pixels to an BGR buffer. */
-static void
+__attribute__((hot)) static void
 write_rgba_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                      CONST GLchan rgba[][4], const GLubyte mask[] )
 {
@@ -1115,7 +1115,7 @@ write_rgba_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 /* Write RGB pixels to an RGB buffer. */
-static void
+__attribute__((hot)) static void
 write_rgb_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                     CONST GLchan rgb[][3], const GLubyte mask[] )
 {
@@ -1137,7 +1137,7 @@ write_rgb_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 /* Write RGB pixels to an BGR buffer. */
-static void
+__attribute__((hot)) static void
 write_rgb_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                     CONST GLchan rgb[][3], const GLubyte mask[] )
 {
@@ -1159,7 +1159,7 @@ write_rgb_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 
-static void
+__attribute__((hot)) static void
 write_monocolor_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                           const GLchan color[4], const GLubyte mask[] )
 {
@@ -1173,7 +1173,7 @@ write_monocolor_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_monocolor_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                           const GLchan color[4], const GLubyte mask[] )
 {
@@ -1187,7 +1187,7 @@ write_monocolor_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_rgba_pixels_RGB( const GLcontext *ctx, GLuint n,
                        const GLint x[], const GLint y[],
                        CONST GLchan rgba[][4], const GLubyte mask[] )
@@ -1202,7 +1202,7 @@ write_rgba_pixels_RGB( const GLcontext *ctx, GLuint n,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_rgba_pixels_BGR( const GLcontext *ctx, GLuint n,
                        const GLint x[], const GLint y[],
                        CONST GLchan rgba[][4], const GLubyte mask[] )
@@ -1217,7 +1217,7 @@ write_rgba_pixels_BGR( const GLcontext *ctx, GLuint n,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_monocolor_pixels_RGB( const GLcontext *ctx,
                             GLuint n, const GLint x[], const GLint y[],
                             const GLchan color[4], const GLubyte mask[] )
@@ -1232,7 +1232,7 @@ write_monocolor_pixels_RGB( const GLcontext *ctx,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_monocolor_pixels_BGR( const GLcontext *ctx,
                             GLuint n, const GLint x[], const GLint y[],
                             const GLchan color[4], const GLubyte mask[] )
@@ -1247,7 +1247,7 @@ write_monocolor_pixels_BGR( const GLcontext *ctx,
    }
 }
 
-static void
+__attribute__((hot)) static void
 read_rgba_span3( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                  GLchan rgba[][4] )
 {
@@ -1262,7 +1262,7 @@ read_rgba_span3( const GLcontext *ctx, GLuint n, GLint x, GLint y,
    }
 }
 
-static void
+__attribute__((hot)) static void
 read_rgba_pixels3( const GLcontext *ctx,
                    GLuint n, const GLint x[], const GLint y[],
                    GLchan rgba[][4], const GLubyte mask[] )
@@ -1286,7 +1286,7 @@ read_rgba_pixels3( const GLcontext *ctx,
 /**********************************************************************/
 
 /* Write RGBA pixels to an RGB_565 buffer. */
-static void
+__attribute__((hot)) static void
 write_rgba_span2( const GLcontext *ctx,
                   GLuint n, GLint x, GLint y,
                   CONST GLchan rgba[][4], const GLubyte mask[] )
@@ -1310,7 +1310,7 @@ write_rgba_span2( const GLcontext *ctx,
 
 
 /* Write RGB pixels to an RGB_565 buffer. */
-static void
+__attribute__((hot)) static void
 write_rgb_span2( const GLcontext *ctx,
                  GLuint n, GLint x, GLint y,
                  CONST GLchan rgb[][3], const GLubyte mask[] )
@@ -1333,7 +1333,7 @@ write_rgb_span2( const GLcontext *ctx,
 }
 
 
-static void
+__attribute__((hot)) static void
 write_monocolor_span2( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                        const GLchan color[4], const GLubyte mask[] )
 {
@@ -1350,7 +1350,7 @@ write_monocolor_span2( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 
-static void
+__attribute__((hot)) static void
 write_rgba_pixels2( const GLcontext *ctx,
                     GLuint n, const GLint x[], const GLint y[],
                     CONST GLchan rgba[][4], const GLubyte mask[] )
@@ -1365,7 +1365,7 @@ write_rgba_pixels2( const GLcontext *ctx,
    }
 }
 
-static void
+__attribute__((hot)) static void
 write_monocolor_pixels2( const GLcontext *ctx,
                          GLuint n, const GLint x[], const GLint y[],
                          const GLchan color[4], const GLubyte mask[] )
@@ -1382,7 +1382,7 @@ write_monocolor_pixels2( const GLcontext *ctx,
    }
 }
 
-static void
+__attribute__((hot)) static void
 read_rgba_span2( const GLcontext *ctx,
                  GLuint n, GLint x, GLint y,
                  GLchan rgba[][4] )
@@ -1399,7 +1399,7 @@ read_rgba_span2( const GLcontext *ctx,
    }
 }
 
-static void
+__attribute__((hot)) static void
 read_rgba_pixels2( const GLcontext *ctx,
                    GLuint n, const GLint x[], const GLint y[],
                    GLchan rgba[][4], const GLubyte mask[] )
@@ -1553,7 +1553,7 @@ read_index_pixels( const GLcontext *ctx,
 /*
  * Draw a flat-shaded, RGB line into an osmesa buffer.
  */
-static void
+__attribute__((hot)) static void
 flat_rgba_line( GLcontext *ctx, const SWvertex *vert0, const SWvertex *vert1 )
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
@@ -1578,7 +1578,7 @@ do {								\
 /*
  * Draw a flat-shaded, Z-less, RGB line into an osmesa buffer.
  */
-static void
+__attribute__((hot)) static void
 flat_rgba_z_line(GLcontext *ctx, const SWvertex *vert0, const SWvertex *vert1)
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
@@ -1611,7 +1611,7 @@ do {							\
  * Draw a flat-shaded, alpha-blended, RGB line into an osmesa buffer.
  * XXX update for GLchan
  */
-static void
+__attribute__((hot)) static void
 flat_blend_rgba_line( GLcontext *ctx,
                       const SWvertex *vert0, const SWvertex *vert1 )
 {
@@ -1660,7 +1660,7 @@ flat_blend_rgba_line( GLcontext *ctx,
  * But don't write to Z buffer.
  * XXX update for GLchan
  */
-static void
+__attribute__((hot)) static void
 flat_blend_rgba_z_line( GLcontext *ctx,
                         const SWvertex *vert0, const SWvertex *vert1 )
 {
@@ -1711,7 +1711,7 @@ flat_blend_rgba_z_line( GLcontext *ctx,
  * Draw a flat-shaded, Z-less, alpha-blended, RGB line into an osmesa buffer.
  * XXX update for GLchan
  */
-static void
+__attribute__((hot)) static void
 flat_blend_rgba_z_line_write( GLcontext *ctx,
                               const SWvertex *vert0, const SWvertex *vert1 )
 {
@@ -1764,7 +1764,7 @@ flat_blend_rgba_z_line_write( GLcontext *ctx,
  * Analyze context state to see if we can provide a fast line drawing
  * function, like those in lines.c.  Otherwise, return NULL.
  */
-static swrast_line_func
+__attribute__((hot)) static swrast_line_func
 osmesa_choose_line_function( GLcontext *ctx )
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);

@@ -985,7 +985,7 @@ static void persp_textured_triangle( GLcontext *ctx,
  * functions in s_span.[ch].  This is used by a bunch of the textured
  * triangle functions.
  */
-static void
+__attribute__((hot)) static void
 rasterize_span(GLcontext *ctx, const struct triangle_span *span)
 {
    DEFMARRAY(GLchan, rgba, MAX_WIDTH, 4);
@@ -1418,7 +1418,7 @@ static void general_textured_spec_triangle( GLcontext *ctx,
  * minification or magnification filter.  If minification and using
  * mipmaps, lambda is also used to select the texture level of detail.
  */
-static void lambda_textured_triangle( GLcontext *ctx,
+__attribute__((hot)) static void lambda_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v0,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )

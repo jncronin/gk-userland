@@ -179,7 +179,7 @@ multi_write_index_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
  *         index - array of [n] color indexes
  *         primitive - either GL_POINT, GL_LINE, GL_POLYGON, or GL_BITMAP
  */
-void
+__attribute__((hot)) void
 _mesa_write_index_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
                         const GLdepth z[], const GLfloat fog[],
                         GLuint indexIn[], const GLint coverage[],
@@ -815,7 +815,7 @@ add_colors(GLuint n, GLchan rgba[][4], CONST GLchan specular[][4] )
  *         rgba - array of [n] color components
  *         primitive - either GL_POINT, GL_LINE, GL_POLYGON or GL_BITMAP.
  */
-void
+__attribute__((hot)) void
 _mesa_write_texture_span( GLcontext *ctx, GLuint n, GLint x, GLint y,
                           const GLdepth z[], const GLfloat fog[],
                           const GLfloat s[], const GLfloat t[],

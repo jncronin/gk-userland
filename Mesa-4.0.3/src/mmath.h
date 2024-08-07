@@ -243,7 +243,7 @@ static INLINE int iround(float f)
  * but uses some IEEE specific tricks for better speed.
  * Contributed by Josh Vanderhoof
  */
-static INLINE int ifloor(float f)
+__attribute__((hot)) static INLINE int ifloor(float f)
 {
    int ai, bi;
    double af, bf;
@@ -338,7 +338,7 @@ float asm_sqrt (float x);
 
 /* default IFLOOR macro */
 #ifndef IFLOOR
-static INLINE int ifloor(float f)
+__attribute__((hot)) static INLINE int ifloor(float f)
 {
 #ifdef USE_IEEE
    int ai, bi;

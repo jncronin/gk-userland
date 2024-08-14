@@ -468,7 +468,7 @@ extern "C" void *realloc(void *pv, size_t size)
 
         if( heapBLOCK_IS_ALLOCATED( pxLink ) != 0 )
         {
-            old_block_size = pxLink->xBlockSize - xHeapStructSize;
+            old_block_size = (pxLink->xBlockSize & ~heapBLOCK_ALLOCATED_BITMASK) - xHeapStructSize;
         }
     }
 

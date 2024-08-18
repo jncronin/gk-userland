@@ -305,63 +305,46 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
 
 int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
-    /* We are allowed to update the window's surface's pixels member here */
-    const unsigned int nmsgs = 8;
-    unsigned int msg_in_block = 0;
-    struct gpu_message gmsg[nmsgs];
+    SDL_Rect act_rect;
 
-    for(int cur_msg = 0; cur_msg < (numrects + 2); cur_msg++)
+    if(numrects <= 0)
     {
-        struct gpu_message *cgmsg = &gmsg[msg_in_block++];
+        act_rect.x = 0;
+        act_rect.y = 0;
+        act_rect.w = _this->displays->current_mode.w;
+        act_rect.h = _this->displays->current_mode.h;
+    }
+    else if(numrects == 1)
+    {
+        act_rect.x = rects[0].x;
+        act_rect.y = rects[0].y;
+        act_rect.w = rects[0].w;
+        act_rect.h = rects[0].h;
+    }
+    else
+    {
+        int l = _this->displays->current_mode.w;
+        int r = 0;
+        int t = _this->displays->current_mode.h;
+        int b = 0;
 
-        if(cur_msg == 0)
+        for(int i = 0; i < numrects; i++)
         {
-            /* First message is to flip buffers */
-            cgmsg->type = FlipBuffers;
-            cgmsg->dest_addr = (uint32_t)(uintptr_t)&window->surface->pixels;
-            cgmsg->src_addr_color = 0;
+            if(rects[i].x < l) l = rects[i].x;
+            if(rects[i].y < t) t = rects[i].y;
+            if((rects[i].x + rects[i].w) > r) r = rects[i].x + rects[i].w;
+            if((rects[i].y + rects[i].h) > b) b = rects[i].y + rects[i].h;
         }
-        else if(cur_msg < (numrects + 1))
-        {
-            const SDL_Rect *crect = &rects[cur_msg - 1];
-
-            /* Next 'n' messages are update rects, from front to backbuffer */
-            cgmsg->type = BlitImage;
-            cgmsg->dest_addr = 0;
-            cgmsg->dest_pf = 0;
-            cgmsg->dp = 0;
-            cgmsg->dx = crect->x;
-            cgmsg->dy = crect->y;
-            cgmsg->dw = crect->w;
-            cgmsg->dh = crect->h;
-            cgmsg->src_addr_color = 0;
-            cgmsg->src_pf = 0;
-            cgmsg->sp = 0;
-            cgmsg->sx = crect->x;
-            cgmsg->sy = crect->y;
-            cgmsg->w = crect->w;
-            cgmsg->h = crect->h;
-        }
-        else
-        {
-            /* Final message is to wait for completion, so we can continue updating the
-                surface on the next frame */
-            cgmsg->type = SignalThread;
-            cgmsg->dest_addr = 0;
-            cgmsg->src_addr_color = 0;
-        }
-
-        if(msg_in_block == nmsgs)
-        {
-            /* Need to send this batch of messages */
-            GK_GPUEnqueueMessages(gmsg, msg_in_block);
-            msg_in_block = 0;
-        }
+        act_rect.x = l;
+        act_rect.y = t;
+        act_rect.w = r - l;
+        act_rect.h = b - t;
     }
 
-    /* Send any messages remaining */
-    GK_GPUEnqueueMessages(gmsg, msg_in_block);
-
+    GK_GPU_CommandList(gmsg, 2);
+    GK_GPUFlipBuffers(&gmsg, &window->surface->pixels);
+    GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
+    GK_GPUFlush(&gmsg);
     return 0;
 }
 

@@ -49,6 +49,7 @@ top16 (double x)
   return asuint64 (x) >> 48;
 }
 
+__attribute__((hot))
 double
 log (double x)
 {

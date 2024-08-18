@@ -534,7 +534,7 @@ sample_linear_1d( GLcontext *ctx, GLuint texUnit,
  * return a texture sample.
  *
  */
-__attribute__((hot)) static void
+static void
 sample_lambda_1d( GLcontext *ctx, GLuint texUnit,
                   const struct gl_texture_object *tObj, GLuint n,
                   const GLfloat s[], const GLfloat t[],
@@ -1070,7 +1070,7 @@ sample_lambda_2d( GLcontext *ctx, GLuint texUnit,
 /*
  * Return the texture sample for coordinate (s,t,r) using GL_NEAREST filter.
  */
-__attribute__((hot)) static void
+static void
 sample_3d_nearest(GLcontext *ctx,
                   const struct gl_texture_object *tObj,
                   const struct gl_texture_image *img,
@@ -1390,7 +1390,7 @@ sample_nearest_3d(GLcontext *ctx, GLuint texUnit,
 
 
 
-__attribute__((hot)) static void
+static void
 sample_linear_3d( GLcontext *ctx, GLuint texUnit,
                   const struct gl_texture_object *tObj, GLuint n,
                   const GLfloat s[], const GLfloat t[],

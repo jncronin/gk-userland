@@ -971,7 +971,7 @@ write_rgb_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 
 
 
-__attribute__((hot)) static void
+static void
 write_monocolor_span( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                       const GLchan color[4], const GLubyte mask[] )
 {
@@ -1005,7 +1005,7 @@ write_rgba_pixels( const GLcontext *ctx, GLuint n,
 
 
 
-__attribute__((hot)) static void
+static void
 write_monocolor_pixels( const GLcontext *ctx, GLuint n,
                         const GLint x[], const GLint y[],
                         const GLchan color[4], const GLubyte mask[] )
@@ -1159,7 +1159,7 @@ write_rgb_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
 }
 
 
-__attribute__((hot)) static void
+static void
 write_monocolor_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                           const GLchan color[4], const GLubyte mask[] )
 {
@@ -1173,7 +1173,7 @@ write_monocolor_span_RGB( const GLcontext *ctx, GLuint n, GLint x, GLint y,
    }
 }
 
-__attribute__((hot)) static void
+static void
 write_monocolor_span_BGR( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                           const GLchan color[4], const GLubyte mask[] )
 {
@@ -1217,7 +1217,7 @@ write_rgba_pixels_BGR( const GLcontext *ctx, GLuint n,
    }
 }
 
-__attribute__((hot)) static void
+static void
 write_monocolor_pixels_RGB( const GLcontext *ctx,
                             GLuint n, const GLint x[], const GLint y[],
                             const GLchan color[4], const GLubyte mask[] )
@@ -1232,7 +1232,7 @@ write_monocolor_pixels_RGB( const GLcontext *ctx,
    }
 }
 
-__attribute__((hot)) static void
+static void
 write_monocolor_pixels_BGR( const GLcontext *ctx,
                             GLuint n, const GLint x[], const GLint y[],
                             const GLchan color[4], const GLubyte mask[] )
@@ -1333,7 +1333,7 @@ write_rgb_span2( const GLcontext *ctx,
 }
 
 
-__attribute__((hot)) static void
+static void
 write_monocolor_span2( const GLcontext *ctx, GLuint n, GLint x, GLint y,
                        const GLchan color[4], const GLubyte mask[] )
 {
@@ -1365,7 +1365,7 @@ write_rgba_pixels2( const GLcontext *ctx,
    }
 }
 
-__attribute__((hot)) static void
+static void
 write_monocolor_pixels2( const GLcontext *ctx,
                          GLuint n, const GLint x[], const GLint y[],
                          const GLchan color[4], const GLubyte mask[] )

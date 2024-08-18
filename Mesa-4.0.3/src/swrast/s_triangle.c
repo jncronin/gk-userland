@@ -168,6 +168,7 @@ static void flat_rgba_triangle( GLcontext *ctx,
 /*
  * Render a smooth-shaded RGBA triangle.
  */
+__attribute__((hot))
 static void smooth_rgba_triangle( GLcontext *ctx,
 				  const SWvertex *v0,
 				  const SWvertex *v1,

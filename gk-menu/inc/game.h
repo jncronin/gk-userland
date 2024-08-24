@@ -15,6 +15,7 @@ class Game
         std::string fname;
         std::vector<std::string> args;
         std::string cwd;
+        std::string img = "img/joystick.png";
 
         int screen_w = 640;
         int screen_h = 320;

@@ -3,6 +3,8 @@
 #include <lvgl/src/drivers/lv_drivers.h>
 #include "game.h"
 #include <algorithm>
+#include <png.h>
+#include <img.h>
 
 std::vector<Game> games;
 
@@ -124,8 +126,9 @@ int main()
         lv_obj_add_style(lbtn_extra_text, &style_text, 0);
 
 
-        auto limg = lv_obj_create(lbtn_row2_cont);
+        auto limg = lv_img_create(lbtn_row2_cont);
         lv_obj_set_size(limg, 160, 120);
+        lv_img_set_src(limg, get_img(g.img));
     }
 
     while(1)

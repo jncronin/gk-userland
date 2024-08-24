@@ -289,6 +289,7 @@ static int parse_game()
     read_string("desc", &g.desc);
     read_string("fname", &g.fname);
     read_string("cwd", &g.cwd);
+    read_string("img", &g.img);
     read_int("heap_size", (int *)&g.heap_size);
     read_int("stack_size", (int *)&g.stack_size);
     read_int("screen_w", &g.screen_w);

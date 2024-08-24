@@ -70,24 +70,14 @@ const lv_image_dsc_t *get_img(const std::string &fname)
     png_read_image(png, row_pointers);
     fclose(fp);
 
-    // convert to rbg565+alpha
-    auto ret = new char[width*height*3];
+    // convert to planar
+    auto ret = new uint8_t[width*height*4];
     for(unsigned int y = 0; y < height; y++)
     {
         auto rp = row_pointers[y];
-        for(unsigned int x = 0; x < width; x++)
+        for(unsigned int x = 0; x < width * 4; x++)
         {
-            auto r = rp[x * 4];
-            auto g = rp[x * 4 + 1];
-            auto b = rp[x * 4 + 2];
-            auto a = rp[x * 4 + 3];
-
-            auto b1 = (b >> 3) | ((g & 0x7) << 5);
-            auto b2 = (g >> 5) | (r & 0xf8);
-            
-            ret[y * width * 3 + x * 3] = b1;
-            ret[y * width * 3 + x * 3 + 1] = b2;
-            ret[y * width * 3 + x * 3 + 2] = a;
+            ret[y * width * 4 + x] = rp[x];
         }
         delete[] row_pointers[y];
     }
@@ -95,12 +85,12 @@ const lv_image_dsc_t *get_img(const std::string &fname)
 
     auto id = new lv_image_dsc_t;
     id->header.magic = LV_IMAGE_HEADER_MAGIC;
-    id->header.cf = LV_COLOR_FORMAT_ARGB8565;
+    id->header.cf = LV_COLOR_FORMAT_ARGB8888;
     id->header.flags = 0;
     id->header.w = width;
     id->header.h = height;
-    id->header.stride = width * 3;
-    id->data_size = width * height * 3;
+    id->header.stride = width * 4;
+    id->data_size = width * height * 4;
     id->data = (const uint8_t *)ret;
 
     img_map[fname] = id;

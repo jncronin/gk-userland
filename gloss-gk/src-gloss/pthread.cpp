@@ -130,12 +130,12 @@ extern "C" int pthread_setschedparam(pthread_t t, int policy, const sched_param 
 
 extern "C" int sched_get_priority_min(int policy)
 {
-    return 0;
+    return deferred_call(__syscall_sched_get_priority_min, policy);
 }
 
 extern "C" int sched_get_priority_max(int policy)
 {
-    return 9;
+    return deferred_call(__syscall_sched_get_priority_max, policy);
 }
 
 int pthread_join(pthread_t thread, void **retval)

@@ -7,8 +7,7 @@
 
 extern "C" int usleep(useconds_t usec)
 {
-    usec /= 1000;
-    return deferred_call(__syscall_sleep_ms, &usec);
+    return deferred_call(__syscall_sleep_us, &usec);
 }
 
 extern "C" unsigned int sleep(unsigned int seconds)

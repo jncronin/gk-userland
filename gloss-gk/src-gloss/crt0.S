@@ -13,6 +13,8 @@ _mainCRTStartup:
 
     bl prvHeapInit
 
+    bl __gk_init_env
+
     ldr r0, =.L_fini_addr
     ldr r0, [r0]
     bl atexit

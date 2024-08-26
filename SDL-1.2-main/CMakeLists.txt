@@ -42,9 +42,9 @@ target_sources(SDLmain PRIVATE
 target_include_directories(SDLmain PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(SDL
-    INTERFACE
-        OSMesa GL)
+#target_link_libraries(SDL
+#    INTERFACE
+#        OSMesa GL)
 
 install(TARGETS SDL SDLmain)
 

@@ -61,6 +61,10 @@ cd include && make install && cd ..
 cd src-glu && make install && cd ..
 cd ../..
 
+# combine -lGL and -lOSMesa
+echo -n -e "create $SYSROOT/usr/lib/libGL2.a\naddlib $SYSROOT/usr/lib/libGL.a\naddlib $SYSROOT/usr/lib/libOSMesa.a\nsave\nend\n" | arm-none-gkos-ar -M
+mv $SYSROOT/usr/lib/libGL2.a $SYSROOT/usr/lib/libGL.a
+
 cmake $CMAKE_OPTS -DUNIX=ON -DSDL_LIBC=ON -DSDL_PTHREADS=ON -DSDL_THREADS=ON -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -S SDL2-2.28.5/ -B build/sdl2
 make -C build/sdl2 -j16 install
 

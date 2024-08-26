@@ -67,7 +67,7 @@ make -C build/sdl2 -j16 install
 cmake $CMAKE_OPTS -DUNIX=ON jpeg-9f/ -B build/jpeg
 make -C build/jpeg -j16 install
 
-cmake $CMAKE_OPTS -DUNIX=ON SDL_image-release-2.8.2/ -B build/sdl2_image
+cmake $CMAKE_OPTS -DUNIX=ON -DCMAKE_POSITION_INDEPENDENT_CODE=OFF SDL_image-release-2.8.2/ -B build/sdl2_image
 make -C build/sdl2_image -j16 install
 
 cmake $CMAKE_OPTS -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=ON -DSDL2MIXER_MIDI_TIMIDITY=ON -DSDL2MIXER_MIDI_FLUIDSYNTH=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_SAMPLES=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=OFF SDL_mixer-release-2.8.0/ -B build/sdl2_mixer

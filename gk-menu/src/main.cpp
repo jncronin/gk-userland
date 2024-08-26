@@ -125,10 +125,13 @@ int main()
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());
         lv_obj_add_style(lbtn_extra_text, &style_text, 0);
 
-
-        auto limg = lv_img_create(lbtn_row2_cont);
-        lv_obj_set_size(limg, 160, 120);
-        lv_img_set_src(limg, get_img(g.img));
+        auto img = get_img(g.img);
+        if(img)
+        {
+            auto limg = lv_img_create(lbtn_row2_cont);
+            lv_obj_set_size(limg, img->header.w, img->header.h);
+            lv_img_set_src(limg, img);
+        }
     }
 
     while(1)

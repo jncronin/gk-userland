@@ -30,7 +30,7 @@
 
 /* Wrapper around POSIX 1003.1b semaphores */
 
-#if defined(__MACOSX__) || defined(__GAMEKID__)
+#if defined(__MACOSX__)
 /* Mac OS X doesn't support sem_getvalue() as of version 10.4 */
 #include "../generic/SDL_syssem.c"
 #else

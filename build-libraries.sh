@@ -85,6 +85,17 @@ make -C build/sdl2_ttf -j16 install
 
 cmake $CMAKE_OPTS -S SDL-1.2-main/ -B build/sdl12
 make -C build/sdl12 -j16 install
+# copy SDL2s sdl-config/pkg-config scripts here
+sed 's/SDL2/SDL/g' $SYSROOT/usr/bin/sdl2-config > $SYSROOT/usr/bin/sdl-config
+chmod ugo+x $SYSROOT/usr/bin/sdl-config
+sed 's/SDL2/SDL/g' $SYSROOT/usr/lib/pkgconfig/sdl2.pc | sed 's/sdl2/sdl/g' > $SYSROOT/usr/lib/pkgconfig/sdl.pc
+chmod ugo+x $SYSROOY/usr/lib/pkgconfig/sdl.pc
+
+mkdir -p build/sdl_gfx
+cp build/sdl_gfx
+../../SDL_gfx-2.0.27/configure --host=arm-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
+make -j16 install
+cd ../..
 
 cmake $CMAKE_OPTS -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log\;cobalt -DBOOST_RUNTIME_LINK=static -S boost-1.85.0/ -B build/boost
 make -C build/boost -j16 install

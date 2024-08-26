@@ -75,9 +75,13 @@ const lv_image_dsc_t *get_img(const std::string &fname)
     for(unsigned int y = 0; y < height; y++)
     {
         auto rp = row_pointers[y];
-        for(unsigned int x = 0; x < width * 4; x++)
+        for(unsigned int x = 0; x < width * 4; x += 4)
         {
-            ret[y * width * 4 + x] = rp[x];
+            // RGBA->BGRA
+            ret[y * width * 4 + x + 0] = rp[x + 2];
+            ret[y * width * 4 + x + 1] = rp[x + 1];
+            ret[y * width * 4 + x + 2] = rp[x + 0];
+            ret[y * width * 4 + x + 3] = rp[x + 3];
         }
         delete[] row_pointers[y];
     }

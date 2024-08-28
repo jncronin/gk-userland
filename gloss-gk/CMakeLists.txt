@@ -27,6 +27,8 @@ target_include_directories(gloss-gk
 	"${CMAKE_CURRENT_SOURCE_DIR}/src-gloss"
 	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
 	"${CMAKE_CURRENT_SOURCE_DIR}/inc-gk"
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_device_h7/Include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_core/Include"
 	)
 
 set_target_properties(gloss-gk PROPERTIES PUBLIC_HEADER "gk-userlandinterface/gk_syscalls.h")

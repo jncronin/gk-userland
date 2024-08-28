@@ -5,10 +5,25 @@
 #include <deferred.h>
 #include <time.h>
 
+extern uint64_t clock_cur_us();
+
 extern "C" int usleep(useconds_t usec)
 {
     if(usec == 0) return 0;
-    return deferred_call(__syscall_sleep_us, &usec);
+    if(usec <= 10000)
+    {
+        // busy wait
+        auto now = clock_cur_us();
+        while(clock_cur_us() < (now + usec))
+        {
+            __asm__ volatile("yield\n" ::: "memory");
+        }
+        return 0;
+    }
+    else
+    {
+        return deferred_call(__syscall_sleep_us, &usec);
+    }
 }
 
 extern "C" unsigned int sleep(unsigned int seconds)

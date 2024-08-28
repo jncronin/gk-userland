@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 static void GK_GL_NotLinked()
 {
@@ -9,13 +10,11 @@ static void GK_GL_NotLinked()
 __attribute__((weak)) void OSMesaCreateContext()
 {
     GK_GL_NotLinked();
-    return 0;
 }
 
 __attribute__((weak)) void OSMesaMakeCurrent()
 {
     GK_GL_NotLinked();
-    return 0;
 }
 
 __attribute__((weak)) void OSMesaPixelStore()

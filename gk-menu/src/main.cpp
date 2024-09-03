@@ -17,10 +17,48 @@ int load_games();
 static void game_click(lv_event_t *e);
 int nrefresh = 0;
 
+// black background for loading
+const uint8_t bbg_data[640*480*3] = { 0 };
+const lv_image_dsc_t bbg {
+    .header {
+        .magic = LV_IMAGE_HEADER_MAGIC,
+        .cf = LV_COLOR_FORMAT_RGB888,
+        .flags = 0,
+        .w = 640,
+        .h = 480,
+        .stride = 640*3,
+    },
+    .data_size = 640*480*3,
+    .data = (const uint8_t *)bbg_data
+};
+
 int main()
 {
     lv_init();
-    SDL_Init(SDL_INIT_AUDIO);
+
+    auto display = lv_gk_display_create();
+    lv_display_set_default(display);
+
+    // show black background with loading text
+    list = lv_img_create(lv_screen_active());    
+    lv_obj_set_size(list, 640, 480);
+    lv_img_set_src(list, &bbg);
+    //lv_obj_add_style(list, &style_bg, 0);
+    //lv_obj_set_style_radius(list, 0, 0);
+
+    auto load_text = lv_label_create(list);
+    lv_obj_set_style_text_font(load_text,
+        &lv_font_montserrat_48, 0);
+    lv_obj_set_style_text_color(load_text, lv_color_white(), 0);
+    lv_label_set_text(load_text, "Ready Player 1...");
+    lv_obj_set_width(load_text, 640);
+    lv_obj_set_style_text_align(load_text, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_pos(load_text, 0, 200);
+
+    lv_obj_invalidate(lv_scr_act());
+    lv_timer_handler();
+
+    /*SDL_Init(SDL_INIT_AUDIO);
 
     if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == 0)
     {
@@ -43,10 +81,17 @@ int main()
     else
     {
         fprintf(stderr, "gkmenu: Mix_OpenAudio failed\n");
+    }*/
+
+    auto bg_img = get_img("gkmenu-background.png");
+    if(bg_img)
+    {
+        lv_img_set_src(list, bg_img);
+        lv_obj_invalidate(lv_scr_act());
+        lv_timer_handler();
     }
 
-    auto display = lv_gk_display_create();
-    lv_display_set_default(display);
+
     auto kbd = lv_gk_kbd_create();
 
     auto grp = lv_group_create();
@@ -81,24 +126,20 @@ int main()
     lv_style_set_border_width(&style_cont, 0);
     lv_style_set_border_opa(&style_cont, LV_OPA_TRANSP);
 
-    /* background style */
-    lv_style_t style_bg;
-    lv_style_init(&style_bg);
-    lv_style_set_bg_color(&style_bg, lv_color_black());
-    lv_style_set_border_width(&style_bg, 0);
-
     /* text styles */
     lv_style_t style_text;
     lv_style_init(&style_text);
     lv_style_set_opa(&style_text, LV_OPA_100);
     lv_style_set_text_color(&style_text, lv_color_white());
 
-    /* populate games list */
-    list = lv_obj_create(lv_screen_active());
-    lv_obj_set_size(list, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
-    lv_obj_add_style(list, &style_bg, 0);
-    lv_obj_set_style_radius(list, 0, 0);
+    lv_color_t neon_colors[] = {
+        lv_color_make(77, 238, 234),
+        lv_color_make(116, 238, 21),
+        lv_color_make(255, 231, 0),
+        lv_color_make(240, 0, 255),
+        lv_color_make(0, 30, 255)
+    };
+    constexpr auto n_neon_colors = sizeof(neon_colors) / sizeof(neon_colors[0]);
 
     for(int i = 0; i < games.size(); i++)
     {
@@ -108,23 +149,19 @@ int main()
         lv_obj_set_flex_flow(lbtn, LV_FLEX_FLOW_COLUMN);
         lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)i);
         lv_obj_set_size(lbtn, LV_PCT(100), LV_SIZE_CONTENT);
-        if(i & 1)
-        {
-            lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 0), 0);
-            lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 0), 0);
-            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUSED);
-            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 40), LV_STATE_FOCUS_KEY);
-        }
-        else
-        {
-            // 160, 0, 0 -> Hue - 15deg -> 160, 0, 40
-            // 120, 0, 0 -> Hue - 15deg -> 120, 0, 30
-            // 255, 40, 40 -> Hue - 15deg -> 255, 40, 94
-            lv_obj_set_style_bg_color(lbtn, lv_color_make(160, 0, 40), 0);
-            lv_obj_set_style_shadow_color(lbtn, lv_color_make(120, 0, 30), 0);
-            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 94), LV_STATE_FOCUSED);
-            lv_obj_set_style_outline_color(lbtn, lv_color_make(255, 40, 94), LV_STATE_FOCUS_KEY);
-        }
+
+        auto col_id = i % n_neon_colors;
+        auto col = neon_colors[col_id];
+        lv_obj_set_style_bg_color(lbtn, lv_color_black(), 0);
+        lv_obj_set_style_bg_opa(lbtn, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_shadow_color(lbtn, lv_color_black(), 0);
+        lv_obj_set_style_shadow_width(lbtn, 0, 0);
+        lv_obj_set_style_outline_width(lbtn, 8, 0);
+        lv_obj_set_style_outline_pad(lbtn, -8, 0);
+        lv_obj_set_style_outline_color(lbtn, col, 0);
+        lv_obj_set_style_outline_color(lbtn, col, LV_STATE_FOCUSED);
+        lv_obj_set_style_outline_color(lbtn, col, LV_STATE_FOCUS_KEY);
+        lv_obj_set_style_outline_opa(lbtn, LV_OPA_50, 0);
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUSED);
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUS_KEY);
 
@@ -160,6 +197,14 @@ int main()
             lv_img_set_src(limg, img);
         }
     }
+
+    lv_obj_delete(load_text);
+    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_style_pad_left(list, 16, 0);
+    lv_obj_set_style_pad_right(list, 16, 0);
+    lv_obj_set_style_pad_top(list, 16, 0);
+    lv_obj_set_style_pad_bottom(list, 16, 0);
+    lv_obj_set_style_pad_row(list, 12, 0);
 
     while(1)
     {

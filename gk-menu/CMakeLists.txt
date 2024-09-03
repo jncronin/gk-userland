@@ -13,6 +13,8 @@ find_package(Freetype REQUIRED)
 pkg_check_modules(LVGL REQUIRED lvgl)
 pkg_check_modules(PNG REQUIRED libpng)
 
+set_property(TARGET gkmenu PROPERTY CXX_STANDARD 20)
+
 file(GLOB_RECURSE GKMENU_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp

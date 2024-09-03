@@ -131,7 +131,8 @@ static int GKAUDIO_OpenDevice(_THIS, const char *devname)
     }
 
     /* Get the first buffer */
-    GK_AudioQueueBuffer(NULL, &this->hidden->mixbuf);
+    GK_AudioQueueBuffer(NULL, (void **)&this->hidden->mixbuf);
+    GK_AudioEnable(1);
 
     SDL_memset(this->hidden->mixbuf, this->spec.silence, this->spec.size);
 
@@ -150,7 +151,7 @@ static int GKAUDIO_CaptureFromDevice(_THIS, void *buffer, int buflen)
 
 static void GKAUDIO_PlayDevice(_THIS)
 {
-    GK_AudioEnable(1);
+    //GK_AudioEnable(1);
     GK_AudioQueueBuffer(this->hidden->mixbuf, (void**)&this->hidden->mixbuf);
 }
 

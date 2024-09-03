@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <png.h>
 #include <img.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include <cstdio>
 
 std::vector<Game> games;
 
@@ -17,6 +20,30 @@ int nrefresh = 0;
 int main()
 {
     lv_init();
+    SDL_Init(SDL_INIT_AUDIO);
+
+    if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == 0)
+    {
+        auto intro_music = Mix_LoadMUS("gkmenu-start.mp3");
+        if(intro_music)
+        {
+            if(Mix_PlayMusic(intro_music, 0) == -1)
+            {
+                Mix_FreeMusic(intro_music);
+                fprintf(stderr, "gkmenu: Mix_PlayMusic failed\n");
+            }
+            else
+            fprintf(stderr, "gkmenu: epic intro music playing\n");
+        }
+        else
+        {
+            fprintf(stderr, "gkmenu: Mix_PlayMusic failed\n");
+        }
+    }
+    else
+    {
+        fprintf(stderr, "gkmenu: Mix_OpenAudio failed\n");
+    }
 
     auto display = lv_gk_display_create();
     lv_display_set_default(display);
@@ -150,6 +177,7 @@ int main()
 void game_click(lv_event_t *e)
 {
     const auto &g = games[(int)e->user_data];
+    Mix_HaltMusic();
     g.Load();
     lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames
     nrefresh = 3;

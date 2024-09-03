@@ -6,6 +6,7 @@ add_executable(gkmenu)
 
 find_package(PkgConfig REQUIRED)
 find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 find_package(squirrel REQUIRED)
 find_package(Freetype REQUIRED)
 
@@ -31,7 +32,9 @@ target_include_directories(gkmenu
 
 target_link_libraries(gkmenu
     PRIVATE
-#        SDL2::SDL2
+        SDL2::SDL2-static
+        SDL2_mixer::SDL2_mixer-static
+        SDL2::SDL2-static
         squirrel::squirrel_static
         squirrel::sqstdlib_static
         ${LVGL_LIBRARIES}

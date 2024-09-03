@@ -910,11 +910,16 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 		/* If the surface is in hardware, video writes are visible
 		   as soon as they are performed, so we need to buffer them
 		 */
+#ifndef __GAMEKID__
+		/* gk framebuffer is always double buffered */
 	     (   ((flags&SDL_HWSURFACE) == SDL_SWSURFACE) &&
 				(SDL_VideoSurface->flags&SDL_HWSURFACE)) ||
 	     (   (flags&SDL_DOUBLEBUF) &&
 				(SDL_VideoSurface->flags&SDL_HWSURFACE) &&
 				!(SDL_VideoSurface->flags&SDL_DOUBLEBUF))
+#else
+		0
+#endif
 	     ) ) {
 		SDL_CreateShadowSurface(bpp);
 		if ( SDL_ShadowSurface == NULL ) {

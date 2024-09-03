@@ -263,6 +263,7 @@ static int GK_AllocHWSurface(_THIS, SDL_Surface *surface)
         MAP_PRIVATE | MAP_ANON | MAP_SYNC, 0, 0);
     if(smem == MAP_FAILED)
     {
+        surface->flags &= ~(SDL_HWSURFACE | SDL_HWACCEL);
         return -1;
     }
     surface->pixels = smem;

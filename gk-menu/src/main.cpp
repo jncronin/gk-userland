@@ -50,7 +50,7 @@ int main()
     lv_obj_set_style_text_font(load_text,
         &lv_font_montserrat_48, 0);
     lv_obj_set_style_text_color(load_text, lv_color_white(), 0);
-    lv_label_set_text(load_text, "Ready Player 1...");
+    lv_label_set_text(load_text, "READY PLAYER 1");
     lv_obj_set_width(load_text, 640);
     lv_obj_set_style_text_align(load_text, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_set_pos(load_text, 0, 200);
@@ -58,11 +58,11 @@ int main()
     lv_obj_invalidate(lv_scr_act());
     lv_timer_handler();
 
-    /*SDL_Init(SDL_INIT_AUDIO);
+    SDL_Init(SDL_INIT_AUDIO);
 
     if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == 0)
     {
-        auto intro_music = Mix_LoadMUS("gkmenu-start.mp3");
+        auto intro_music = Mix_LoadMUS("gkmenu-start.ogg");
         if(intro_music)
         {
             if(Mix_PlayMusic(intro_music, 0) == -1)
@@ -81,7 +81,7 @@ int main()
     else
     {
         fprintf(stderr, "gkmenu: Mix_OpenAudio failed\n");
-    }*/
+    }
 
     auto bg_img = get_img("gkmenu-background.png");
     if(bg_img)

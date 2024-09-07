@@ -12,6 +12,7 @@ extern "C"
 #include "_gk_scancodes.h"
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 ssize_t GK_GPUEnqueueMessages(const struct gpu_message *msgs, size_t nmsg);
@@ -48,6 +49,8 @@ int GK_AudioSetMode(int nchan, int nbits, int freq, size_t buf_size_bytes);
 int GK_AudioEnable(int enable);
 int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
 int GK_AudioWaitFree();
+
+int GK_SetLED(int led_id, uint32_t color);
 
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)
 

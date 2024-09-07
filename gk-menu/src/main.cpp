@@ -15,6 +15,7 @@ static lv_obj_t *list;
 
 int load_games();
 static void game_click(lv_event_t *e);
+static void btn_focus(lv_event_t *e);
 int nrefresh = 0;
 
 // black background for loading
@@ -171,6 +172,8 @@ int main()
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUSED);
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUS_KEY);
 
+        lv_obj_add_event_cb(lbtn, btn_focus, LV_EVENT_FOCUSED, (void *)lv_color_to_u32(col));
+
         lv_group_add_obj(grp, lbtn);
 
         auto lbtn_text = lv_label_create(lbtn);
@@ -232,4 +235,10 @@ void game_click(lv_event_t *e)
     g.Load();
     lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames
     nrefresh = 3;
+}
+
+void btn_focus(lv_event_t *e)
+{
+    auto col = (uint32_t)e->user_data;
+    GK_SetLED(1, col);
 }

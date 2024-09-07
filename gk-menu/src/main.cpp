@@ -68,7 +68,7 @@ int main()
 
     if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == 0)
     {
-        auto intro_music = Mix_LoadMUS("gkmenu-start.ogg");
+        auto intro_music = Mix_LoadMUS("gkmenu-start.mp3");
         if(intro_music)
         {
             if(Mix_PlayMusic(intro_music, 0) == -1)

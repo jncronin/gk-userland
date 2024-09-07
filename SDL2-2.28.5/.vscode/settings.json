@@ -1,14 +1,16 @@
 {
     "cmake.configureSettings": {
-        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-m4.cmake",
-        "CMAKE_INSTALL_PREFIX": "~/src/gk",
-        "CMAKE_FIND_ROOT_PATH": "~/src/gk",
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-gkos.cmake",
         "UNIX": "ON",
         "SDL_LIBC": "ON",
         "SDL_PTHREADS": "ON",
         "SDL_THREADS": "ON",
         "SDL_OPENGL": "OFF",
         "SDL_OPENGLES": "OFF"
+    },
+    "cmake.environment": {
+        "SYSROOT": "${env:HOME}/opt/gk",
+        "PATH": "${env:HOME}/opt/gk-build/bin:${env:PATH}"
     },
     "files.associations": {
         "sdl_video.h": "c",

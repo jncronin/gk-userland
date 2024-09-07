@@ -12,7 +12,7 @@
 #include <GL/osmesa.h>
 
 /* keymap from scancodes (i.e. SDL2 keys) to SDL1 SDLKey */
-static SDLKey keymap[256];
+static SDLKey keymap[GK_NUM_SCANCODES];
 
 /* Hidden "this" pointer for the video functions */
 #define _THIS	SDL_VideoDevice *this
@@ -433,20 +433,72 @@ int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)
 
 void GK_InitOSKeymap(_THIS)
 {
-    for(int i = 0; i < 256; i++)
+    for(int i = 0; i < GK_NUM_SCANCODES; i++)
     {
-        keymap[i] = i;
+        keymap[i] = SDLK_UNKNOWN;
     }
 
-    keymap[224] = SDLK_LCTRL;
-    keymap[44] = SDLK_SPACE;
-    keymap[40] = SDLK_RETURN;
-    keymap[41] = SDLK_ESCAPE;
+    for(int i = 0; i < 26; i++)
+    {
+        keymap[GK_SCANCODE_A + i] = SDLK_a + i;
+    }
+    for(int i = 0; i < 9; i++)
+    {
+        keymap[GK_SCANCODE_1 + i] = SDLK_1 + i;
+    }
+    keymap[GK_SCANCODE_0] = SDLK_0;
+    for(int i = 0; i < 9; i++)
+    {
+        keymap[GK_SCANCODE_KP_1] = SDLK_KP1 + i;
+    }
+    keymap[GK_SCANCODE_KP_0] = SDLK_KP0;
 
-    keymap[79] = SDLK_RIGHT;
-    keymap[80] = SDLK_LEFT;
-    keymap[81] = SDLK_DOWN;
-    keymap[82] = SDLK_UP;
+
+    keymap[GK_SCANCODE_LCTRL] = SDLK_LCTRL;
+    keymap[GK_SCANCODE_RCTRL] = SDLK_RCTRL;
+    keymap[GK_SCANCODE_LSHIFT] = SDLK_LSHIFT;
+    keymap[GK_SCANCODE_RSHIFT] = SDLK_RSHIFT;
+    keymap[GK_SCANCODE_LALT] = SDLK_LALT;
+    keymap[GK_SCANCODE_RALT] = SDLK_RALT;
+    keymap[GK_SCANCODE_SPACE] = SDLK_SPACE;
+    keymap[GK_SCANCODE_RETURN] = SDLK_RETURN;
+    keymap[GK_SCANCODE_ESCAPE] = SDLK_ESCAPE;
+    keymap[GK_SCANCODE_TAB] = SDLK_TAB;
+
+    keymap[GK_SCANCODE_RIGHT] = SDLK_RIGHT;
+    keymap[GK_SCANCODE_LEFT] = SDLK_LEFT;
+    keymap[GK_SCANCODE_DOWN] = SDLK_DOWN;
+    keymap[GK_SCANCODE_UP] = SDLK_UP;
+
+    for(int i = 0; i < 12; i++)
+    {
+        keymap[GK_SCANCODE_F1 + i] = SDLK_F1 + i;
+    }
+
+    keymap[GK_SCANCODE_PRINTSCREEN] = SDLK_PRINT;
+    keymap[GK_SCANCODE_PAUSE] = SDLK_PAUSE;
+    keymap[GK_SCANCODE_INSERT] = SDLK_INSERT;
+    keymap[GK_SCANCODE_DELETE] = SDLK_DELETE;
+
+    keymap[GK_SCANCODE_SLASH] = SDLK_SLASH;
+    keymap[GK_SCANCODE_BACKSLASH] = SDLK_BACKSLASH;
+
+    keymap[GK_SCANCODE_HOME] = SDLK_HOME;
+    keymap[GK_SCANCODE_PAGEUP] = SDLK_PAGEUP;
+    keymap[GK_SCANCODE_PAGEDOWN] = SDLK_PAGEDOWN;
+    keymap[GK_SCANCODE_END] = SDLK_END;
+
+    keymap[GK_SCANCODE_GRAVE] = SDLK_BACKQUOTE;
+    keymap[GK_SCANCODE_MINUS] = SDLK_MINUS;
+    keymap[GK_SCANCODE_EQUALS] = SDLK_EQUALS;
+    keymap[GK_SCANCODE_LEFTBRACKET] = SDLK_LEFTBRACKET;
+    keymap[GK_SCANCODE_RIGHTBRACKET] = SDLK_RIGHTBRACKET;
+    keymap[GK_SCANCODE_SEMICOLON] = SDLK_SEMICOLON;
+    keymap[GK_SCANCODE_APOSTROPHE] = SDLK_QUOTE;
+    keymap[GK_SCANCODE_COMMA] = SDLK_COMMA;
+    keymap[GK_SCANCODE_PERIOD] = SDLK_PERIOD;
+    keymap[GK_SCANCODE_LGUI] = SDLK_LSUPER;
+    keymap[GK_SCANCODE_APPLICATION] = SDLK_MENU;
 
     return;
 }

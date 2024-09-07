@@ -138,4 +138,10 @@ cd ../..
 cmake $CMAKE_OPTS -S lvgl-9.1.0/ -B build/lvgl9
 make -C build/lvgl9 -j 16 install
 
+mkdir -p build/mpg123
+cd build/mpg123
+../../mpg123-1.32.7/configure --host=arm-none-gkos --enable-static --disable-shared --disable-components --enable-libmpg123 --with-audio=dummy --prefix=$SYSROOT/usr
+make -j16 install
+cd ../..
+
 echo "Successfully built gk libraries in $SYSROOT"

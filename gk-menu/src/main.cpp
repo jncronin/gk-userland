@@ -46,9 +46,15 @@ int main()
     //lv_obj_add_style(list, &style_bg, 0);
     //lv_obj_set_style_radius(list, 0, 0);
 
+    lv_freetype_init(LV_FREETYPE_CACHE_FT_GLYPH_CNT);
+    const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
+        LV_FREETYPE_FONT_RENDER_MODE_BITMAP, 48,
+        LV_FREETYPE_FONT_STYLE_BOLD);
+    if(!load_font)
+        load_font = &lv_font_montserrat_48;
+
     auto load_text = lv_label_create(list);
-    lv_obj_set_style_text_font(load_text,
-        &lv_font_montserrat_48, 0);
+    lv_obj_set_style_text_font(load_text, load_font, 0);
     lv_obj_set_style_text_color(load_text, lv_color_white(), 0);
     lv_label_set_text(load_text, "READY PLAYER 1");
     lv_obj_set_width(load_text, 640);

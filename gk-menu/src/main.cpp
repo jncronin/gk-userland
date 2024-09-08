@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <cstdio>
+#include <unistd.h>
 
 std::vector<Game> games;
 
@@ -51,6 +52,25 @@ int main()
     const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
         LV_FREETYPE_FONT_RENDER_MODE_BITMAP, 48,
         LV_FREETYPE_FONT_STYLE_BOLD);
+    if(!load_font)
+    {
+        auto f = fopen("gkmenu-start-font.ttf", "rb");
+        if(f)
+        {
+            fseek(f, 0L, SEEK_END);
+            auto flen = ftell(f);
+            rewind(f);
+
+            auto fnt = new char[flen];
+            if(fnt)
+            {
+                if(fread(fnt, 1, flen, f) == flen)
+                {
+                    load_font = lv_tiny_ttf_create_data(fnt, flen, 48);
+                }
+            }
+        }
+    }
     if(!load_font)
         load_font = &lv_font_montserrat_48;
 

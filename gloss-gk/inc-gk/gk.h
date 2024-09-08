@@ -49,6 +49,7 @@ int GK_AudioSetMode(int nchan, int nbits, int freq, size_t buf_size_bytes);
 int GK_AudioEnable(int enable);
 int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
 int GK_AudioWaitFree();
+int GK_AudioSetFreq(int freq);
 
 int GK_SetLED(int led_id, uint32_t color);
 

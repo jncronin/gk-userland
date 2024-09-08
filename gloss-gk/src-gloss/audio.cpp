@@ -27,3 +27,8 @@ int GK_AudioWaitFree()
 {
     return deferred_call(__syscall_audiowaitfree, (void*)NULL);
 }
+
+int GK_AudioSetFreq(int freq)
+{
+    return deferred_call(__syscall_audiosetfreq, (void*)freq);
+}

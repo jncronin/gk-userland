@@ -61,3 +61,13 @@ extern "C" int munmap(void *addr, size_t len)
     __syscall_memdealloc_params p { len, addr };
     return deferred_call(__syscall_memdealloc, &p);
 }
+
+extern "C" int mprotect(void *addr, size_t len, int prot)
+{
+    __syscall_setprot_params p2 { addr,
+        (prot & PROT_READ) ? 1 : 0,
+        (prot & PROT_WRITE) ? 1 : 0,
+        (prot & PROT_EXEC) ? 1 : 0
+    };
+    return deferred_call(__syscall_setprot, &p2);
+}

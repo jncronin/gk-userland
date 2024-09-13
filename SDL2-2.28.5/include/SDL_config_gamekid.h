@@ -92,4 +92,13 @@ typedef unsigned int uintptr_t;
 /* Enable the dummy filesystem driver (src/filesystem/dummy/\*.c) */
 #define SDL_FILESYSTEM_DUMMY  1
 
+
+#define HAVE_MALLOC     1
+#define HAVE_CALLOC     1
+#define HAVE_REALLOC    1
+#define HAVE_FREE       1
+#define STDC_HEADERS    1
+#define HAVE_NANOSLEEP  1
+#define HAVE_CLOCK_GETTIME 1
+
 #endif /* SDL_config_minimal_h_ */

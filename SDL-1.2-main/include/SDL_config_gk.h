@@ -71,6 +71,6 @@ typedef unsigned long uintptr_t;
 #define HAVE_FREE       1
 #define STDC_HEADERS    1
 #define HAVE_NANOSLEEP  1
-
+#define HAVE_CLOCK_GETTIME 1
 
 #endif /* _SDL_config_minimal_h */

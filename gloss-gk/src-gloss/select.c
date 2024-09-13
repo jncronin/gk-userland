@@ -20,6 +20,6 @@ int select(int nfds, fd_set *readfds,
         return -1;
     }
 
-    usleep(timeout->tv_sec * 1000000 + timeout->tv_usec);
+    return usleep(timeout->tv_sec * 1000000 + timeout->tv_usec);
 }
 

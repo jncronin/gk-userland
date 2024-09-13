@@ -70,5 +70,7 @@ typedef unsigned long uintptr_t;
 #define HAVE_REALLOC    1
 #define HAVE_FREE       1
 #define STDC_HEADERS    1
+#define HAVE_NANOSLEEP  1
+
 
 #endif /* _SDL_config_minimal_h */

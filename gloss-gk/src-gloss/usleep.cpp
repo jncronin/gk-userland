@@ -10,11 +10,11 @@ extern uint64_t clock_cur_us();
 extern "C" int usleep(useconds_t usec)
 {
     if(usec == 0) return 0;
-    if(usec <= 10000)
+    if(usec < 1000)
     {
         // busy wait
         auto now = clock_cur_us();
-        while(clock_cur_us() < (now + usec))
+        while(clock_cur_us() < (now + (uint64_t)usec))
         {
             __asm__ volatile("yield\n" ::: "memory");
         }
@@ -22,7 +22,8 @@ extern "C" int usleep(useconds_t usec)
     }
     else
     {
-        return deferred_call(__syscall_sleep_us, &usec);
+        uint64_t _usec = usec;
+        return deferred_call(__syscall_sleep_us, &_usec);
     }
 }
 
@@ -83,35 +84,32 @@ extern "C" int nanosleep(const timespec *duration, timespec *rem)
         errno = EINVAL;
         return -1;
     }
-    timespec startt, exp_endt, act_endt;
-    clock_gettime(CLOCK_MONOTONIC, &startt);
-    exp_endt = startt + *duration;
 
-    if(duration->tv_sec == 0 && duration->tv_nsec < 2000000)
+    if(duration->tv_sec == 0 && duration->tv_nsec < 1000000)
     {
-        // <2 ms just do busy wait
-        do
-        {
-            clock_gettime(CLOCK_MONOTONIC, &act_endt);
-        } while(act_endt < exp_endt);
+        // <1 ms just do busy wait
+        usleep(duration->tv_nsec / 1000 + 1);
+        return 0;
     }
-    else
-    {
-        // use sleep_ms
-        unsigned int msec = (unsigned int)(duration->tv_nsec / 1000000) +
-            (unsigned int)(duration->tv_sec * 1000);
-        deferred_call(__syscall_sleep_ms, &msec);
-        clock_gettime(CLOCK_MONOTONIC, &act_endt);
-    }
-    if(act_endt < exp_endt)
+    
+    // else use sleep functions
+    auto start_time = clock_cur_us();
+
+    // use sleep_us
+    uint64_t usec = (uint64_t)(duration->tv_sec * 1000) +
+        (uint64_t)(duration->tv_nsec / 1000);
+    deferred_call(__syscall_sleep_us, &usec);
+    auto now_time = clock_cur_us();
+    if(now_time < (start_time + usec))
     {
         if(rem)
-            *rem = exp_endt - act_endt;
+        {
+            auto diff = start_time + usec - now_time;
+            rem->tv_sec = diff / 1000000ULL;
+            rem->tv_nsec = (diff % 1000000ULL) * 1000ULL;
+        }
         errno = EINTR;
         return -1;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }

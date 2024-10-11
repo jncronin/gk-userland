@@ -34,7 +34,7 @@ const lv_image_dsc_t bbg {
     .data = (const uint8_t *)bbg_data
 };
 
-int main()
+int main(int argc, char *argv[])
 {
     lv_init();
 
@@ -234,6 +234,19 @@ int main()
     lv_obj_set_style_pad_top(list, 16, 0);
     lv_obj_set_style_pad_bottom(list, 16, 0);
     lv_obj_set_style_pad_row(list, 12, 0);
+
+    /* Load a default game, if requested */
+    if(argc > 1 && argv[1])
+    {
+        std::string gname(argv[1]);
+        for(const auto &g : games)
+        {
+            if(g.name == gname)
+            {
+                g.Load();
+            }
+        }
+    }
 
     while(1)
     {

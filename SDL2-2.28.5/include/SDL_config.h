@@ -49,7 +49,7 @@
 #include "SDL_config_emscripten.h"
 #elif defined(__NGAGE__)
 #include "SDL_config_ngage.h"
-#elif defined(__GAMEKID)
+#elif defined(__GAMEKID__)
 #include "SDL_config_gamekid.h"
 #else
 /* This is a minimal configuration just to get SDL running on new platforms. */

@@ -64,8 +64,8 @@ template<typename T> int deferred_call_with_retry(syscall_no sno, T arg, const t
             return ret;
         
         timespec curt;
-        __syscall_clock_gettime_params p { CLOCK_REALTIME, &curt };
-        deferred_call(__syscall_clock_gettime, &p);
+        void clock_get_now(struct timespec *tp);
+        clock_get_now(&curt);
 
         if((curt.tv_sec > abstime->tv_sec) ||
             ((curt.tv_sec == abstime->tv_sec) && (curt.tv_nsec > abstime->tv_nsec)))

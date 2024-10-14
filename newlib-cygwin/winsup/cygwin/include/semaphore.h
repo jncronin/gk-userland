@@ -9,6 +9,7 @@
    details. */
 
 #include <sys/types.h>
+#include <time.h>
 
 #ifndef _SEMAPHORE_H
 #define _SEMAPHORE_H

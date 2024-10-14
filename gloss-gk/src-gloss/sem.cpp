@@ -73,6 +73,17 @@ extern "C" int sem_timedwait(sem_t *sem, const timespec *abstime)
     return deferred_call_with_retry(__syscall_sem_trywait, &p, abstime);
 }
 
+extern "C" int sem_clockwait (sem_t *sem, clockid_t clock_id, const struct timespec *abstime)
+{
+    if(!sem || !abstime)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = sem, .clock_id = (int)clock_id, .until = abstime };
+    return deferred_call_with_retry(__syscall_sem_trywait, &p, abstime);
+}
+
 extern "C" int sem_trywait(sem_t *sem)
 {
     if(!sem)

@@ -52,6 +52,8 @@ arm-none-gkos-strip -S $SYSROOT/usr/bin/tftpd
 arm-none-gkos-strip -S $SYSROOT/usr/bin/sh
 arm-none-gkos-strip -S $SYSROOT/usr/bin/echo
 
+cp -dpR nemagfx/inc/* $SYSROOT/usr/include
+cp -dpR nemagfx/lib/* $SYSROOT/usr/lib
 
 mkdir -p build/mesa4
 cd build/mesa4

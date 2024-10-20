@@ -51,6 +51,8 @@ int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
 int GK_AudioWaitFree();
 int GK_AudioSetFreq(int freq);
 
+int GK_NemaEnable(void **rb);
+
 int GK_SetLED(int led_id, uint32_t color);
 
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)

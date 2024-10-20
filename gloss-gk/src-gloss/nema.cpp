@@ -10,27 +10,22 @@
 
 static pthread_mutex_t nema_mutexes[MUTEX_MAX + 1];
 static sem_t nema_irq_sem;
-static nema_ringbuffer_t nema_rb;
 #define GPU2D_BASE 0x52014000U
 #define GPU2D_CLID                      (0x148U)   /*!< GPU2D Last Command List Identifier Register Offset */
 
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 void clock_get_now_monotonic(struct timespec *tp);
 
-int GK_NemaEnable(void **rb)
+int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex)
 {
     __syscall_nemaenable_params p {
         .mutexes = nema_mutexes,
         .nmutexes = MUTEX_MAX + 1,
-        .rb = &nema_rb,
-        .irq_sem = &nema_irq_sem
+        .rb = rb,
+        .irq_sem = &nema_irq_sem,
+        .eof_mutex = eof_mutex
     };
     auto ret = deferred_call(__syscall_nemaenable, &p);
-    if(ret == 0)
-    {
-        if(rb)
-            *rb = &nema_rb;
-    }
     return ret;
 }
 

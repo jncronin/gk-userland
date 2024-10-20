@@ -51,7 +51,7 @@ int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
 int GK_AudioWaitFree();
 int GK_AudioSetFreq(int freq);
 
-int GK_NemaEnable(void **rb);
+int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex);
 
 int GK_SetLED(int led_id, uint32_t color);
 

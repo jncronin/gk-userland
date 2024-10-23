@@ -31,6 +31,8 @@ static void GK_GL_DeleteContext(_THIS, SDL_GLContext context);
 static int GK_GL_LoadLibrary(_THIS, const char *path);
 static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
+void OSMesaNemaEndFrame(OSMesaContext ctx);
+
 typedef struct
 {
     SDL_Window *sdl_window;
@@ -306,6 +308,7 @@ int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
 int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
     SDL_Rect act_rect;
+    GK_GPU_CommandList(gmsg, 2);
 
     if(numrects <= 0)
     {
@@ -341,7 +344,6 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
         act_rect.h = b - t;
     }
 
-    GK_GPU_CommandList(gmsg, 2);
     GK_GPUFlipBuffers(&gmsg, &window->surface->pixels);
     GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
     GK_GPUFlush(&gmsg);
@@ -435,6 +437,8 @@ int GK_GL_SwapWindow(_THIS, SDL_Window *window)
     void *next_fb;
     GK_Window *gk_window = window->driverdata;
     GK_GPU_CommandList(cmds, 4);
+
+    OSMesaNemaEndFrame(gk_window->gl_ctx);
 
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);

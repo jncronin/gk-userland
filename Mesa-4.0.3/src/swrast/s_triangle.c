@@ -31,6 +31,8 @@
  * functions to draw triangles.
  */
 
+/* Additions to use nemagfx for https://github.com/jncronin/gk-userland */
+
 #include "glheader.h"
 #include "context.h"
 #include "colormac.h"
@@ -49,7 +51,7 @@
 #include "s_triangle.h"
 #include "s_trispan.h"
 
-
+#include <nema_core.h>
 
 GLboolean _mesa_cull_triangle( GLcontext *ctx,
 			    const SWvertex *v0,
@@ -140,6 +142,16 @@ static void flat_rgba_triangle( GLcontext *ctx,
 				const SWvertex *v1,
 				const SWvertex *v2 )
 {
+   /*fprintf(stderr, "flat_rgba_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);*/
+
+   nema_fill_triangle_f(v0->win[0], v0->win[1], v1->win[0], v1->win[1],
+      v2->win[0], v2->win[1], nema_rgba(v2->color[0], v2->color[1], v2->color[2], 255));
+   
+   return;
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -174,6 +186,11 @@ static void smooth_rgba_triangle( GLcontext *ctx,
 				  const SWvertex *v1,
 				  const SWvertex *v2 )
 {
+   fprintf(stderr, "smooth_rgba_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -222,6 +239,12 @@ static void simple_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+   fprintf(stderr, "simple_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_INT_TEX 1
 #define S_SCALE twidth
 #define T_SCALE theight
@@ -276,6 +299,12 @@ static void simple_z_textured_triangle( GLcontext *ctx,
 					const SWvertex *v1,
 					const SWvertex *v2 )
 {
+   fprintf(stderr, "simple_z_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
 #define INTERP_INT_TEX 1
@@ -620,6 +649,12 @@ static void affine_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+   fprintf(stderr, "affine_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -916,6 +951,12 @@ static void persp_textured_triangle( GLcontext *ctx,
 				     const SWvertex *v1,
 				     const SWvertex *v2 )
 {
+   fprintf(stderr, "persp_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1320,6 +1361,12 @@ static void general_textured_triangle( GLcontext *ctx,
 				       const SWvertex *v1,
 				       const SWvertex *v2 )
 {
+   fprintf(stderr, "general_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1391,6 +1438,12 @@ static void general_textured_spec_triangle( GLcontext *ctx,
 					    const SWvertex *v1,
 					    const SWvertex *v2 )
 {
+   fprintf(stderr, "general_textured_spec_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1424,6 +1477,12 @@ __attribute__((hot)) static void lambda_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+   fprintf(stderr, "lambda_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1458,6 +1517,12 @@ static void lambda_textured_spec_triangle( GLcontext *ctx,
 					   const SWvertex *v1,
 					   const SWvertex *v2 )
 {
+   fprintf(stderr, "lambda_textured_spec_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1492,6 +1557,11 @@ lambda_multitextured_triangle( GLcontext *ctx,
                                const SWvertex *v1,
                                const SWvertex *v2 )
 {
+   fprintf(stderr, "lambda_multitextured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+      v0->win[0], v0->win[1], v0->win[2],
+      v1->win[0], v1->win[1], v1->win[2],
+      v2->win[0], v2->win[1], v2->win[2],
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
 
 #define INTERP_Z 1
 #define INTERP_FOG 1

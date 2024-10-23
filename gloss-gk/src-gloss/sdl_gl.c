@@ -26,3 +26,8 @@ __attribute__((weak)) void OSMesaDestroyContext()
 {
     GK_GL_NotLinked();
 }
+
+__attribute__((weak)) void OSMesaNemaEndFrame()
+{
+    GK_GL_NotLinked();
+}

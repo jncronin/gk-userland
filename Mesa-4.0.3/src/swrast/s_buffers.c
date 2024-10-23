@@ -36,7 +36,7 @@
 #include "s_masking.h"
 #include "s_stencil.h"
 
-
+#include <nema_core.h>
 
 
 /*
@@ -111,6 +111,8 @@ clear_color_buffer(GLcontext *ctx)
       GLchan span[MAX_WIDTH][4];
       GLint i;
 
+      nema_clear(nema_rgba(r, g, b, a));
+#if 0
       ASSERT(*((GLuint *) &ctx->Color.ColorMask) == 0xffffffff);
 
       for (i = 0; i < width; i++) {
@@ -123,6 +125,7 @@ clear_color_buffer(GLcontext *ctx)
          (*swrast->Driver.WriteRGBASpan)( ctx, width, x, y + i,
                                        (CONST GLchan (*)[4]) span, NULL );
       }
+#endif
    }
    else {
       /* Color index mode */

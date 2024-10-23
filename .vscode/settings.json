@@ -40,7 +40,11 @@
         "variant": "c",
         "regex": "c",
         "compare": "c",
-        "dynamic_bitset": "c"
+        "dynamic_bitset": "c",
+        "s_aatritemp.h": "c",
+        "s_tritemp.h": "c",
+        "span": "c",
+        "spanstream": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

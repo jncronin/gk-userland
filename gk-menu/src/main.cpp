@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     lv_freetype_init(LV_FREETYPE_CACHE_FT_GLYPH_CNT);
     const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
-        LV_FREETYPE_FONT_RENDER_MODE_BITMAP, 48,
+        LV_FREETYPE_FONT_RENDER_MODE_BITMAP, 48/v_scale,
         LV_FREETYPE_FONT_STYLE_BOLD);
     if(!load_font)
     {
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
             {
                 if(fread(fnt, 1, flen, f) == flen)
                 {
-                    load_font = lv_tiny_ttf_create_data(fnt, flen, 48);
+                    load_font = lv_tiny_ttf_create_data(fnt, flen, 48/v_scale);
                 }
             }
         }

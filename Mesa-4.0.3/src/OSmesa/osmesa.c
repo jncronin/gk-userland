@@ -525,8 +525,13 @@ GLAPI void GLAPIENTRY OSMesaNemaEndFrame(OSMesaContext ctx)
 {
    nema_ext_hold_assert(0, 0);
    nema_cl_unbind();
-   pthread_mutex_lock(&ctx->nema_m);
+   //pthread_mutex_lock(&ctx->nema_m);
    nema_cl_submit(&ctx->nema_cl);
+}
+
+GLAPI void GLAPIENTRY nema_rebind_framebuffer(OSMesaContext ctx)
+{
+   nema_bind_dst_tex(ctx->buffer, ctx->width, ctx->height, ctx->nema_bb_format, -1);
 }
 
 int32_t nema_sys_init()

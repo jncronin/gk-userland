@@ -142,14 +142,20 @@ static void flat_rgba_triangle( GLcontext *ctx,
 				const SWvertex *v1,
 				const SWvertex *v2 )
 {
-   /*fprintf(stderr, "flat_rgba_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+   /* fprintf(stderr, "flat_rgba_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
       v0->win[0], v0->win[1], v0->win[2],
       v1->win[0], v1->win[1], v1->win[2],
       v2->win[0], v2->win[1], v2->win[2],
-      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);*/
+      v2->color[0], v2->color[1], v2->color[2], v2->color[3]); */
+
+   GLchan r = (GLchan)((((int)v0->color[0]) + ((int)v1->color[0]) + ((int)v2->color[0])) / 3);
+   GLchan g = (GLchan)((((int)v0->color[1]) + ((int)v1->color[1]) + ((int)v2->color[1])) / 3);
+   GLchan b = (GLchan)((((int)v0->color[2]) + ((int)v1->color[2]) + ((int)v2->color[2])) / 3);
+   GLchan a = (GLchan)((((int)v0->color[3]) + ((int)v1->color[3]) + ((int)v2->color[3])) / 3);
 
    nema_fill_triangle_f(v0->win[0], v0->win[1], v1->win[0], v1->win[1],
-      v2->win[0], v2->win[1], nema_rgba(v2->color[0], v2->color[1], v2->color[2], 255));
+      v2->win[0], v2->win[1], nema_rgba(r, g, b,
+      ctx->Color.ColorMask[3] ? a : 255));
    
    return;
 #define INTERP_Z 1

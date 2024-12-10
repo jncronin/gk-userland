@@ -75,6 +75,8 @@ lv_display_t *lv_gk_display_create()
             return NULL;
     }
 
+    lv_display_set_resolution(disp, w, h);
+    
     {
         /* Get first framebuffer */
         void *fb;

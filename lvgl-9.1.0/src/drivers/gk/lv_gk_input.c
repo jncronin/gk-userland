@@ -2,6 +2,8 @@
 #include "../../stdlib/lv_string.h"
 #include "lv_gk_input.h"
 #include "../../indev/lv_indev.h"
+#include "../../core/lv_obj.h"
+#include "../../display/lv_display.h"
 #include "gk.h"
 #include "_gk_event.h"
 
@@ -128,6 +130,10 @@ void gk_update_state()
                 if(d_mouse.point.x >= 640) d_mouse.point.x = 639;
                 if(d_mouse.point.y < 0) d_mouse.point.y = 0;
                 if(d_mouse.point.y >= 480) d_mouse.point.y = 479;
+                break;
+
+            case RefreshScreen:
+                lv_obj_invalidate(lv_screen_active());
                 break;
 
             default:

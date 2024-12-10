@@ -43,10 +43,13 @@ int main(int argc, char *argv[])
 
     // show black background with loading text
     list = lv_img_create(lv_screen_active());    
-    lv_obj_set_size(list, 640, 480);
+    lv_obj_set_size(list, lv_display_get_horizontal_resolution(display), lv_display_get_vertical_resolution(display));
     lv_img_set_src(list, &bbg);
     //lv_obj_add_style(list, &style_bg, 0);
     //lv_obj_set_style_radius(list, 0, 0);
+
+    auto h_scale = 640 / lv_display_get_horizontal_resolution(display);
+    auto v_scale = 480 / lv_display_get_horizontal_resolution(display);
 
     lv_freetype_init(LV_FREETYPE_CACHE_FT_GLYPH_CNT);
     const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
@@ -78,9 +81,9 @@ int main(int argc, char *argv[])
     lv_obj_set_style_text_font(load_text, load_font, 0);
     lv_obj_set_style_text_color(load_text, lv_color_white(), 0);
     lv_label_set_text(load_text, "READY PLAYER 1");
-    lv_obj_set_width(load_text, 640);
+    lv_obj_set_width(load_text, lv_display_get_horizontal_resolution(display));
     lv_obj_set_style_text_align(load_text, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_pos(load_text, 0, 200);
+    lv_obj_set_pos(load_text, 0, 200/v_scale);
 
     lv_obj_invalidate(lv_scr_act());
     lv_timer_handler();
@@ -114,6 +117,7 @@ int main(int argc, char *argv[])
     if(bg_img)
     {
         lv_img_set_src(list, bg_img);
+        lv_img_set_zoom(list, 256 / h_scale);
         lv_obj_invalidate(lv_scr_act());
         lv_timer_handler();
     }
@@ -124,6 +128,8 @@ int main(int argc, char *argv[])
     auto grp = lv_group_create();
     lv_indev_set_group(kbd, grp);
     lv_group_set_wrap(grp, false);
+
+    auto touch = lv_gk_touchscreen_create();
 
     load_games();
     std::sort(games.begin(), games.end(),
@@ -183,8 +189,8 @@ int main(int argc, char *argv[])
         lv_obj_set_style_bg_opa(lbtn, LV_OPA_TRANSP, 0);
         lv_obj_set_style_shadow_color(lbtn, lv_color_black(), 0);
         lv_obj_set_style_shadow_width(lbtn, 0, 0);
-        lv_obj_set_style_outline_width(lbtn, 8, 0);
-        lv_obj_set_style_outline_pad(lbtn, -8, 0);
+        lv_obj_set_style_outline_width(lbtn, 8/h_scale, 0);
+        lv_obj_set_style_outline_pad(lbtn, -8/h_scale, 0);
         lv_obj_set_style_outline_color(lbtn, col, 0);
         lv_obj_set_style_outline_color(lbtn, col, LV_STATE_FOCUSED);
         lv_obj_set_style_outline_color(lbtn, col, LV_STATE_FOCUS_KEY);
@@ -222,18 +228,19 @@ int main(int argc, char *argv[])
         if(img)
         {
             auto limg = lv_img_create(lbtn_row2_cont);
-            lv_obj_set_size(limg, img->header.w, img->header.h);
+            lv_obj_set_size(limg, img->header.w/h_scale, img->header.h/v_scale);
             lv_img_set_src(limg, img);
+            lv_img_set_zoom(limg, 256/h_scale);
         }
     }
 
     lv_obj_delete(load_text);
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_style_pad_left(list, 16, 0);
-    lv_obj_set_style_pad_right(list, 16, 0);
-    lv_obj_set_style_pad_top(list, 16, 0);
-    lv_obj_set_style_pad_bottom(list, 16, 0);
-    lv_obj_set_style_pad_row(list, 12, 0);
+    lv_obj_set_style_pad_left(list, 16/h_scale, 0);
+    lv_obj_set_style_pad_right(list, 16/h_scale, 0);
+    lv_obj_set_style_pad_top(list, 16/v_scale, 0);
+    lv_obj_set_style_pad_bottom(list, 16/v_scale, 0);
+    lv_obj_set_style_pad_row(list, 12/v_scale, 0);
 
     /* Load a default game, if requested */
     if(argc > 1 && argv[1])

@@ -108,14 +108,13 @@ void gk_update_state()
                 d_kbd.state = LV_INDEV_STATE_RELEASED;
                 break;
             case MouseDown:
-                if(ev.mouse_data.buttons & 0x1)
-                    d_mouse.state = LV_INDEV_STATE_PRESSED;
-                break;
             case MouseUp:
-                if(ev.mouse_data.buttons & 0x1)
-                    d_mouse.state = LV_INDEV_STATE_RELEASED;
-                break;
             case MouseMove:
+                if(ev.mouse_data.buttons & 0x1)
+                {
+                    d_mouse.state = (ev.type == MouseUp) ? LV_INDEV_STATE_RELEASED : LV_INDEV_STATE_PRESSED;
+                }
+
                 if(ev.mouse_data.is_rel)
                 {
                     d_mouse.point.x += ev.mouse_data.x;
@@ -130,6 +129,7 @@ void gk_update_state()
                 if(d_mouse.point.x >= 640) d_mouse.point.x = 639;
                 if(d_mouse.point.y < 0) d_mouse.point.y = 0;
                 if(d_mouse.point.y >= 480) d_mouse.point.y = 479;
+
                 break;
 
             case RefreshScreen:

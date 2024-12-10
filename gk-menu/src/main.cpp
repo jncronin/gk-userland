@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     //lv_obj_set_style_radius(list, 0, 0);
 
     auto h_scale = 640 / lv_display_get_horizontal_resolution(display);
-    auto v_scale = 480 / lv_display_get_horizontal_resolution(display);
+    auto v_scale = 480 / lv_display_get_vertical_resolution(display);
 
     lv_freetype_init(LV_FREETYPE_CACHE_FT_GLYPH_CNT);
     const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     lv_indev_set_group(kbd, grp);
     lv_group_set_wrap(grp, false);
 
-    auto touch = lv_gk_touchscreen_create();
+    auto touch = lv_gk_mouse_create();
 
     load_games();
     std::sort(games.begin(), games.end(),

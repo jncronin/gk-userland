@@ -18,7 +18,7 @@ struct passwd *getpwuid(uid_t uid)
         case 0:
             retval.pw_name = "root";
             retval.pw_dir = "/root";
-            retval.pw_passwd = "";
+            retval.pw_passwd = "00root       ";
             retval.pw_uid = 0;
             retval.pw_gid = 0;
             retval.pw_gecos = "";
@@ -28,7 +28,7 @@ struct passwd *getpwuid(uid_t uid)
         case 1:
             retval.pw_name = "user";
             retval.pw_dir = "/home/user";
-            retval.pw_passwd = "";
+            retval.pw_passwd = "00user       ";
             retval.pw_uid = 1;
             retval.pw_gid = 1;
             retval.pw_gecos = "";

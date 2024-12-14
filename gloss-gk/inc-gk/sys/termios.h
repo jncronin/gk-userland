@@ -39,6 +39,8 @@ int     tcsetattr(int, int, const struct termios *);
 #define ICANON          16
 #define ISIG            32
 #define IEXTEN          64
+#define NOFLSH          128
+#define TOSTOP          256
 
 /* c_iflag constants */
 #define IXON            1
@@ -93,6 +95,11 @@ int     tcsetattr(int, int, const struct termios *);
 #define VTIME           11
 #define VSTART          12
 #define VSTOP           13
+#define VQUIT           14
+#define VERASE          15
+#define VKILL           16
+#define VEOL            17
+#define VSUSP           18
 
 #define B0              0
 #define B50             1

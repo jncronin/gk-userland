@@ -9,7 +9,6 @@
 
 static void gk_kbd_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
 static void gk_mouse_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
-static void gk_touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
 static void gk_update_state();
 static enum _lv_key_t gk_key_to_lv(unsigned short gkkey);
 
@@ -19,7 +18,6 @@ void lv_gk_register_inputs()
 {
     lv_gk_kbd_create();
     lv_gk_mouse_create();
-    lv_gk_touchscreen_create();
 }
 
 lv_indev_t *lv_gk_kbd_create()
@@ -51,21 +49,6 @@ lv_indev_t *lv_gk_mouse_create()
     return indev;
 }
 
-lv_indev_t *lv_gk_touchscreen_create()
-{
-    lv_indev_t *indev = lv_indev_create();
-    if(indev == NULL) return NULL;
-
-    d_touch.point.x = 0;
-    d_touch.point.y = 0;
-    d_touch.state = 0;
-
-    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
-    lv_indev_set_read_cb(indev, gk_touch_read_cb);
-
-    return indev;
-}
-
 void gk_kbd_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 {
     gk_update_state();
@@ -81,15 +64,6 @@ void gk_mouse_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
     data->point.x = d_mouse.point.x;
     data->point.y = d_mouse.point.y;
     data->state = d_mouse.state;
-}
-
-void gk_touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
-{
-    gk_update_state();
-
-    data->point.x = d_touch.point.x;
-    data->point.y = d_touch.point.y;
-    data->state = d_touch.state;
 }
 
 void gk_update_state()

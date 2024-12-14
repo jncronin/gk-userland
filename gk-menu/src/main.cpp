@@ -19,6 +19,9 @@ static void game_click(lv_event_t *e);
 static void btn_focus(lv_event_t *e);
 int nrefresh = 0;
 
+// fonts
+const lv_font_t *fnt_big, *fnt_mid, *fnt_small;
+
 // black background for loading
 const uint8_t bbg_data[640*480*3] = { 0 };
 const lv_image_dsc_t bbg {
@@ -51,6 +54,19 @@ int main(int argc, char *argv[])
     auto h_scale = 640 / lv_display_get_horizontal_resolution(display);
     auto v_scale = 480 / lv_display_get_vertical_resolution(display);
 
+    if(v_scale == 1)
+    {
+        fnt_big = &lv_font_montserrat_48;
+        fnt_mid = &lv_font_montserrat_24;
+        fnt_small = &lv_font_montserrat_14;
+    }
+    else
+    {
+        fnt_big = &lv_font_montserrat_24;
+        fnt_mid = &lv_font_montserrat_14;
+        fnt_small = &lv_font_montserrat_10;
+    }
+
     lv_freetype_init(LV_FREETYPE_CACHE_FT_GLYPH_CNT);
     const lv_font_t *load_font = lv_freetype_font_create("gkmenu-start-font.ttf",
         LV_FREETYPE_FONT_RENDER_MODE_BITMAP, 48/v_scale,
@@ -75,7 +91,7 @@ int main(int argc, char *argv[])
         }
     }
     if(!load_font)
-        load_font = &lv_font_montserrat_48;
+        load_font = fnt_big;
 
     auto load_text = lv_label_create(list);
     lv_obj_set_style_text_font(load_text, load_font, 0);
@@ -203,7 +219,7 @@ int main(int argc, char *argv[])
         lv_group_add_obj(grp, lbtn);
 
         auto lbtn_text = lv_label_create(lbtn);
-        lv_obj_set_style_text_font(lbtn_text, &lv_font_montserrat_24, 0);
+        lv_obj_set_style_text_font(lbtn_text, fnt_mid, 0);
         lv_obj_set_size(lbtn_text, LV_PCT(100), LV_SIZE_CONTENT);
         lv_label_set_text(lbtn_text, g.name.c_str());
         lv_obj_add_style(lbtn_text, &style_text, 0);
@@ -219,6 +235,7 @@ int main(int argc, char *argv[])
         lv_obj_add_style(lbtn_row2_cont, &style_cont, 0);
 
         auto lbtn_extra_text = lv_label_create(lbtn_row2_cont);
+        lv_obj_set_style_text_font(lbtn_extra_text, fnt_small, 0);
         lv_obj_set_height(lbtn_extra_text, LV_SIZE_CONTENT);
         lv_obj_set_flex_grow(lbtn_extra_text, 1);
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());

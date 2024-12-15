@@ -292,6 +292,7 @@ static int parse_game()
     read_string("img", &g.img);
     read_int("heap_size", (int *)&g.heap_size);
     read_int("stack_size", (int *)&g.stack_size);
+    read_int("graphics_texture_size", (int *)&g.graphics_texture_size);
     read_int("screen_w", &g.screen_w);
     read_int("screen_h", &g.screen_h);
     read_int("screen_pf", &g.screen_pf);
@@ -316,6 +317,14 @@ static int parse_game()
     bool tij = g.keymap.tilt_is_joystick != 0;
     read_bool("tilt_is_joystick", &tij);
     g.keymap.tilt_is_joystick = tij ? 1 : 0;
+
+    bool jij = g.keymap.joystick_is_joystick != 0;
+    read_bool("joystick_is_joystick", &jij);
+    g.keymap.joystick_is_joystick = jij ? 1 : 0;
+
+    bool tim = g.keymap.touch_is_mouse != 0;
+    read_bool("touch_is_mouse", &tim);
+    g.keymap.touch_is_mouse = tim ? 1 : 0;
 
     read_string_array("params", &g.args);
 

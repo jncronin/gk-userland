@@ -24,6 +24,7 @@ void Game::Load() const
     pcinfo.pixel_format = screen_pf;
     pcinfo.with_focus = 1;
     pcinfo.keymap = keymap;
+    pcinfo.graphics_texture_size = graphics_texture_size;
 
     pid_t cpid;
     if(GK_CreateProcess(fname.c_str(), &pcinfo, &cpid) < 0)

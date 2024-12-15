@@ -1,5 +1,5 @@
 #define SDL_PrivateGLData osmesa_context
-
+#define private_hwdata GKSurfaceData
 
 #include "SDL_config.h"
 #include "SDL.h"
@@ -10,6 +10,13 @@
 #include "gk.h"
 #include <sys/mman.h>
 #include <GL/osmesa.h>
+#include <unistd.h>
+#include <string.h>
+
+struct GKSurfaceData
+{
+    int in_cache;
+};
 
 /* keymap from scancodes (i.e. SDL2 keys) to SDL1 SDLKey */
 static SDLKey keymap[GK_NUM_SCANCODES];
@@ -268,6 +275,15 @@ static int GK_AllocHWSurface(_THIS, SDL_Surface *surface)
     }
     surface->pixels = smem;
     surface->flags |= (SDL_HWSURFACE | SDL_PREALLOC | SDL_HWACCEL);
+
+    surface->hwdata = SDL_malloc(sizeof(struct GKSurfaceData));
+    if(surface->hwdata == NULL)
+    {
+        munmap(smem, surface->h * surface->pitch);
+        memset(surface->hwdata, 0, sizeof(struct GKSurfaceData));
+        ((struct GKSurfaceData *)surface->hwdata)->in_cache = 1;
+    }
+
     return 0;
 }
 
@@ -277,24 +293,76 @@ static void GK_FreeHWSurface(_THIS, SDL_Surface *surface)
     {
         munmap(surface->pixels, surface->h * surface->pitch);
     }
+    if(surface->hwdata)
+    {
+        SDL_free(surface->hwdata);
+    }
 }
 
 static int GK_LockHWSurface(_THIS, SDL_Surface *surface)
 {
+    if(surface->flags & SDL_HWSURFACE && surface->hwdata && !surface->hwdata->in_cache)
+    {
+        struct gpu_message gmsgs[2];
+        uint32_t spf = pformat_to_gkpf(surface->format);
+
+        // may have been written to by DMA - need to wait and invalidate
+        gmsgs[0].type = InvalidateCache;
+        gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
+        gmsgs[0].dx = 0;
+        gmsgs[0].dy = 0;
+        gmsgs[0].w = surface->w;
+        gmsgs[0].h = surface->h;
+        gmsgs[0].dp = surface->pitch;
+        gmsgs[0].dest_pf = spf;
+        
+        gmsgs[1].type = SignalThread;
+
+        GK_GPUEnqueueMessages(gmsgs, 2);
+
+        surface->hwdata->in_cache = 1;
+    }
     return 0;
 }
 
 static void GK_UnlockHWSurface(_THIS, SDL_Surface *surface)
 {
+    if(!(surface->flags & SDL_HWSURFACE))
+    {
+        // need to clean so can be read by ltdc
+        struct gpu_message gmsgs[2];
+        uint32_t spf = pformat_to_gkpf(surface->format);
+
+        // may have been written to by DMA - need to wait and invalidate
+        gmsgs[0].type = CleanCache;
+        gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
+        gmsgs[0].dx = 0;
+        gmsgs[0].dy = 0;
+        gmsgs[0].w = surface->w;
+        gmsgs[0].h = surface->h;
+        gmsgs[0].dp = surface->pitch;
+        gmsgs[0].dest_pf = spf;
+        
+        gmsgs[1].type = SignalThread;
+
+        GK_GPUEnqueueMessages(gmsgs, 2);
+    }
     return;
 }
 
 static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
 {
-    GK_GPU_CommandList(gmsg, 1);
+    GK_GPU_CommandList(gmsg, 2);
     GK_GPUFlipBuffers(&gmsg, &surface->pixels);
+    GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, 0, 0, surface->w, surface->h, 0, 0);
     GK_GPUFlush(&gmsg);
     surface->flags |= SDL_PREALLOC;
+
+    if(surface->hwdata)
+    {
+        surface->hwdata->in_cache = 0;
+    }
+
     return 0;
 }
 
@@ -341,6 +409,10 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
     GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
     GK_GPUFlush(&gmsg);
     this->screen->flags |= SDL_PREALLOC;
+    if(this->screen->hwdata)
+    {
+        this->screen->hwdata->in_cache = 0;
+    }
 }
 
 int GK_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
@@ -402,6 +474,11 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
     }
 
     GK_GPUEnqueueMessages(gmsgs, i);
+
+    if(dst->flags & SDL_HWSURFACE && dst->hwdata)
+    {
+        dst->hwdata->in_cache = 0;
+    }
 
     return 0;
 }

@@ -25,7 +25,7 @@ file(GLOB SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/loadso/dummy/*.c
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/video/gk/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio/dummy/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio/gk/*.c
 )
 
 target_sources(SDL PRIVATE

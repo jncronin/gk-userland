@@ -1,0 +1,2 @@
+#undef STDINT_LONG32
+#define STDINT_LONG32 0

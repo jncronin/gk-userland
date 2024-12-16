@@ -1322,7 +1322,7 @@ arm*-*-freebsd*)                # ARM FreeBSD EABI
 	with_tls=${with_tls:-gnu}
 	;;
 arm*-*-gkos*)
-	tm_file="elfos.h arm/unknown-elf.h arm/elf.h arm/bpabi.h newlib-stdint.h arm/aout.h arm/arm.h arm/gkos.h"
+	tm_file="elfos.h arm/unknown-elf.h arm/elf.h arm/bpabi.h arm/gkos-pre.h newlib-stdint.h arm/aout.h arm/arm.h arm/gkos.h"
 	tmake_file="${tmake_file} arm/t-arm arm/t-gk arm/t-bpabi"
 	target_cpu_cname="cortex-m7"
 	;;

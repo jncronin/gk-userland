@@ -84,6 +84,9 @@ int     tcsetattr(int, int, const struct termios *);
 #define PARODD          0x1000
 #define HUPCL           0x2000
 #define CLOCAL          0x4000
+#define CIBAUD          0x8000
+#define CMSPAR          0x10000
+#define CRTSCTS         0x20000
 
 #define TCSANOW         1
 #define TCSADRAIN       2
@@ -128,5 +131,26 @@ int     tcsetattr(int, int, const struct termios *);
 #define B1152000        24
 #define B1500000        25
 #define B2000000        26
+
+/* ioctls - random prefix to hopefully avoid clashes */
+#define TIOCMGET        0x17890000
+#define TIOCMSET        0x17890001
+#define TIOCMBIC        0x17890002
+#define TIOCMBIS        0x17890003
+#define TIOCSBRK        0x17890004
+#define TIOCCBRK        0x17890005
+
+/* flags for above */
+#define TIOCM_LE        0x1
+#define TIOCM_DTR       0x2
+#define TIOCM_RTS       0x4
+#define TIOCM_ST        0x8
+#define TIOCM_SR        0x10
+#define TIOCM_CTS       0x20
+#define TIOCM_CAR       0x40
+#define TIOCM_CD        TIOCM_CAR
+#define TIOCM_RNG       0x80
+#define TIOCM_RI        TIOCM_RNG
+#define TIOCM_DSR       0x100
 
 #endif

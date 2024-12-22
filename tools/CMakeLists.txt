@@ -46,4 +46,21 @@ target_link_libraries(echo
         common
 )
 
-install(TARGETS ls tftpd echo)
+add_executable(sh)
+
+target_sources(sh
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/shell/shell.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shell/tokenize.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ls/ls.cpp"
+)
+target_link_libraries(sh
+    PRIVATE
+        common
+)
+target_compile_definitions(sh
+    PRIVATE
+        IN_SHELL
+)
+
+install(TARGETS ls tftpd echo sh)

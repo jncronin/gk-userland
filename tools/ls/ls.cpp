@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <sys/stat.h>
 #include <iostream>
+#include <shell.h>
 #include "args.h"
 
 static void show_attr(mode_t show, std::string if_true)
@@ -14,7 +15,7 @@ static void show_attr(mode_t show, std::string if_true)
         std::cout << "-";
 }
 
-int main(int argc, char *argv[])
+SHELL_MAIN(ls)
 {
     /* Parse args */
     Args a;

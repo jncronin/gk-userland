@@ -3,25 +3,43 @@
 #include <string>
 #include <map>
 #include <unistd.h>
+#include "shell.h"
 
 #define LINE_MAX    1024
-char linebuf[LINE_MAX];
 
-using main_type = int (*)(int, const char *[]);
+using main_type = int (*)(int, const char *[], shell_state *);
 
 #define ADD_BUILTIN(x) \
-    int x##_main(int, const char *[]); \
+    int x##_main(int, const char *[], shell_state *); \
     builtins[#x] = x##_main;
 
 std::vector<std::string> tokenize(const char *buf, unsigned int len);
 std::map<std::string, main_type> builtins;
 
-int main(int argc, char *argv[])
+static int sh_main(int argc, const char *argv[], shell_state *sst);
+static int exit_main(int argc, const char *argv[], shell_state *sst);
+
+int main(int argc, const char *argv[])
 {
+    return sh_main(argc, argv, nullptr);
+}
+
+int sh_main(int argc, const char *argv[], shell_state *sst)
+{
+    // sh always generates a new shell state
+    shell_state _sst;
+    sst = &_sst;
+
     // builtins
     ADD_BUILTIN(ls);
+    ADD_BUILTIN(sh);
+    ADD_BUILTIN(exit);
+    ADD_BUILTIN(cat);
+    ADD_BUILTIN(cd);
 
-    while(true)
+    char linebuf[LINE_MAX];
+
+    while(sst->to_exit == false)
     {
         // prompt
         char cwd[LINE_MAX];
@@ -59,7 +77,7 @@ int main(int argc, char *argv[])
                         argarray[i] = toks[i].c_str();
                     }
 
-                    builtin(toks.size(), argarray);
+                    builtin(toks.size(), argarray, sst);
                     delete[] argarray;
                 }
                 else
@@ -70,4 +88,16 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+    return sst->exit_code;
+}
+
+int exit_main(int argc, const char *argv[], shell_state *sst)
+{
+    if(argc > 1)
+    {
+        sst->exit_code = strtol(argv[1], nullptr, 10);
+    }
+    sst->to_exit = true;
+    return sst->exit_code;
 }

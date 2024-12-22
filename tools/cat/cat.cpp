@@ -32,6 +32,8 @@ SHELL_MAIN(cat)
                 fwrite(cbuf, 1, br, stdout);
             }
 
+            fclose(f);
+
             delete[] cbuf;
         }
     }

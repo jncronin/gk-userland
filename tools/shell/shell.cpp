@@ -36,6 +36,7 @@ int sh_main(int argc, const char *argv[], shell_state *sst)
     ADD_BUILTIN(exit);
     ADD_BUILTIN(cat);
     ADD_BUILTIN(cd);
+    ADD_BUILTIN(mkdir);
 
     char linebuf[LINE_MAX];
 

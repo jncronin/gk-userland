@@ -55,6 +55,7 @@ target_sources(sh
         "${CMAKE_CURRENT_SOURCE_DIR}/ls/ls.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/cat/cat.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/cd/cd.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/mkdir/mkdir.cpp"
 )
 target_link_libraries(sh
     PRIVATE

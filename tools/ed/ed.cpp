@@ -71,6 +71,7 @@ std::string readline()
     if(fgets(linebuf, PATH_MAX - 1, stdin))
     {
         linebuf[PATH_MAX - 1] = 0;
+        linebuf[strcspn(linebuf, "\r\n")] = 0;      // remove newline character(s)
         return std::string(linebuf);
     }
     return "";

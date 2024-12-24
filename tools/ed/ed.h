@@ -10,6 +10,7 @@ struct ed_buffer_state
 {
     ed_buffer buf, cutbuf;
     unsigned int addr;
+    int markline;
 
     ed_buffer_state(const ed_buffer_state &other);
     ed_buffer_state(ed_buffer_state &&other);

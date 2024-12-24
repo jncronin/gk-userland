@@ -39,23 +39,42 @@ SHELL_MAIN(ed)
     }
 
     bool show_prompt = false;
-    std::string prompt;
+    bool show_help = false;
+    std::string prompt = "*";
 
     // now parse commands until exit
     while(true)
     {
         if(show_prompt)
-            puts(prompt.c_str());
+            printf("%s", prompt.c_str());
         
         auto l = readline();
 
         unsigned int p = 0;
-        auto a0 = parse_line_address(l, &p);
-        auto a1 = parse_second_line_address(l, &p);
-        auto cmd = parse_command(l, &p);
-        auto params = parse_parameters(l, &p);
+        parser_buffer_desc origbuf(s.cur);
+        auto a0 = parse_line_address(l, &p, origbuf);
+        parser_buffer_desc second_buf = a0.valid ? a0.bufdesc : origbuf;
+        auto a1 = parse_second_line_address(l, &p, origbuf, second_buf);
+        auto cmd = parse_command(l, &p, second_buf);
+        if(p != l.length()) cmd.valid = false;
 
-        auto l0 = a0.empty() ? s.cur.addr : strtoul(a0.c_str(), nullptr, 10);
+        if(cmd.valid)
+        {
+            // run command
+            //
+            printf("cmd: %u\n", (unsigned)cmd.cmd);
+        }
+        else
+        {
+            if(show_help)
+            {
+                // TODO
+            }
+            else
+            {
+                puts("?");
+            }
+        }
     }
 
 }

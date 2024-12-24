@@ -46,6 +46,19 @@ target_link_libraries(echo
         common
 )
 
+add_executable(ed)
+
+target_sources(ed
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/ed/ed.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ed/buffer.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ed/file.cpp"
+)
+target_link_libraries(ed
+    PRIVATE
+        common
+)
+
 add_executable(sh)
 
 target_sources(sh

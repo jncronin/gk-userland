@@ -34,5 +34,7 @@ ed_buffer_state cmd_load(const std::string &fname, unsigned int addr)
     fclose(f);
     delete[] linebuf;
 
+    ret.addr = 1;
+
     return ret;
 }

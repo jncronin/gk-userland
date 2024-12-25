@@ -150,16 +150,30 @@ parse_second_line_result parse_second_line_address(const std::string &s, unsigne
     }
 }
 
-static char print_suffix(const std::string &s, unsigned int *ptr)
+static unsigned int print_suffix(const std::string &s, unsigned int *ptr)
 {
-    if(is_eol(s, ptr)) return 0;
-    if(s[*ptr] == 'p' || s[*ptr] == 'l' || s[*ptr] == 'n')
+    unsigned int ret = 0;
+    while(!is_eol(s, ptr))
     {
-        auto ret = s[*ptr];
-        ++*ptr;
-        return ret;
+        if(s[*ptr] == 'p')
+        {
+            ret |= PRINT_SUFFIX_P;
+            ++*ptr;
+        }
+        else if(s[*ptr] == 'l')
+        {
+            ret |= PRINT_SUFFIX_L;
+            ++*ptr;
+        }
+        else if(s[*ptr] == 'n')
+        {
+            ret |= PRINT_SUFFIX_N;
+            ++*ptr;
+        }
+        else
+            return 0;
     }
-    return 0;
+    return ret;
 }
 
 #define HANDLE_SIMPLECOMMAND(x, c) if(expect_string(s, ptr, #x).first) return { .valid = true, .cmd = c, .print_suffix = print_suffix(s, ptr) };

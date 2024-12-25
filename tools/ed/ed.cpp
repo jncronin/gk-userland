@@ -77,7 +77,9 @@ SHELL_MAIN(ed)
                         unsigned int a0_addr, a1_addr;
                         if(interpret_address_pair(origbuf, a0, a1, &a0_addr, &a1_addr))
                         {
-                            cmd_print(s, a0_addr, a1_addr, cmd.cmd == n_number, cmd.cmd == l_list);
+                            cmd_print(s, a0_addr, a1_addr,
+                                cmd.cmd == n_number || ((cmd.print_suffix & PRINT_SUFFIX_N) != 0),
+                                cmd.cmd == l_list || ((cmd.print_suffix & PRINT_SUFFIX_L) != 0));
                         }
                     }
                     break;

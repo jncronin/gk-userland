@@ -39,7 +39,7 @@ struct parse_command_result
     std::vector<std::tuple<parse_line_result, parse_second_line_result, parse_command_result>> command_list;
     unsigned int n;
     char x;
-    char print_suffix = 0;
+    unsigned int print_suffix = 0;
 };
 
 using ed_command_line = std::tuple<parse_line_result, parse_second_line_result, parse_command_result>;
@@ -59,6 +59,10 @@ enum ed_default_address
     last,
     cur1
 };
+
+#define PRINT_SUFFIX_P      1
+#define PRINT_SUFFIX_N      2
+#define PRINT_SUFFIX_L      4
 
 bool interpret_address(const parser_buffer_desc &buf,
     const parse_line_result &a,

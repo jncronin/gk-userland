@@ -353,3 +353,28 @@ bool interpret_address_pair(const parser_buffer_desc &buf,
     // catch error
     return false;
 }
+
+bool interpret_address_single(const parser_buffer_desc &buf,
+    const parse_line_result &a0,
+    const parse_second_line_result &a1,
+    unsigned int *a_out,
+    ed_default_address a_def,
+    bool a_allow0)
+{
+    // do not allow a1
+    if(a1.valid)
+        return false;
+    
+    // if nothing specified, return default
+    if(!a0.valid)
+    {
+        *a_out = interpret_addr_default(buf, a_def);
+        return true;
+    }
+
+    if(a0.bufdesc.cline == 0 && !a_allow0)
+        return false;
+
+    *a_out = a0.bufdesc.cline;
+    return true;
+}

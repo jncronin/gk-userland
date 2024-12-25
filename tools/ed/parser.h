@@ -64,8 +64,9 @@ enum ed_default_address
 #define PRINT_SUFFIX_N      2
 #define PRINT_SUFFIX_L      4
 
-bool interpret_address(const parser_buffer_desc &buf,
-    const parse_line_result &a,
+bool interpret_address_single(const parser_buffer_desc &buf,
+    const parse_line_result &a0,
+    const parse_second_line_result &a1,
     unsigned int *a_out,
     ed_default_address a_def = cur,
     bool a_allow0 = false);

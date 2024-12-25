@@ -83,6 +83,54 @@ SHELL_MAIN(ed)
                         }
                     }
                     break;
+                case d_delete:
+                    {
+                        unsigned int a0_addr, a1_addr;
+                        if(interpret_address_pair(origbuf, a0, a1, &a0_addr, &a1_addr))
+                        {
+                            cmd_delete(s, a0_addr, a1_addr, &a0_addr);
+                            if(cmd.print_suffix)
+                            {
+                                cmd_print(s, a0_addr, a0_addr,
+                                    (cmd.print_suffix & PRINT_SUFFIX_N) != 0,
+                                    (cmd.print_suffix & PRINT_SUFFIX_L) != 0);
+                            }
+                        }
+                    }
+                    break;
+                case c_change:
+                    {
+                        unsigned int a0_addr, a1_addr;
+                        if(interpret_address_pair(origbuf, a0, a1, &a0_addr, &a1_addr))
+                        {
+                            auto input = input_mode();
+                            cmd_change(s, a0_addr, a1_addr, input, &a0_addr);
+                            if(cmd.print_suffix)
+                            {
+                                cmd_print(s, a0_addr, a0_addr,
+                                    (cmd.print_suffix & PRINT_SUFFIX_N) != 0,
+                                    (cmd.print_suffix & PRINT_SUFFIX_L) != 0);
+                            }
+                        }
+                    }
+                    break;
+                case a_append:
+                case i_insert:
+                    {
+                        unsigned int a0_addr;
+                        if(interpret_address_single(origbuf, a0, a1, &a0_addr, cur, true))
+                        {
+                            auto input = input_mode();
+                            cmd_append(s, a0_addr, input, cmd.cmd == i_insert, &a0_addr);
+                            if(cmd.print_suffix)
+                            {
+                                cmd_print(s, a0_addr, a0_addr,
+                                    (cmd.print_suffix & PRINT_SUFFIX_N) != 0,
+                                    (cmd.print_suffix & PRINT_SUFFIX_L) != 0);
+                            }
+                        }
+                    }
+                    break;
             }
         }
         else
@@ -115,4 +163,17 @@ std::string readline()
         return std::string(linebuf);
     }
     return "";
+}
+
+ed_buffer input_mode()
+{
+    ed_buffer ret;
+    while(true)
+    {
+        auto cline = readline();
+        if(cline == ".")
+            return ret;
+        else
+            ret.push_back(cline);
+    }
 }

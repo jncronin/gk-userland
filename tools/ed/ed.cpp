@@ -150,6 +150,13 @@ SHELL_MAIN(ed)
                         }
                     }
                     break;
+                case q_quit:
+                case Q_quitunconditional:
+                    if(cmd_quit(s, cmd.cmd == Q_quitunconditional))
+                    {
+                        return 0;
+                    }
+                    break;
             }
         }
         else

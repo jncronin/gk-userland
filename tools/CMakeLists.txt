@@ -56,6 +56,7 @@ target_sources(ed
         "${CMAKE_CURRENT_SOURCE_DIR}/ed/parser.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ed/print.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ed/edit.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ed/misc.cpp"
 )
 target_link_libraries(ed
     PRIVATE

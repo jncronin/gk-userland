@@ -13,6 +13,7 @@ struct ed_buffer_state
     unsigned int addr;
     std::array<unsigned int, 26> markline;
     bool modified = false;
+    bool qe_warn = false;
     std::string fname;
 
     ed_buffer_state(const ed_buffer_state &other);
@@ -39,5 +40,6 @@ bool cmd_delete(ed_state &s, unsigned int a0, unsigned int a1, unsigned int *las
 bool cmd_change(ed_state &s, unsigned int a0, unsigned int a1, const ed_buffer &input, unsigned int *last_line_affected = nullptr);
 bool cmd_append(ed_state &s, unsigned int a0, const ed_buffer &input, bool is_insert = false, unsigned int *last_line_affected = nullptr);
 bool cmd_write(ed_state &s, unsigned int a0, unsigned int a1, const std::string &fname, bool append = false, unsigned int *last_line_affected = nullptr);
+bool cmd_quit(ed_state &s, bool unconditional = false);
 
 #endif

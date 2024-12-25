@@ -15,6 +15,7 @@ ed_buffer_state::ed_buffer_state(const ed_buffer_state &other)
     buf.clear();
     buf = other.buf;
     cutbuf = other.cutbuf;
+    qe_warn = false;    // always reset because only q and e will test and will do so before reset
 }
 
 ed_buffer_state::ed_buffer_state(ed_buffer_state &&other)
@@ -26,6 +27,7 @@ ed_buffer_state::ed_buffer_state(ed_buffer_state &&other)
     fname = std::move(other.fname);
     buf = std::move(other.buf);
     cutbuf = std::move(other.cutbuf);
+    qe_warn = false;    // always reset because only q and e will test and will do so before reset
 }
 
 ed_buffer_state ed_buffer_state::operator=(ed_buffer_state &&other)
@@ -36,6 +38,7 @@ ed_buffer_state ed_buffer_state::operator=(ed_buffer_state &&other)
     fname = std::move(other.fname);
     buf = std::move(other.buf);
     cutbuf = std::move(other.cutbuf);
+    qe_warn = false;    // always reset because only q and e will test and will do so before reset
     return *this;
 }
 

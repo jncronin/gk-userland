@@ -36,6 +36,7 @@ SHELL_MAIN(ed)
     if(!fname.empty())
     {
         s.push(cmd_load(fname, 0));
+        s.cur.fname = fname;
     }
 
     bool show_prompt = false;
@@ -128,6 +129,24 @@ SHELL_MAIN(ed)
                                     (cmd.print_suffix & PRINT_SUFFIX_N) != 0,
                                     (cmd.print_suffix & PRINT_SUFFIX_L) != 0);
                             }
+                        }
+                    }
+                    break;
+                case w_write:
+                case wq_writequit:
+                case W_writeappend:
+                    {
+                        auto fname = cmd.file.empty() ? s.cur.fname : cmd.file;
+                        unsigned int a0_addr, a1_addr;
+                        if(interpret_address_pair(origbuf, a0, a1, &a0_addr, &a1_addr,
+                            ed_default_address::l1, ed_default_address::last))
+                        {
+                            cmd_write(s, a0_addr, a1_addr, fname, cmd.cmd == W_writeappend, &a0_addr);
+                        }
+
+                        if(cmd.cmd == wq_writequit)
+                        {
+                            return 0;
                         }
                     }
                     break;

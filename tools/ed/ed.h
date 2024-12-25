@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 using ed_buffer = std::vector<std::string>;
 
@@ -10,7 +11,9 @@ struct ed_buffer_state
 {
     ed_buffer buf, cutbuf;
     unsigned int addr;
-    int markline;
+    std::array<unsigned int, 26> markline;
+    bool modified = false;
+    std::string fname;
 
     ed_buffer_state(const ed_buffer_state &other);
     ed_buffer_state(ed_buffer_state &&other);
@@ -35,5 +38,6 @@ bool cmd_print(ed_state &s, unsigned int a0, unsigned int a1, bool number = fals
 bool cmd_delete(ed_state &s, unsigned int a0, unsigned int a1, unsigned int *last_line_affected = nullptr);
 bool cmd_change(ed_state &s, unsigned int a0, unsigned int a1, const ed_buffer &input, unsigned int *last_line_affected = nullptr);
 bool cmd_append(ed_state &s, unsigned int a0, const ed_buffer &input, bool is_insert = false, unsigned int *last_line_affected = nullptr);
+bool cmd_write(ed_state &s, unsigned int a0, unsigned int a1, const std::string &fname, bool append = false, unsigned int *last_line_affected = nullptr);
 
 #endif

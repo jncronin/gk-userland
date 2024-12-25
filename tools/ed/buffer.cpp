@@ -10,6 +10,8 @@ ed_buffer_state::ed_buffer_state(const ed_buffer_state &other)
     // copy constructor - need deep copy of the line buffer
     addr = other.addr;
     markline = other.markline;
+    modified = other.modified;
+    fname = other.fname;
     buf.clear();
     buf = other.buf;
     cutbuf = other.cutbuf;
@@ -19,7 +21,9 @@ ed_buffer_state::ed_buffer_state(ed_buffer_state &&other)
 {
     // move constructor - used to swap undo buffers
     addr = other.addr;
-    markline = other.markline;
+    markline = std::move(other.markline);
+    modified = other.modified;
+    fname = std::move(other.fname);
     buf = std::move(other.buf);
     cutbuf = std::move(other.cutbuf);
 }
@@ -27,7 +31,9 @@ ed_buffer_state::ed_buffer_state(ed_buffer_state &&other)
 ed_buffer_state ed_buffer_state::operator=(ed_buffer_state &&other)
 {
     addr = other.addr;
-    markline = other.markline;
+    markline = std::move(other.markline);
+    modified = other.modified;
+    fname = std::move(other.fname);
     buf = std::move(other.buf);
     cutbuf = std::move(other.cutbuf);
     return *this;

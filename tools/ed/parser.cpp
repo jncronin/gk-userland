@@ -119,9 +119,10 @@ parse_line_result parse_line_address(const std::string &s, unsigned int *ptr,
     else if(expect_string(s, ptr, "\'").first && !is_eol(s, ptr) && s.c_str()[*ptr] >= 'a' && s.c_str()[*ptr] <= 'z')
     {
         // mark
+        auto mark_item = s.c_str()[*ptr];
         ++*ptr;
-        if(origbuf.markline >= 0)
-            return { .valid = true, .bufdesc = parser_buffer_desc(origbuf.nlines, (unsigned int)origbuf.markline, origbuf.markline) };
+        if(origbuf.markline[mark_item - 'a'] >= 0)
+            return { .valid = true, .bufdesc = parser_buffer_desc(origbuf.nlines, (unsigned int)origbuf.markline[mark_item - 'a'], origbuf.markline) };
         else
         {
             *ptr = orig_ptr;
@@ -245,8 +246,8 @@ parse_command_result parse_command(const std::string &s, unsigned int *ptr,
     else HANDLE_SIMPLECOMMAND(q, q_quit)
     else HANDLE_SIMPLECOMMAND(Q, Q_quitunconditional)
     else HANDLE_SIMPLECOMMAND(u, u_undo)
-    else HANDLE_FILECOMMAND(w, w_write)
     else HANDLE_FILECOMMAND(wq, wq_writequit)
+    else HANDLE_FILECOMMAND(w, w_write)
     else HANDLE_FILECOMMAND(W, W_writeappend)
     else HANDLE_SIMPLECOMMAND(x, x_paste)
     else HANDLE_SIMPLECOMMAND(y, y_yank)

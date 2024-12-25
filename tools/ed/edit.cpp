@@ -16,6 +16,7 @@ bool cmd_delete(ed_state &s, unsigned int a0, unsigned int a1, unsigned int *las
     newbuf.addr = a0;   // new address after last line deleted i.e. start address
     if(newbuf.buf.empty())
         newbuf.addr = 0;
+    newbuf.modified = true;
 
     if(last_line_affected)
         *last_line_affected = newbuf.addr;
@@ -42,6 +43,7 @@ bool cmd_change(ed_state &s, unsigned int a0, unsigned int a1, const ed_buffer &
     newbuf.addr = a0 + input.size();
     if(newbuf.buf.empty())
         newbuf.addr = 0;
+    newbuf.modified = true;
 
     if(last_line_affected)
         *last_line_affected = newbuf.addr;
@@ -63,6 +65,7 @@ bool cmd_append(ed_state &s, unsigned int a0, const ed_buffer &input, bool is_in
     auto newbuf = s.cur;
     newbuf.buf.insert(newbuf.buf.begin() + a0, input.begin(), input.end());
     newbuf.addr = a0 + input.size();
+    newbuf.modified = true;
 
     if(last_line_affected)
         *last_line_affected = newbuf.addr;

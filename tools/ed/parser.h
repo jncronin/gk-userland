@@ -11,11 +11,11 @@ struct parser_buffer_desc
 {
     unsigned int nlines;
     unsigned int cline;
-    int markline;
+    std::array<unsigned int, 26> markline;
 
     parser_buffer_desc() {}
     parser_buffer_desc(const ed_buffer_state &s) { nlines = s.buf.size(); cline = s.addr; markline = s.markline; }
-    parser_buffer_desc(unsigned int _nlines, unsigned int _cline, int _markline) { nlines = _nlines; cline = _cline; markline = _markline; }
+    parser_buffer_desc(unsigned int _nlines, unsigned int _cline, const std::array<unsigned int, 26> &_markline) { nlines = _nlines; cline = _cline; markline = _markline; }
 };
 
 struct parse_line_result

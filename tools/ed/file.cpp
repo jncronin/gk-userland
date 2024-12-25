@@ -35,6 +35,37 @@ ed_buffer_state cmd_load(const std::string &fname, unsigned int addr)
     delete[] linebuf;
 
     ret.addr = 1;
+    ret.fname = fname;
 
     return ret;
+}
+
+bool cmd_write(ed_state &s, unsigned int a0, unsigned int a1, const std::string &fname,
+    bool is_append, unsigned int *last_line_affected)
+{
+    if(a0 == 0 || a1 < a0 || a0 > s.cur.buf.size() || a1 > s.cur.buf.size())
+    {
+        printf("?\n");
+        return false;
+    }
+
+    auto fmode = is_append ? "a" : "w";
+    auto f = fopen(fname.c_str(), fmode);
+    if(!f)
+    {
+        return false;
+    }
+
+    for(auto iter = s.cur.buf.begin() + (a0-1); iter < s.cur.buf.begin() + a1; iter++)
+    {
+        const auto &cline = *iter;
+        fwrite(cline.c_str(), 1, cline.size(), f);
+        fputc('\n', f);
+    }
+
+    fclose(f);
+
+    s.cur.modified = false;
+
+    return true;
 }

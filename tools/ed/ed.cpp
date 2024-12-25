@@ -58,11 +58,30 @@ SHELL_MAIN(ed)
         auto cmd = parse_command(l, &p, second_buf);
         if(p != l.length()) cmd.valid = false;
 
+        // check addresses are valid
+        if(a0.valid && a0.bufdesc.cline > a0.bufdesc.nlines)
+            cmd.valid = false;
+        if(a1.valid && a1.line.valid && a1.line.bufdesc.cline > a1.line.bufdesc.nlines)
+            cmd.valid = false;
+
         if(cmd.valid)
         {
             // run command
             //
-            printf("cmd: %u\n", (unsigned)cmd.cmd);
+            switch(cmd.cmd)
+            {
+                case p_print:
+                case n_number:
+                case l_list:
+                    {
+                        unsigned int a0_addr, a1_addr;
+                        if(interpret_address_pair(origbuf, a0, a1, &a0_addr, &a1_addr))
+                        {
+                            cmd_print(s, a0_addr, a1_addr, cmd.cmd == n_number, cmd.cmd == l_list);
+                        }
+                    }
+                    break;
+            }
         }
         else
         {

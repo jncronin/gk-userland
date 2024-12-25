@@ -25,6 +25,7 @@ ed_buffer_state cmd_load(const std::string &fname, unsigned int addr)
     while(fgets(linebuf, PATH_MAX - 1, f))
     {
         linebuf[PATH_MAX - 1] = 0;
+        linebuf[strcspn(linebuf, "\r\n")] = 0;      // remove newline character(s)
         ret.buf.push_back(std::string(linebuf));
     }
 

@@ -52,4 +52,28 @@ parse_command_result parse_command(const std::string &s, unsigned int *p,
     const parser_buffer_desc &origbufdesc);
 std::string parse_parameters(const std::string &s, unsigned int *p);
 
+enum ed_default_address
+{
+    cur,
+    l1,
+    last,
+    cur1
+};
+
+bool interpret_address(const parser_buffer_desc &buf,
+    const parse_line_result &a,
+    unsigned int *a_out,
+    ed_default_address a_def = cur,
+    bool a_allow0 = false);
+
+bool interpret_address_pair(const parser_buffer_desc &buf,
+    const parse_line_result &a0,
+    const parse_second_line_result &a1,
+    unsigned int *a0_out,
+    unsigned int *a1_out,
+    ed_default_address a0_def = cur,
+    ed_default_address a1_def = cur,
+    bool a0_allow0 = false,
+    bool a1_allow0 = false);
+
 #endif

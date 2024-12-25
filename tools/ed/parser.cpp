@@ -239,3 +239,103 @@ parse_command_result parse_command(const std::string &s, unsigned int *ptr,
 
     return { .valid = false };
 }
+
+static unsigned int interpret_addr_default(const parser_buffer_desc &buf, ed_default_address def)
+{
+    switch(def)
+    {
+        case ed_default_address::cur:
+            return buf.cline;
+        case ed_default_address::cur1:
+            return buf.cline + 1;
+        case ed_default_address::l1:
+            return 1;
+        case ed_default_address::last:
+            return buf.nlines;
+    }
+    return 0;
+}
+
+bool interpret_address_pair(const parser_buffer_desc &buf,
+    const parse_line_result &a0,
+    const parse_second_line_result &a1,
+    unsigned int *a0_out,
+    unsigned int *a1_out,
+    ed_default_address a0_def,
+    ed_default_address a1_def,
+    bool a0_allow0,
+    bool a1_allow0)
+{
+    // just a ',' means whole buffer
+    if(!a0.valid && a1.valid && !a1.line.valid)
+    {
+        if(a1.sep == ',')
+        {
+            *a0_out = 1;
+            *a1_out = buf.nlines;
+            return true;
+        }
+        // just a ';' is not supported
+        return false;
+    }
+
+    // if no address range is specified, then return the defaults
+    if(!a0.valid && !a1.valid)
+    {
+        *a0_out = interpret_addr_default(buf, a0_def);
+        *a1_out = interpret_addr_default(buf, a1_def);
+        return true;
+    }
+
+    // if only the first address is given, the second is set to the first
+    if(a0.valid && (!a1.valid || !a1.line.valid))
+    {
+        if(a0.bufdesc.cline == 0 && (!a0_allow0 || !a1_allow0))
+        {
+            return false;
+        }
+        else
+        {
+            *a0_out = a0.bufdesc.cline;
+            *a1_out = a0.bufdesc.cline;
+            return true;
+        }
+    }
+
+    // if only the second address is given the range is (1,addr) or (.$addr)
+    if(!a0.valid && a1.valid && a1.line.valid)
+    {
+        if(a1.line.bufdesc.cline == 0 && !a1_allow0)
+        {
+            return false;
+        }
+        else
+        {
+            *a1_out = a1.line.bufdesc.cline;
+            *a0_out = (a1.sep == ',') ? 1 : buf.cline;
+            return true;
+        }
+    }
+
+    // if both are specified use those
+    if(a0.valid && a1.valid && a1.line.valid)
+    {
+        if(a0.bufdesc.cline == 0 && !a0_allow0)
+        {
+            return false;
+        }
+        else if(a1.line.bufdesc.cline == 0 && !a1_allow0)
+        {
+            return false;
+        }
+        else
+        {
+            *a0_out = a0.bufdesc.cline;
+            *a1_out = a1.line.bufdesc.cline;
+            return true;
+        }
+    }
+
+    // catch error
+    return false;
+}

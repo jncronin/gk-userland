@@ -29,5 +29,6 @@ struct ed_state
 };
 
 ed_buffer_state cmd_load(const std::string &fname, unsigned int addr);
+bool cmd_print(ed_state &s, unsigned int a0, unsigned int a1, bool number = false, bool list = false);
 
 #endif

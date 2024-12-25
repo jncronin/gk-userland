@@ -2,6 +2,12 @@
 
 bool cmd_print(ed_state &s, unsigned int a0, unsigned int a1, bool number, bool list)
 {
+    if(a0 == 0 || a1 < a0)
+    {
+        printf("?\n");
+        return false;
+    }
+    
     for(unsigned int a = a0; a <= a1; a++)
     {
         if(number)

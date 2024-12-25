@@ -64,6 +64,7 @@ target_link_libraries(ed
 
 add_executable(sh)
 
+get_target_property(ED_SOURCES ed SOURCES)
 target_sources(sh
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/shell/shell.cpp"
@@ -73,6 +74,7 @@ target_sources(sh
         "${CMAKE_CURRENT_SOURCE_DIR}/cd/cd.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/mkdir/mkdir.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/rm/rm.cpp"
+        ${ED_SOURCES}
 )
 target_link_libraries(sh
     PRIVATE

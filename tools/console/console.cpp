@@ -10,13 +10,18 @@
 #include <pthread.h>
 #include <string>
 
-std::array<std::array<char, 80>, 25> scr_lines;
+auto fnt = &lv_font_unscii_8;
+
+const unsigned int nlines = 26;
+const unsigned int ncols = 80;
+
+std::array<std::array<char, ncols>, nlines> scr_lines;
 unsigned int cursor_x = 0;
 unsigned int cursor_y = 0;
 unsigned int input_start_x = 0;
 unsigned int input_start_y = 0;
 
-auto fnt = &lv_font_unscii_8;
+
 
 static void *lvgl_thread(void *);
 static void *read_sh_thread(void *);
@@ -45,26 +50,25 @@ int main(int argc, char *argv[])
 
     ta = lv_textarea_create(lv_screen_active());
     lv_group_focus_obj(ta);
+    lv_obj_set_size(ta, 0, 0);
 
     disp = lv_label_create(lv_screen_active());
 
     lv_obj_set_size(disp, 640, 480-208-32);
     lv_obj_set_pos(disp, 0, 32);
     lv_obj_set_style_bg_color(disp, lv_color_black(), 0);
-    lv_obj_set_style_text_color(disp, lv_color_make(100, 200, 100), 0);
+    lv_obj_set_style_bg_opa(disp, LV_OPA_COVER, 0);
+    lv_obj_set_style_text_color(disp, lv_color_white(), 0);
     lv_obj_set_style_text_font(disp, fnt, 0);
 
     cursor = lv_obj_create(disp);
     lv_obj_set_size(cursor, 2, fnt->line_height);
-    lv_obj_set_style_bg_color(cursor, lv_color_black(), 0);
+    lv_obj_set_style_bg_color(cursor, lv_color_white(), 0);
     lv_obj_set_style_bg_opa(cursor, LV_OPA_COVER, 0);
     lv_obj_set_style_outline_width(cursor, 0, 0);
     lv_obj_set_style_border_width(cursor, 0, 0);
     lv_obj_set_style_radius(cursor, 0, 0);
     lv_obj_set_scrollbar_mode(cursor, LV_SCROLLBAR_MODE_OFF);
-
-
-    lv_label_set_text(disp, "Console\n");
 
     // create pipes for console -> sh and sh -> console
     int pipes_console_to_sh[2], pipes_sh_to_console[2];
@@ -144,7 +148,7 @@ void *read_sh_thread(void *p)
                 {
                     scr_lines[cursor_y][cursor_x] = c;
                     cursor_x++;
-                    if(cursor_x >= 80)
+                    if(cursor_x >= ncols)
                     {
                         cursor_x = 0;
                         cursor_y++;
@@ -194,7 +198,7 @@ void key_cb(lv_event_t *ev)
                 for(auto y = input_start_y; y <= cursor_y; y++)
                 {
                     auto start_x = (y == input_start_y) ? input_start_x : 0;
-                    auto end_x = (y == cursor_y) ? cursor_x : 80;
+                    auto end_x = (y == cursor_y) ? cursor_x : ncols;
 
                     for(auto x = start_x; x < end_x; x++)
                     {
@@ -237,7 +241,7 @@ void key_cb(lv_event_t *ev)
             {
                 scr_lines[cursor_y][cursor_x] = key;
                 cursor_x++;
-                if(cursor_x >= 80)
+                if(cursor_x >= ncols)
                 {
                     cursor_x = 0;
                     cursor_y++;
@@ -278,15 +282,15 @@ void disp_redraw()
 
 void handle_scroll()
 {
-    if(cursor_y >= 25)
+    if(cursor_y >= nlines)
     {
         // scroll lines up
         auto nscroll = cursor_y - 24;
-        for(unsigned int from = nscroll; from < 25; from++)
+        for(unsigned int from = nscroll; from < nlines; from++)
         {
             scr_lines[from - nscroll] = scr_lines[from];
         }
-        for(unsigned int blank = 25-nscroll; blank < 25; blank++)
+        for(unsigned int blank = nlines-nscroll; blank < nlines; blank++)
         {
             scr_lines[blank].fill(0);
         }

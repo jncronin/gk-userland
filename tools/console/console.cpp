@@ -149,12 +149,15 @@ void *read_sh_thread(void *p)
                 else if(c == '\t')
                 {
                     while(cursor_x % tabstop)
-                        cursor_x++;
-                    if(cursor_x >= ncols)
                     {
-                        cursor_x = 0;
-                        cursor_y++;
-                        handle_scroll();
+                        scr_lines[cursor_y][cursor_x] = ' ';
+                        cursor_x++;
+                        if(cursor_x >= ncols)
+                        {
+                            cursor_x = 0;
+                            cursor_y++;
+                            handle_scroll();
+                        }
                     }
                 }
                 else if(c != 0)
@@ -185,6 +188,10 @@ void *lvgl_thread(void *p)
 {
     auto pipe_console_write = (int)(intptr_t)p;
     lv_obj_add_event_cb(ta, key_cb, LV_EVENT_KEY, p);
+
+    pthread_mutex_lock(&m_lvgl);
+    disp_redraw();
+    pthread_mutex_unlock(&m_lvgl);
 
     while(true)
     {

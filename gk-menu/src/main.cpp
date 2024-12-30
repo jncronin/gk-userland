@@ -241,13 +241,16 @@ int main(int argc, char *argv[])
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());
         lv_obj_add_style(lbtn_extra_text, &style_text, 0);
 
-        auto img = get_img(g.img);
-        if(img)
+        if(!g.img.empty())
         {
-            auto limg = lv_img_create(lbtn_row2_cont);
-            lv_obj_set_size(limg, img->header.w/h_scale, img->header.h/v_scale);
-            lv_img_set_src(limg, img);
-            lv_img_set_zoom(limg, 256/h_scale);
+            auto img = get_img(g.img);
+            if(img)
+            {
+                auto limg = lv_img_create(lbtn_row2_cont);
+                lv_obj_set_size(limg, img->header.w/h_scale, img->header.h/v_scale);
+                lv_img_set_src(limg, img);
+                lv_img_set_zoom(limg, 256/h_scale);
+            }
         }
     }
 

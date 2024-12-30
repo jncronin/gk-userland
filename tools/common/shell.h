@@ -1,7 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#ifdef IN_SHELL
+#if defined(IN_SHELL) || defined(IN_TELNETD) || defined(IN_CONSOLE)
 #define SHELL_MAIN(x) int x##_main(int argc, const char *argv[], shell_state *_sst)
 #else
 #define SHELL_MAIN(x) int main(int argc, char *argv[])

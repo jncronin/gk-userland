@@ -86,4 +86,36 @@ target_compile_definitions(sh
         IN_SHELL
 )
 
-install(TARGETS ls tftpd echo sh)
+add_executable(telnetd)
+get_target_property(SH_SOURCES sh SOURCES)
+target_sources(telnetd
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/telnetd/telnetd.cpp"
+        ${SH_SOURCES}
+)
+target_link_libraries(telnetd
+    PRIVATE
+        common
+)
+target_compile_definitions(telnetd
+    PRIVATE
+        IN_TELNETD
+)
+
+add_executable(console)
+target_sources(console
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/console/console.cpp"
+        ${SH_SOURCES}
+)
+target_link_libraries(console
+    PRIVATE
+        common
+)
+target_compile_definitions(console
+    PRIVATE
+        IN_CONSOLE
+)
+
+
+install(TARGETS ls tftpd echo ed telnetd sh console)

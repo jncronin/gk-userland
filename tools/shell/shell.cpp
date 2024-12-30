@@ -16,13 +16,15 @@ using main_type = int (*)(int, const char *[], shell_state *);
 std::vector<std::string> tokenize(const char *buf, unsigned int len);
 std::map<std::string, main_type> builtins;
 
-static int sh_main(int argc, const char *argv[], shell_state *sst);
+int sh_main(int argc, const char *argv[], shell_state *sst);
 static int exit_main(int argc, const char *argv[], shell_state *sst);
 
+#ifdef IN_SHELL
 int main(int argc, const char *argv[])
 {
     return sh_main(argc, argv, nullptr);
 }
+#endif
 
 int sh_main(int argc, const char *argv[], shell_state *sst)
 {

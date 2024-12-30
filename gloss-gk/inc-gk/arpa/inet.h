@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
+#define restrict
 extern "C" {
 #endif
 

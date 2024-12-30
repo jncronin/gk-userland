@@ -77,10 +77,12 @@ int main(int argc, char *argv[])
     if(pipe(pipes_console_to_sh) != 0)
     {
         fprintf(stderr, "failed to create pipe %s\n", strerror(errno));
+        return -1;
     }
     if(pipe(pipes_sh_to_console) != 0)
     {
         fprintf(stderr, "failed to create pipe %s\n", strerror(errno));
+        return -1;
     }
 
     act_stdin = dup(STDIN_FILENO);
@@ -130,6 +132,11 @@ void *read_sh_thread(void *p)
     {
         char buf[128];
         auto br = read(pipe_console_read, buf, sizeof(buf)-1);
+        if(br < 0)
+        {
+            write(act_stderr, "read() failed\n", 14);
+            exit(-1);
+        }
         buf[sizeof(buf)-1] = 0;
 
         if(br)

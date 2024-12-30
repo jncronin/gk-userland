@@ -16,6 +16,8 @@ unsigned int cursor_y = 0;
 unsigned int input_start_x = 0;
 unsigned int input_start_y = 0;
 
+auto fnt = &lv_font_unscii_8;
+
 static void *lvgl_thread(void *);
 static void *read_sh_thread(void *);
 static void key_cb(lv_event_t *);
@@ -24,7 +26,7 @@ static void handle_scroll();
 
 pthread_mutex_t m_lvgl;
 
-lv_obj_t *disp, *ta;
+lv_obj_t *disp, *ta, *cursor;
 
 int act_stdin, act_stdout, act_stderr;
 
@@ -44,8 +46,6 @@ int main(int argc, char *argv[])
     ta = lv_textarea_create(lv_screen_active());
     lv_group_focus_obj(ta);
 
-
-    auto fnt = &lv_font_unscii_8;
     disp = lv_label_create(lv_screen_active());
 
     lv_obj_set_size(disp, 640, 480-208-32);
@@ -53,6 +53,16 @@ int main(int argc, char *argv[])
     lv_obj_set_style_bg_color(disp, lv_color_black(), 0);
     lv_obj_set_style_text_color(disp, lv_color_make(100, 200, 100), 0);
     lv_obj_set_style_text_font(disp, fnt, 0);
+
+    cursor = lv_obj_create(disp);
+    lv_obj_set_size(cursor, 2, fnt->line_height);
+    lv_obj_set_style_bg_color(cursor, lv_color_black(), 0);
+    lv_obj_set_style_bg_opa(cursor, LV_OPA_COVER, 0);
+    lv_obj_set_style_outline_width(cursor, 0, 0);
+    lv_obj_set_style_border_width(cursor, 0, 0);
+    lv_obj_set_style_radius(cursor, 0, 0);
+    lv_obj_set_scrollbar_mode(cursor, LV_SCROLLBAR_MODE_OFF);
+
 
     lv_label_set_text(disp, "Console\n");
 
@@ -261,6 +271,8 @@ void disp_redraw()
     }
 
     lv_label_set_text(disp, s.c_str());
+
+    lv_obj_set_pos(cursor, cursor_x * 8, cursor_y * fnt->line_height);
     lv_obj_invalidate(disp);
 }
 

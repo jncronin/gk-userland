@@ -14,6 +14,8 @@ auto fnt = &lv_font_unscii_8;
 
 const unsigned int nlines = 26;
 const unsigned int ncols = 80;
+const unsigned int tabstop = 8;
+const unsigned int fnt_width = 8;
 
 std::array<std::array<char, ncols>, nlines> scr_lines;
 unsigned int cursor_x = 0;
@@ -144,7 +146,18 @@ void *read_sh_thread(void *p)
                     cursor_y++;
                     handle_scroll();
                 }
-                else
+                else if(c == '\t')
+                {
+                    while(cursor_x % tabstop)
+                        cursor_x++;
+                    if(cursor_x >= ncols)
+                    {
+                        cursor_x = 0;
+                        cursor_y++;
+                        handle_scroll();
+                    }
+                }
+                else if(c != 0)
                 {
                     scr_lines[cursor_y][cursor_x] = c;
                     cursor_x++;
@@ -276,7 +289,7 @@ void disp_redraw()
 
     lv_label_set_text(disp, s.c_str());
 
-    lv_obj_set_pos(cursor, cursor_x * 8, cursor_y * fnt->line_height);
+    lv_obj_set_pos(cursor, cursor_x * fnt_width, cursor_y * fnt->line_height);
     lv_obj_invalidate(disp);
 }
 

@@ -191,6 +191,7 @@ void *lvgl_thread(void *p)
 
     pthread_mutex_lock(&m_lvgl);
     disp_redraw();
+    lv_obj_invalidate(lv_screen_active());
     pthread_mutex_unlock(&m_lvgl);
 
     while(true)

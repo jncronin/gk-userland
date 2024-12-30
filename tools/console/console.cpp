@@ -75,10 +75,8 @@ int main(int argc, char *argv[])
     dup2(pipes_sh_to_console[1], STDOUT_FILENO);
     dup2(pipes_sh_to_console[1], STDERR_FILENO);
 
-    write(act_stdout, "here\n", 5);
-
-    //close(pipes_console_to_sh[0]);
-    //close(pipes_sh_to_console[1]);
+    close(pipes_console_to_sh[0]);
+    close(pipes_sh_to_console[1]);
 
     auto pipe_console_write = pipes_console_to_sh[1];
     auto pipe_console_read = pipes_sh_to_console[0];
@@ -112,8 +110,6 @@ void *read_sh_thread(void *p)
 {
     auto pipe_console_read = (int)(intptr_t)p;
 
-    write(act_stdout, "start read_sh_thread\n", 22);
-
     while(true)
     {
         char buf[128];
@@ -123,9 +119,6 @@ void *read_sh_thread(void *p)
         if(br)
         {
             buf[br] = 0;
-
-            write(act_stdout, "bufread\n", 8);
-            write(act_stdout, buf, br);
 
             // add the text
             for(unsigned int i = 0; i < br; i++)
@@ -153,13 +146,9 @@ void *read_sh_thread(void *p)
             input_start_x = cursor_x;
             input_start_y = cursor_y;
 
-            write(act_stdout, "pre-redraw\n", 12);
-
             pthread_mutex_lock(&m_lvgl);
             disp_redraw();
             pthread_mutex_unlock(&m_lvgl);
-
-            write(act_stdout, "post-redraw\n", 13);
         }
 
     }

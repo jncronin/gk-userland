@@ -207,6 +207,22 @@ void key_cb(lv_event_t *ev)
             }
             break;
 
+        case LV_KEY_BACKSPACE:
+            if((cursor_y > input_start_y) || ((cursor_y == input_start_y) && (cursor_x > input_start_x)))
+            {
+                if(cursor_x == 0)
+                {
+                    cursor_y--;
+                    cursor_x = 79;
+                }
+                else
+                {
+                    cursor_x--;
+                }
+                scr_lines[cursor_y][cursor_x] = 0;
+            }
+            break;
+
         default:
             {
                 scr_lines[cursor_y][cursor_x] = key;

@@ -129,7 +129,6 @@ target_link_libraries(console
         freetype
         ${PNG_LIBRARIES}
         z
-        X11
 )
 
 target_compile_definitions(console
@@ -139,3 +138,4 @@ target_compile_definitions(console
 
 
 install(TARGETS ls tftpd echo ed telnetd sh console)
+include(CPack)

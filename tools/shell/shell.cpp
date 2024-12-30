@@ -54,6 +54,7 @@ int sh_main(int argc, const char *argv[], shell_state *sst)
 
         std::string prompt = "user@gk:" + std::string(cwd) + "$ ";
         fputs(prompt.c_str(), stdout);
+        fflush(stdout);
 
         if(fgets(linebuf, LINE_MAX-1, stdin))
         {

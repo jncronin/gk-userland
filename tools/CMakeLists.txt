@@ -103,15 +103,35 @@ target_compile_definitions(telnetd
 )
 
 add_executable(console)
+find_package(PkgConfig REQUIRED)
+find_package(Freetype REQUIRED)
+
+pkg_check_modules(LVGL REQUIRED lvgl)
+pkg_check_modules(PNG REQUIRED libpng)
+
+set_property(TARGET console PROPERTY CXX_STANDARD 20)
+
 target_sources(console
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/console/console.cpp"
         ${SH_SOURCES}
 )
+
+target_include_directories(console
+    PRIVATE
+        ${LVGL_INCLUDE_DIRS}
+)
+
 target_link_libraries(console
     PRIVATE
         common
+        ${LVGL_LIBRARIES}
+        freetype
+        ${PNG_LIBRARIES}
+        z
+        X11
 )
+
 target_compile_definitions(console
     PRIVATE
         IN_CONSOLE

@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 
 #ifdef __GAMEKID__
     auto display = lv_gk_display_create();
+    lv_gk_register_inputs();
 #else
     auto display = lv_x11_window_create("gk console", 640, 480);
     lv_x11_inputs_create(display, nullptr);
@@ -207,7 +208,7 @@ void *lvgl_thread(void *p)
         auto timer_wait = lv_timer_handler();
         pthread_mutex_unlock(&m_lvgl);
 
-        usleep(timer_wait * 1000);
+        usleep(timer_wait * 1000UL);
     }
 }
 

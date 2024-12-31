@@ -112,12 +112,14 @@ void gk_update_state()
             case KeyDown:
                 d.key = gk_key_to_lv(ev.key);
                 d.state = LV_INDEV_STATE_PRESSED;
-                gk_rb_push(&d_kbd, &d);
+                if(d.key)
+                    gk_rb_push(&d_kbd, &d);
                 break;
             case KeyUp:
                 d.key = gk_key_to_lv(ev.key);
                 d.state = LV_INDEV_STATE_RELEASED;
-                gk_rb_push(&d_kbd, &d);
+                if(d.key)
+                    gk_rb_push(&d_kbd, &d);
                 break;
             case MouseDown:
             case MouseUp:
@@ -158,47 +160,53 @@ void gk_update_state()
 #define _SCCHAR(x) *#x
 #define _SC(x) case GK_SCANCODE_##x: \
         return _SCCHAR(x);
+#define SH  (gkkey & GK_MODIFIER_SHIFT)
+#define _SCSH(x, a, b) case GK_SCANCODE_##x: \
+        if(SH) \
+            return b; \
+        else \
+            return a;
 
 enum _lv_key_t gk_key_to_lv(unsigned short gkkey)
 {
-    switch(gkkey)
+    switch(gkkey & (GK_NUM_SCANCODES - 1))
     {
-        _SC(0);
-        _SC(1);
-        _SC(2);
-        _SC(3);
-        _SC(4);
-        _SC(5);
-        _SC(6);
-        _SC(7);
-        _SC(8);
-        _SC(9);
-        _SC(A);
-        _SC(B);
-        _SC(C);
-        _SC(D);
-        _SC(E);
-        _SC(F);
-        _SC(G);
-        _SC(H);
-        _SC(I);
-        _SC(J);
-        _SC(K);
-        _SC(L);
-        _SC(M);
-        _SC(N);
-        _SC(O);
-        _SC(P);
-        _SC(Q);
-        _SC(R);
-        _SC(S);
-        _SC(T);
-        _SC(U);
-        _SC(V);
-        _SC(W);
-        _SC(X);
-        _SC(Y);
-        _SC(Z);
+        _SCSH(0, '0', ')');
+        _SCSH(1, '1', '!');
+        _SCSH(2, '2', '\"');
+        _SCSH(3, '3', '#');
+        _SCSH(4, '4', '$');
+        _SCSH(5, '5', '%');
+        _SCSH(6, '6', '^');
+        _SCSH(7, '7', '&');
+        _SCSH(8, '8', '*');
+        _SCSH(9, '9', '(');
+        _SCSH(A, 'a', 'A');
+        _SCSH(B, 'b', 'B');
+        _SCSH(C, 'c', 'C');
+        _SCSH(D, 'd', 'D');
+        _SCSH(E, 'e', 'E');
+        _SCSH(F, 'f', 'F');
+        _SCSH(G, 'g', 'G');
+        _SCSH(H, 'h', 'H');
+        _SCSH(I, 'i', 'I');
+        _SCSH(J, 'j', 'J');
+        _SCSH(K, 'k', 'K');
+        _SCSH(L, 'l', 'L');
+        _SCSH(M, 'm', 'M');
+        _SCSH(N, 'n', 'N');
+        _SCSH(O, 'o', 'O');
+        _SCSH(P, 'p', 'P');
+        _SCSH(Q, 'q', 'Q');
+        _SCSH(R, 'r', 'R');
+        _SCSH(S, 's', 'S');
+        _SCSH(T, 't', 'T');
+        _SCSH(U, 'u', 'U');
+        _SCSH(V, 'v', 'V');
+        _SCSH(W, 'w', 'W');
+        _SCSH(X, 'x', 'X');
+        _SCSH(Y, 'y', 'Y');
+        _SCSH(Z, 'z', 'Z');
         case GK_SCANCODE_UP:
             return LV_KEY_UP;
         case GK_SCANCODE_DOWN:
@@ -224,29 +232,31 @@ enum _lv_key_t gk_key_to_lv(unsigned short gkkey)
         case GK_SCANCODE_END:
             return LV_KEY_END;
         case GK_SCANCODE_SLASH:
-            return '/';
+            return SH ? '?' : '/';
         case GK_SCANCODE_BACKSLASH:
-            return '\\';
+            return SH ? '|' : '\\';
         case GK_SCANCODE_GRAVE:
             return '`';
         case GK_SCANCODE_MINUS:
-            return '-';
+            return SH ? '_' : '-';
         case GK_SCANCODE_EQUALS:
-            return '=';
+            return SH ? '+' : '=';
         case GK_SCANCODE_TAB:
             return '\t';
         case GK_SCANCODE_LEFTBRACKET:
-            return '[';
+            return SH ? '{' : '[';
         case GK_SCANCODE_RIGHTBRACKET:
-            return ']';
+            return SH ? '}' : ']';
         case GK_SCANCODE_SEMICOLON:
-            return ';';
+            return SH ? ':' : ';';
         case GK_SCANCODE_APOSTROPHE:
-            return '\'';
+            return SH ? '@' : '\'';
         case GK_SCANCODE_COMMA:
-            return ',';
+            return SH ? '<' : ',';
         case GK_SCANCODE_PERIOD:
-            return '.';
+            return SH ? '>' : '.';
+        case GK_SCANCODE_SPACE:
+            return ' ';
 
         default:
             return 0;

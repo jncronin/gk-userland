@@ -31,8 +31,16 @@ static lv_indev_data_t cur_mouse, cur_kbd;
 
 void lv_gk_register_inputs()
 {
-    lv_gk_kbd_create();
-    lv_gk_mouse_create();
+    lv_display_t *disp = lv_display_get_default();
+    lv_group_t *grp = lv_group_get_default();
+    if(grp == NULL)
+    {    
+        grp = lv_group_create();
+        lv_group_set_default(grp);
+    }
+
+    lv_indev_set_group(lv_gk_mouse_create(), grp);
+    lv_indev_set_group(lv_gk_kbd_create(), grp);
 }
 
 lv_indev_t *lv_gk_kbd_create()

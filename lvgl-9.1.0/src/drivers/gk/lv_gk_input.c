@@ -147,35 +147,99 @@ void gk_update_state()
         }
     }
 }
+#define _SCCHAR(x) *#x
+#define _SC(x) case GK_SCANCODE_##x: \
+        return _SCCHAR(x);
 
 enum _lv_key_t gk_key_to_lv(unsigned short gkkey)
 {
     switch(gkkey)
     {
-        case 82:
+        _SC(0);
+        _SC(1);
+        _SC(2);
+        _SC(3);
+        _SC(4);
+        _SC(5);
+        _SC(6);
+        _SC(7);
+        _SC(8);
+        _SC(9);
+        _SC(A);
+        _SC(B);
+        _SC(C);
+        _SC(D);
+        _SC(E);
+        _SC(F);
+        _SC(G);
+        _SC(H);
+        _SC(I);
+        _SC(J);
+        _SC(K);
+        _SC(L);
+        _SC(M);
+        _SC(N);
+        _SC(O);
+        _SC(P);
+        _SC(Q);
+        _SC(R);
+        _SC(S);
+        _SC(T);
+        _SC(U);
+        _SC(V);
+        _SC(W);
+        _SC(X);
+        _SC(Y);
+        _SC(Z);
+        case GK_SCANCODE_UP:
             return LV_KEY_UP;
-        case 81:
+        case GK_SCANCODE_DOWN:
             return LV_KEY_DOWN;
-        case 79:
+        case GK_SCANCODE_RIGHT:
             return LV_KEY_RIGHT;
-        case 80:
+        case GK_SCANCODE_LEFT:
             return LV_KEY_LEFT;
-        case 41:
+        case GK_SCANCODE_ESCAPE:
             return LV_KEY_ESC;
-        case 76:
+        case GK_SCANCODE_DELETE:
             return LV_KEY_DEL;
-        case 42:
+        case GK_SCANCODE_BACKSPACE:
             return LV_KEY_BACKSPACE;
-        case 40:
+        case GK_SCANCODE_RETURN:
             return LV_KEY_ENTER;
-        case 258:
+        case GK_SCANCODE_AUDIONEXT:
             return LV_KEY_NEXT;
-        case 259:
+        case GK_SCANCODE_AUDIOPREV:
             return LV_KEY_PREV;
-        case 74:
+        case GK_SCANCODE_HOME:
             return LV_KEY_HOME;
-        case 77:
+        case GK_SCANCODE_END:
             return LV_KEY_END;
+        case GK_SCANCODE_SLASH:
+            return '/';
+        case GK_SCANCODE_BACKSLASH:
+            return '\\';
+        case GK_SCANCODE_GRAVE:
+            return '`';
+        case GK_SCANCODE_MINUS:
+            return '-';
+        case GK_SCANCODE_EQUALS:
+            return '=';
+        case GK_SCANCODE_TAB:
+            return '\t';
+        case GK_SCANCODE_LEFTBRACKET:
+            return '[';
+        case GK_SCANCODE_RIGHTBRACKET:
+            return ']';
+        case GK_SCANCODE_SEMICOLON:
+            return ';';
+        case GK_SCANCODE_APOSTROPHE:
+            return '\'';
+        case GK_SCANCODE_COMMA:
+            return ',';
+        case GK_SCANCODE_PERIOD:
+            return '.';
+
         default:
             return 0;
     }

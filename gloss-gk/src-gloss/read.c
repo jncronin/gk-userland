@@ -30,7 +30,7 @@ int _read(int file, char *ptr, int len)
 				errno = wssp.ival2;
 			return wssp.ival1;
 		}
-		else if(ret == 0)
+		else if(ret >= 0)
 			return ret;
 		// else ret == -3 -> try again
 	}

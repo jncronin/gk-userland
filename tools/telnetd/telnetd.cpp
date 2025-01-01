@@ -57,18 +57,31 @@ int telnetd_main(int argc, const char *argv[], shell_state *sst)
             printf("telnetd: accept succeeded %d\n", ret);
         }
 
+        auto act_stdin = dup(STDIN_FILENO);
+        auto act_stdout = dup(STDOUT_FILENO);
+        auto act_stderr = dup(STDERR_FILENO);
+
         // update stdin/stdout
         dup2(ret, STDIN_FILENO);
         dup2(ret, STDOUT_FILENO);
+        dup2(ret, STDERR_FILENO);
+
+        setvbuf(stdout, nullptr, _IOLBF, BUFSIZ);
+        setvbuf(stderr, nullptr, _IONBF, BUFSIZ);
 
         int sh_main(int argc, const char *argv[], shell_state *sst);
         const char sh[] = "sh";
         const char *sh_argv[] = { sh, nullptr };
         sh_main(1, sh_argv, nullptr);
 
-        freopen("/dev/stdin", "r", stdin);
-        freopen("/dev/stdout", "w", stdout);
-
         close(ret);
+
+        dup2(act_stdin, STDIN_FILENO);
+        dup2(act_stdout, STDOUT_FILENO);
+        dup2(act_stderr, STDERR_FILENO);
+
+        close(act_stdin);
+        close(act_stdout);
+        close(act_stderr);
     }
 }

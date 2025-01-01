@@ -35,3 +35,9 @@ extern "C" int _stat(char *file, struct stat *st)
 
 	return ret;
 }
+
+extern "C" int lstat(const char *path, struct stat *buf)
+{
+	// TODO: handle links properly
+	return _stat((char *)path, buf);
+}

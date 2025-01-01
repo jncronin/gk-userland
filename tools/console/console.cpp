@@ -10,6 +10,10 @@
 #include <pthread.h>
 #include <string>
 
+#ifdef __GAMEKID__
+#include <gk.h>
+#endif
+
 auto fnt = &lv_font_unscii_8;
 
 const unsigned int nlines = 26;
@@ -72,6 +76,10 @@ int main(int argc, char *argv[])
     lv_obj_set_style_border_width(cursor, 0, 0);
     lv_obj_set_style_radius(cursor, 0, 0);
     lv_obj_set_scrollbar_mode(cursor, LV_SCROLLBAR_MODE_OFF);
+
+#ifdef __GAMEKID__
+    GK_SetSupervisorVisible(1, 2);
+#endif
 
     // create pipes for console -> sh and sh -> console
     int pipes_console_to_sh[2], pipes_sh_to_console[2];

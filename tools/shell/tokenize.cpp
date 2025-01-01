@@ -15,7 +15,8 @@ std::vector<std::string> tokenize(const char *buf, unsigned int len)
     unsigned int cur_start = 0;
     while(i < len)
     {
-        if(!in_quote && !in_escape && (buf[i] == ' ' || buf[i] == 0 || buf[i] == '\n'))
+        if(!in_quote && !in_escape && (buf[i] == ' ' || buf[i] == 0 || buf[i] == '\n' ||
+            ((i < (len-1)) && buf[i] == '\r' && buf[i+1] == '\n')))
         {
             // end of token
             if(i != cur_start)
@@ -32,11 +33,15 @@ std::vector<std::string> tokenize(const char *buf, unsigned int len)
                     toks.push_back(cur);
                 }
             }
-            cur_start = i + 1;
             if(buf[i] == 0)
             {
                 break;
             }
+            if(buf[i] == '\r')
+            {
+                i++;    // skip over \r\n
+            }
+            cur_start = i + 1;
         }
         else if(in_escape)
         {

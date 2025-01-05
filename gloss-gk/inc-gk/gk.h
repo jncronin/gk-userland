@@ -46,6 +46,7 @@ int GK_CacheFlush(void *addr, size_t len, int is_exec);
 int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo, pid_t *pid);
 
 int GK_AudioSetMode(int nchan, int nbits, int freq, size_t buf_size_bytes);
+int GK_AudioSetModeEx(int nchan, int nbits, int freq, size_t buf_size_bytes, size_t nbufs);
 int GK_AudioEnable(int enable);
 int GK_AudioQueueBuffer(const void *buffer, void **next_buffer);
 int GK_AudioWaitFree();

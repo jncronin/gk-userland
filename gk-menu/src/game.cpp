@@ -2,8 +2,10 @@
 #include <gk.h>
 #include <cstring>
 #include <sys/wait.h>
+#include <sstream>
+#include <string>
 
-void Game::Load() const
+void Game::Load()
 {
     proccreate_t pcinfo;
 
@@ -25,6 +27,40 @@ void Game::Load() const
     pcinfo.with_focus = 1;
     pcinfo.keymap = keymap;
     pcinfo.graphics_texture_size = graphics_texture_size;
+    pcinfo.osd = nullptr;
+
+    printf("osd: %s\n", osd.c_str());
+
+    if(!osd.empty() && osd_text.empty())
+    {
+        auto f = fopen(osd.c_str(), "r");
+        if(f)
+        {
+            const unsigned int nbuf = 256;
+            char buf[nbuf];
+
+            while(true)
+            {
+                auto br = fread(buf, 1, nbuf, f);
+                if(br)
+                {
+                    std::string cstr(buf, br);
+                    osd_text.append(cstr.begin(), cstr.end());
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            fclose(f);
+        }
+        else
+        {
+            printf("could not open %s\n", osd.c_str());
+        }
+    }
+    pcinfo.osd = osd_text.empty() ? nullptr : osd_text.c_str();
 
     pid_t cpid;
     if(GK_CreateProcess(fname.c_str(), &pcinfo, &cpid) < 0)

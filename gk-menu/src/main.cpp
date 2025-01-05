@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
     if(argc > 1 && argv[1])
     {
         std::string gname(argv[1]);
-        for(const auto &g : games)
+        for(auto &g : games)
         {
             if(g.name == gname)
             {
@@ -290,7 +290,7 @@ int main(int argc, char *argv[])
 
 void game_click(lv_event_t *e)
 {
-    const auto &g = games[(int)e->user_data];
+    auto &g = games[(int)e->user_data];
     Mix_HaltMusic();
     g.Load();
     lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames

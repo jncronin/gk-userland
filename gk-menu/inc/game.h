@@ -16,6 +16,8 @@ class Game
         std::vector<std::string> args;
         std::string cwd;
         std::string img = "img/joystick.png";
+        std::string osd = "";
+        std::string osd_text = "";
 
         int screen_w = 640;
         int screen_h = 320;
@@ -29,7 +31,7 @@ class Game
 
         prockeymap_t keymap = { 0 };
 
-        void Load() const;
+        void Load();
         Game();
 };
 

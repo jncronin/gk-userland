@@ -43,15 +43,6 @@ cp $SYSROOT/usr/lib/liblibpng16.a $SYSROOT/usr/lib/libpng16.a
 cmake $CMAKE_OPTS -S rain-1-s-shell/ -B build/s
 make -C build/s -j16 install
 
-cmake $CMAKE_OPTS -S tools/ -B build/tools
-make -C build/tools -j16 install
-
-# strip bin files for gk
-arm-none-gkos-strip -S $SYSROOT/usr/bin/ls
-arm-none-gkos-strip -S $SYSROOT/usr/bin/tftpd
-arm-none-gkos-strip -S $SYSROOT/usr/bin/sh
-arm-none-gkos-strip -S $SYSROOT/usr/bin/echo
-
 cp -dpR nemagfx/inc/* $SYSROOT/usr/include
 cp -dpR nemagfx/lib/* $SYSROOT/usr/lib
 
@@ -91,10 +82,10 @@ make -C build/sdl12 -j16 install
 sed 's/SDL2/SDL/g' $SYSROOT/usr/bin/sdl2-config > $SYSROOT/usr/bin/sdl-config
 chmod ugo+x $SYSROOT/usr/bin/sdl-config
 sed 's/SDL2/SDL/g' $SYSROOT/usr/lib/pkgconfig/sdl2.pc | sed 's/sdl2/sdl/g' > $SYSROOT/usr/lib/pkgconfig/sdl.pc
-chmod ugo+x $SYSROOY/usr/lib/pkgconfig/sdl.pc
+chmod ugo+x $SYSROOT/usr/lib/pkgconfig/sdl.pc
 
 mkdir -p build/sdl_gfx
-cp build/sdl_gfx
+cd build/sdl_gfx
 ../../SDL_gfx-2.0.27/configure --host=arm-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
 make -j16 install
 cd ../..

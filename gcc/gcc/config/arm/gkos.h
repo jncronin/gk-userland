@@ -11,6 +11,9 @@
     builtin_define ("_REENT_THREAD_LOCAL"); \
   } while(0);
 
+#undef ARM_DEFAULT_SHORT_ENUMS
+#define ARM_DEFAULT_SHORT_ENUMS false
+
 #undef LINK_SPEC
 #define LINK_SPEC "--section-start .init=0 -Ttext 0x20 -z max-page-size=32 --gc-sections -q " BPABI_LINK_SPEC
 

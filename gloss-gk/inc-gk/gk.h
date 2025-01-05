@@ -60,6 +60,8 @@ int GK_SetLED(int led_id, uint32_t color);
 
 int GK_SetSupervisorVisible(int visible, int screen);
 
+uint64_t GK_GetCurUs();
+
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)
 
 #ifdef __cplusplus

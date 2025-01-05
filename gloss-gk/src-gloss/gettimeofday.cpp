@@ -121,3 +121,7 @@ extern "C" int _gettimeofday(struct timeval *tv, timezone *tz)
     return 0;
 }
 
+uint64_t GK_GetCurUs()
+{
+    return clock_cur_us();
+}

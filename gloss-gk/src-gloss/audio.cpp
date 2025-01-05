@@ -19,6 +19,14 @@ int GK_AudioSetModeEx(int nchan, int nbits, int freq, size_t buf_size_bytes, siz
     return deferred_call(__syscall_audiosetmodeex, &p);
 }
 
+int GK_AudioGetBufferPos(size_t *nbufs, size_t *curbuf, size_t *buflen, size_t *bufpos,
+    int *nchan, int *nbits, int *freq)
+{
+    __syscall_audiogetbufferpos_params p { .nbufs = nbufs, .curbuf = curbuf, .buflen = buflen,
+        .bufpos = bufpos, .nchan = nchan, .nbits = nbits, .freq = freq };
+    return deferred_call(__syscall_audiogetbufferpos, &p);
+}
+
 int GK_AudioEnable(int enable)
 {
     return deferred_call(__syscall_audioenable, (void*)enable);

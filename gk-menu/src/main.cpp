@@ -271,6 +271,8 @@ int main(int argc, char *argv[])
             if(g.name == gname)
             {
                 g.Load();
+                lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames
+                nrefresh = 3;
             }
         }
     }

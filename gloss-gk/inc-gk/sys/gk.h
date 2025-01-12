@@ -71,4 +71,15 @@ int     lstat (const char * __path, struct stat * __buf );
 #define PTHREAD_MUTEX_DEFAULT 3
 #endif
 
+#define _GLIBCXX_USE_C99_STDLIB 1
+#define _GLIBCXX_USE_C99_STDIO 1
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+long double strtold (const char* str, char** endptr);
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -16,6 +16,7 @@ mkdir -p $SYSROOT/usr
 
 # copy newlib headers
 cp -dpR newlib-cygwin/newlib/libc/include $SYSROOT/usr
+rm $SYSROOT/usr/include/threads.h
 
 # copy gk headers
 cp -dpR gloss-gk/gk-userlandinterface/* $SYSROOT/usr/include

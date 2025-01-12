@@ -34,7 +34,7 @@ export PATH="$TOOLSDIR/bin:$PATH"
 # build gcc
 mkdir -p build/gcc
 cd build/gcc
-../../gcc/configure --target=arm-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --enable-languages=c,c++
+../../gcc/configure --target=arm-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --enable-languages=c,c++ --enable-threads=posix
 make -j16 all-gcc
 make -j16 install-gcc
 cd ../..

@@ -60,8 +60,10 @@ cp -dp build/gloss-gk/crt0.o $SYSROOT/usr/lib
 cd build/gcc
 make -j16 all-target-libgcc
 make -j16 install-target-libgcc
+cd ../..
 
-# build libstdc++
+# build libstdc++ - use separate build tree (even though it builds gcc again) so that we pull in new newlib defines
+mkdir -p build/libstdc++
 make -j16 all-target-libstdc++-v3
 make -j16 install-target-libstdc++-v3
 cd ../..

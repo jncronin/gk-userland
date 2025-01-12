@@ -219,7 +219,7 @@ static SDL_AudioDevice * GKAUDIO_Init(int devindex)
     //impl->CaptureFromDevice = GKAUDIO_CaptureFromDevice;
     impl->free = GKAUDIO_Free;
 
-    return 0; /* this audio target is available. */
+    return impl; /* this audio target is available. */
 }
 
 AudioBootStrap GKAUDIO_bootstrap = {

@@ -98,6 +98,9 @@ cp -dpR glm/ ~/src/gk/include
 cmake $CMAKE_OPTS  -S mojoAL-main/ -B build/mojoAL
 make -C build/mojoAL -j16 install
 cp -dp ~/src/gk/lib/libmojoal.a ~/src/gk/lib/libal.a
+cp -dp ~/src/gk/lib/libmojoal.a ~/src/gk/lib/libopenal.a
+cp -dp ~/opt/gk/usr/lib/libmojoal.a ~/opt/gk/usr/lib/libal.a
+cp -dp ~/opt/gk/usr/lib/libmojoal.a ~/opt/gk/usr/lib/libopenal.a
 
 cmake $CMAKE_OPTS -S libogg-1.3.5/ -B build/ogg
 make -C build/ogg -j16 install

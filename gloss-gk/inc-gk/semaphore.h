@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <sys/types.h>
+
 typedef struct _sem_t
 {
     void *opaque;

@@ -45,7 +45,8 @@
         "s_tritemp.h": "c",
         "span": "c",
         "spanstream": "c",
-        "sdl_audio_c.h": "c"
+        "sdl_audio_c.h": "c",
+        "pr47333.C": "cpp"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

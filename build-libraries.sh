@@ -141,12 +141,9 @@ make -j16 install
 cd ../..
 
 # build script doesn't like installing with static libraries
-cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DALSOFT_INSTALL=OFF
+cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DALSOFT_INSTALL=OFF -DLIBTYPE=STATIC
 make -C build/openal -j 16 install
-# instead, combine them and install ourselves
-echo -n -e "create $SYSROOT/usr/lib/libopenal.a\naddlib build/openal/libopenal.a\naddlib build/openal/libalsoft.common.a\nsave\nend\n" | arm-none-gkos-ar -M
-mkdir -p $SYSROOT/usr/lib/cmake/OpenAL
-cp build/openal/OpenALConfig.cmake build/openal/OpenALTargets.cmake $SYSROOT/usr/lib/cmake/OpenAL
 cp build/openal/openal.pc $SYSROOT/usr/lib/pkgconfig
+cp build/openal/libopenal.a $SYSROOT/usr/lib
 
 echo "Successfully built gk libraries in $SYSROOT"

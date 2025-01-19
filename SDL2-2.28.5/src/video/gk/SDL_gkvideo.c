@@ -264,6 +264,7 @@ int GK_CreateWindow(_THIS, SDL_Window *window)
     }
 
     gk_window->sdl_window = window;
+    SDL_SetKeyboardFocus(window);
 
     return 0;
 }

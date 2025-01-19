@@ -1488,6 +1488,14 @@ elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
       list(APPEND SOURCE_FILES ${GK_AUDIO_SOURCES})
       set(HAVE_SDL_AUDIO TRUE)
     endif()
+
+    if(SDL_JOYSTICK)
+      set(SDL_JOYSTICK_GK 1)
+      file(GLOB GK_JOYSTICK_SOURCES ${SDL2_SOURCE_DIR}/src/joystick/gk/*.c)
+      list(APPEND SOURCE_FILES ${GK_JOYSTICK_SOURCES})
+    set(HAVE_SDL_JOYSTICK TRUE)
+  endif()
+
   endif()
 
   if(UNIX)

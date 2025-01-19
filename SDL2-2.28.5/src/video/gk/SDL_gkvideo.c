@@ -346,6 +346,7 @@ int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects,
 
     GK_GPUFlipBuffers(&gmsg, &window->surface->pixels);
     GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
+    gmsg.msgs[gmsg.hdr.__ncmds-1].type = BlitImageNoBlendIf;    /* will not copy if flagged as such in process struct */
     GK_GPUFlush(&gmsg);
     return 0;
 }

@@ -24,6 +24,7 @@ class Game
         int screen_pf = GK_PIXELFORMAT_RGB565;
 
         bool screen_ignore_vsync = true;
+        bool screen_overwritten_each_frame = true;
 
         size_t stack_size = 64*1024;
         size_t heap_size = 32*1024*1024;

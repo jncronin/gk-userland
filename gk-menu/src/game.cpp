@@ -23,6 +23,7 @@ void Game::Load()
     pcinfo.screen_w = screen_w;
     pcinfo.screen_h = screen_h;
     pcinfo.screen_ignore_vsync = screen_ignore_vsync;
+    pcinfo.screen_overwritten_each_frame = screen_overwritten_each_frame;
     pcinfo.pixel_format = screen_pf;
     pcinfo.with_focus = 1;
     pcinfo.keymap = keymap;

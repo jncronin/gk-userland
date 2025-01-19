@@ -298,6 +298,7 @@ static int parse_game()
     read_int("screen_h", &g.screen_h);
     read_int("screen_pf", &g.screen_pf);
     read_bool("screen_ignore_vsync", &g.screen_ignore_vsync);
+    read_bool("screen_overwritten_each_frame", &g.screen_overwritten_each_frame);
 
     bool gik = g.keymap.gamepad_is_keyboard != 0;
     read_bool("gamepad_is_keyboard", &gik);
@@ -406,6 +407,8 @@ int load_games()
     ADD_DEFINE(GK_KEYJOYDIGIRIGHT);
     ADD_DEFINE(GK_KEYJOYDIGIUP);
     ADD_DEFINE(GK_KEYJOYDIGIDOWN);
+    ADD_DEFINE(GK_KEYLB);
+    ADD_DEFINE(GK_KEYRB);
 
     ADD_DEFINE(GK_SCANCODE_0);
     ADD_DEFINE(GK_SCANCODE_1);

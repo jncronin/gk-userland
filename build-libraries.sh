@@ -27,6 +27,7 @@ export PATH
 # cmake options
 CMAKE_OPTS="-DCMAKE_TOOLCHAIN_FILE=../toolchain-gkos.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr"
 
+rm $SYSROOT/arm-none-gkos/include/iconv.h
 cmake $CMAKE_OPTS -S libiconv-cmake-master/ -B build/libiconv
 make -C build/libiconv -j16 install
 cp -dpf $SYSROOT/usr/lib/liblibiconv.a $SYSROOT/usr/lib/libiconv.a

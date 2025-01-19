@@ -46,7 +46,11 @@
         "span": "c",
         "spanstream": "c",
         "sdl_audio_c.h": "c",
-        "pr47333.C": "cpp"
+        "pr47333.C": "cpp",
+        "*.x": "cpp",
+        "internet": "cpp",
+        "ostream": "cpp",
+        "iomanip": "cpp"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

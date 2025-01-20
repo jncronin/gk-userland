@@ -1,6 +1,7 @@
 build/
 build-*/
 *.o
+!build-aux/
 
 busybox-1.36.1/applets/.built-in.o.cmd
 busybox-1.36.1/busybox_unstripped.out

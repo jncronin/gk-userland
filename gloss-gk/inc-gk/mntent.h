@@ -23,6 +23,10 @@
 #ifndef        _MNTENT_H
 #define        _MNTENT_H        1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <features.h>
 #define __need_FILE
 #include <stdio.h>
@@ -93,6 +97,9 @@ extern int endmntent (FILE *__stream) __THROW;
 extern char *hasmntopt (__const struct mntent *__mnt,
                         __const char *__opt) __THROW;
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif        /* mntent.h */
 

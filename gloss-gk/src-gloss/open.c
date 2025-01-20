@@ -1,5 +1,7 @@
 #include <syscalls.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 int _open(const char *name, int flags, int mode)
 {
@@ -26,4 +28,9 @@ int _open(const char *name, int flags, int mode)
 		return wssp.ival1;
 	}
 	return ret;
+}
+
+int creat(const char *pathname, mode_t mode)
+{
+	return _open(pathname, O_WRONLY | O_CREAT | O_TRUNC, mode);
 }

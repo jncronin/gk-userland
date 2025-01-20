@@ -113,3 +113,13 @@ struct group *getgrnam(const char *name)
     else
         return NULL;
 }
+
+void setpwent(void)
+{
+
+}
+
+void endpwent(void)
+{
+
+}

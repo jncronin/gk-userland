@@ -581,3 +581,30 @@ extern "C" int pthread_once(pthread_once_t *once_control,
         // else we are currently running, so just loop until complete
     }
 }
+
+extern "C" int sched_yield()
+{
+    deferred_call(__syscall_yield, (void *)0);
+    return 0;
+}
+
+extern "C" int pthread_equal(pthread_t a, pthread_t b)
+{
+    if(a == b)
+        return 1;
+    return 0;
+}
+
+extern "C" int pthread_attr_setschedparam(pthread_attr_t *attr,
+    const struct sched_param *param)
+{
+    errno = EINVAL;
+    return -1;
+}
+
+extern "C" int pthread_attr_getschedparam(const pthread_attr_t *attr,
+    struct sched_param *param)
+{
+    errno = ENOTSUP;
+    return -1;
+}

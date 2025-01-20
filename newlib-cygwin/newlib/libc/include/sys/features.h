@@ -437,6 +437,10 @@ extern "C" {
 #define UNIX
 #endif
 
+#ifndef SSIZE_MAX
+#define SSIZE_MAX INT_MAX
+#endif
+
 #endif
 
 /* XMK loosely adheres to POSIX -- 1003.1 */

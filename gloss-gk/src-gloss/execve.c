@@ -59,3 +59,21 @@ int execlp(const char *file, const char *arg, ...)
 	}
 	return ret;
 }
+
+int execv(const char *path, char *const argv[])
+{
+	int ret, _errno;
+	struct __syscall_execve_params p;
+	char *envend = NULL;
+
+	p.name = (char *)path;
+	p.argv = (char **)argv;
+	p.env = &envend;
+
+	__syscall(__syscall_execve, &ret, &p, &_errno);
+	if(ret)
+	{
+		errno = _errno;
+	}
+	return ret;
+}

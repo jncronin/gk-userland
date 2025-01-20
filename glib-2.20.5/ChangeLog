@@ -1,0 +1,2066 @@
+commit 0eb09632563003a6b42fd654d10b8ee78fbf5304
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Aug 27 23:56:42 2009 -0400
+
+    Updates
+
+ NEWS |   16 ++++++++++++++++
+ 1 files changed, 16 insertions(+), 0 deletions(-)
+
+commit ca79339e228733c83f5956ba22f457cf14981b30
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Aug 27 23:02:08 2009 -0400
+
+    Use the saved errno value
+
+    Bug 591995
+
+ gio/glocalfileoutputstream.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 1674764f0c9bb458125b53124a4aff7b2acfe540
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Aug 27 22:59:05 2009 -0400
+
+    Read /dev/urandom unbuffered
+
+    To avoid wasting entropy. Bug 593232.
+
+ glib/grand.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+commit 0bfd98400387acb2eaddbe4bdac4e821e7e4f0f4
+Author: Christian Persch <chpe@gnome.org>
+Date:   Thu Aug 20 15:13:43 2009 +0200
+
+    Preserve errno
+
+    When using errno in g_set_error with _(), preserve errno. Bug #592457.
+
+ glib/gconvert.c     |   22 +++++++++++++++-------
+ glib/gdir.c         |   13 +++++++++----
+ glib/gspawn-win32.c |    9 ++++++---
+ glib/gspawn.c       |   27 +++++++++++++++++++--------
+ 4 files changed, 49 insertions(+), 22 deletions(-)
+
+commit d349f2f6e5f647efdf8367455533a53b02b2b1db
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Tue Aug 11 20:22:51 2009 +0200
+
+    Only fsync if the existing file is > 0 bytes
+
+    This means we don't sync in the case where we created an (empty)
+    temp file and now replace it with the data.
+
+    This fixes (among other things) the performance of trashing files.
+
+ glib/gfileutils.c |   51
+ ++++++++++++++++++++++++++++-----------------------
+ 1 files changed, 28 insertions(+), 23 deletions(-)
+
+commit 408950287d283963cf221c6e7619792447ba73aa
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Jul 10 13:13:18 2009 -0400
+
+    Avoid some compiler warnings.
+
+ gobject/gtype.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 9939347cceb0c839b3a962f75614af0a3d0e4303
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Jul 10 13:11:28 2009 -0400
+
+    Another possible error code clash, yay
+
+ glib/gstrfuncs.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 5084b8d9b8bf471d34cf87d37956e34cf4dd96a2
+Author: Carles Ferrando <carles.ferrando@gmail.com>
+Date:   Mon Aug 24 18:34:48 2009 +0200
+
+    Minor update to Catalan (Valencian) translation
+
+ po/ca@valencia.po |  926
+ ++++++++++++++++++++++++++---------------------------
+ 1 files changed, 447 insertions(+), 479 deletions(-)
+
+commit ce09f940b6c385a07834587c410d6924655840cb
+Author: Shixin Zeng <zeng.shixin@gmail.com>
+Date:   Fri Aug 14 23:21:12 2009 +0300
+
+    [Win32] Avoid superfluous '/' from g_file_resolve_relative_path()
+
+    Patch from bug #591532.
+
+ gio/win32/gwinhttpfile.c |   16 +++++++++++++---
+ 1 files changed, 13 insertions(+), 3 deletions(-)
+
+commit d3b4d03784b0b80a33281627a862b9997822dc6d
+Author: Tor Lillqvist <tml@iki.fi>
+Date:   Fri Aug 14 22:59:47 2009 +0300
+
+    Avoid gcc warning on Windows
+
+    Avoid "function declaration isn't a prototype" warnings from gcc 4.4
+    in the Windows-specific code.
+
+ glib/gutils.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit e536290bb0db27cb88411516622d4000b1353bd0
+Author: Antón Méixome <meixome@mancomun.org>
+Date:   Mon Aug 10 16:25:24 2009 +0200
+
+    Updated Galician translation
+
+ po/gl.po | 1129
+ +++++++++++++++++++++++++++++++++++---------------------------
+ 1 files changed, 641 insertions(+), 488 deletions(-)
+
+commit fbcbfc74539c5b399ae2707f8dc855d58a98df7e
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat Jun 27 01:29:06 2009 -0400
+
+    Bump version
+
+ configure.in |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 213b4ca60ad81629e9a19a4d525572376ab801ec
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat Jun 27 01:25:56 2009 -0400
+
+    2.20.42.20.4
+
+ gio/pltcheck.sh   |    2 +-
+ po/am.po          |   34 +-
+ po/ar.po          |   34 +-
+ po/as.po          |   34 +-
+ po/az.po          |   34 +-
+ po/be.po          |   34 +-
+ po/be@latin.po    |   34 +-
+ po/bg.po          |   34 +-
+ po/bn.po          |   34 +-
+ po/bn_IN.po       |  877
+ +++++++++++++++++++++++++++--------------------------
+ po/bs.po          |   34 +-
+ po/ca.po          |   34 +-
+ po/ca@valencia.po |   34 +-
+ po/cs.po          |   34 +-
+ po/cy.po          |   34 +-
+ po/da.po          |   34 +-
+ po/de.po          |   34 +-
+ po/dz.po          |   34 +-
+ po/el.po          |   34 +-
+ po/en_CA.po       |   34 +-
+ po/en_GB.po       |   34 +-
+ po/eo.po          |   34 +-
+ po/es.po          |   34 +-
+ po/et.po          |   34 +-
+ po/eu.po          |   34 +-
+ po/fa.po          |   34 +-
+ po/fi.po          |   34 +-
+ po/fr.po          |   34 +-
+ po/ga.po          |   34 +-
+ po/gl.po          |   34 +-
+ po/gu.po          |   34 +-
+ po/he.po          |   34 +-
+ po/hi.po          |   34 +-
+ po/hr.po          |   34 +-
+ po/hu.po          |   34 +-
+ po/hy.po          |   34 +-
+ po/id.po          |   34 +-
+ po/is.po          |   34 +-
+ po/it.po          |   34 +-
+ po/ja.po          |   34 +-
+ po/ka.po          |   34 +-
+ po/kn.po          |   34 +-
+ po/ko.po          |   34 +-
+ po/ku.po          |   34 +-
+ po/lt.po          |   34 +-
+ po/lv.po          |   34 +-
+ po/mai.po         |   34 +-
+ po/mg.po          |   34 +-
+ po/mk.po          |   34 +-
+ po/ml.po          |   34 +-
+ po/mn.po          |   34 +-
+ po/mr.po          |   34 +-
+ po/ms.po          |   34 +-
+ po/nb.po          |   34 +-
+ po/ne.po          |   34 +-
+ po/nl.po          |   34 +-
+ po/nn.po          |   34 +-
+ po/oc.po          |   34 +-
+ po/or.po          |   34 +-
+ po/pa.po          |  860
+ ++++++++++++++++++++++++++--------------------------
+ po/pl.po          |   34 +-
+ po/ps.po          |   34 +-
+ po/pt.po          |   34 +-
+ po/pt_BR.po       |   34 +-
+ po/ro.po          |   34 +-
+ po/ru.po          |   34 +-
+ po/rw.po          |   34 +-
+ po/si.po          |   34 +-
+ po/sk.po          |   34 +-
+ po/sl.po          |   34 +-
+ po/sq.po          |   34 +-
+ po/sr.po          |   34 +-
+ po/sr@ije.po      |   34 +-
+ po/sr@latin.po    |   34 +-
+ po/sv.po          |   34 +-
+ po/ta.po          |   34 +-
+ po/te.po          |   34 +-
+ po/th.po          |   34 +-
+ po/tl.po          |   34 +-
+ po/tr.po          |   34 +-
+ po/tt.po          |   34 +-
+ po/uk.po          |   34 +-
+ po/vi.po          |   34 +-
+ po/wa.po          |   34 +-
+ po/xh.po          |   34 +-
+ po/yi.po          |   34 +-
+ po/zh_CN.po       |   34 +-
+ po/zh_HK.po       |   34 +-
+ po/zh_TW.po       |   34 +-
+ 89 files changed, 2336 insertions(+), 2327 deletions(-)
+
+commit cf72d0f757ba78e151cf8a01387ee7669a207761
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat Jun 27 00:14:46 2009 -0400
+
+    Updates
+
+ NEWS |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
+
+commit 340ad3d17fbb02952ccace02405301541e5afca2
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Jun 26 23:01:12 2009 -0400
+
+    Fix a typo
+
+ docs/reference/glib/building.sgml |   96
+ +++++++++++++++++++------------------
+ 1 files changed, 49 insertions(+), 47 deletions(-)
+
+commit bfb3aa9d4800811c14c1df4da2dedc924655712d
+Author: Tom Parker <palfrey@tevp.net>
+Date:   Fri Jun 26 22:41:23 2009 -0400
+
+    Add NULL to end of g_filename_complete_get_completions() return value
+
+    g_filename_complete_get_completions() return value is meant to be a
+    g_strfreev-compatible array i.e. NULL-terminated. However, pointer
+    arrays
+    aren't automagically NULL-terminated. This fixes bug 586868
+
+ gio/gfilenamecompleter.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+commit d5444c9b49e1281a6f5c958da4cce439c5410bb2
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Jun 19 23:44:29 2009 -0400
+
+    Use pipe2 when available
+
+    This avoids a small window for races between pipe and fdset.
+    Reported in bug 579933 by Thiago Macieira.
+
+ configure.in |   11 ++---------
+ glib/gmain.c |   20 +++++++++++++++-----
+ 2 files changed, 17 insertions(+), 14 deletions(-)
+
+commit 6cf974af383ed2934d0f40e9c488eb3eb5312f7d
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Mon Jun 15 12:25:43 2009 +0200
+
+    Avoid unnecessary work if mount watching not specified (#585360)
+
+    If G_FILE_MONITOR_WATCH_MOUNTS isn't specified, don't do all the work
+    when the mtab changes.
+
+ gio/glocaldirectorymonitor.c |   29 +++++++++++++++++++++++++----
+ gio/glocaldirectorymonitor.h |    1 +
+ 2 files changed, 26 insertions(+), 4 deletions(-)
+
+commit 4ab9132735d99c036ceaa7850e21af5ca8659167
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Mon Jun 15 01:09:25 2009 -0400
+
+    Refer to the correct gcc deprecation options
+
+    This oversight was pointed out in bug 585520.
+
+ docs/reference/glib/tmpl/macros_misc.sgml |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 0ee3ed07d3ef2771290e7ba99a874d84daa15b9e
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Mon Jun 15 01:03:54 2009 -0400
+
+    Fix some typos in list documentation
+
+    This fixes bug 585726.
+
+ docs/reference/glib/tmpl/linked_lists_double.sgml |    4 ++--
+ docs/reference/glib/tmpl/linked_lists_single.sgml |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit af390010fb60e40aa9d20958a72a1cccfa55b400
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Mon Jun 15 00:45:55 2009 -0400
+
+    Fix the icon property implementation
+
+    Turns out both the setter and the getter were broken...
+    Fixes bug 585676.
+
+ gio/gemblem.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+commit 29b1fd54d9066f2f7fb503dbdf207f685c1d8202
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Mon Jun 15 00:38:34 2009 -0400
+
+    Trivial formatting fixes
+
+ gio/gemblem.c |   63
+ ++++++++++++++++++++++++++++-----------------------------
+ 1 files changed, 31 insertions(+), 32 deletions(-)
+
+commit 2192f1003f27eaf523917a046a42d8fc0019a87b
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sun Jun 14 22:26:52 2009 -0400
+
+    Use inotify_init1 when available
+
+    To avoid leaking the inotify fd. Fixes bug 585478.
+
+ configure.in                 |    1 +
+ gio/inotify/inotify-kernel.c |    9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+commit 3eb432314906f154be7db71a99554972328d0a32
+Author: Benjamin Otte <otte@gnome.org>
+Date:   Fri Jun 12 15:57:12 2009 +0200
+
+    don't make strings const when they are not
+
+    gets rid of compiler warnings
+
+ gio/gdesktopappinfo.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 6d8d9348230dd23214120ae0d43d559e7a805b75
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Jun 11 12:41:16 2009 -0400
+
+    Fix an oversight in the previous commit
+
+    We don't want to unset DISPLAY etc, if none is specified in the
+    app launch context.
+
+ gio/gdesktopappinfo.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+commit 979929206b21a2818be74c41edfb22005742f8ca
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Wed Jun 10 23:50:45 2009 -0400
+
+    Fix g_string_chunk_insert_len to accept nuls
+
+    Contrary to what the documentation says, g_string_chunk_insert_len
+    was stopping at the first nul. Also add a test. Fixes bug 585088.
+
+ glib/gstring.c      |   54
+ ++++++++++++++++++++++++--------------------------
+ glib/tests/string.c |   23 +++++++++++++++++++++
+ 2 files changed, 49 insertions(+), 28 deletions(-)
+
+commit 12c411a98e13aac87a6e937e0b6b92c698b37edf
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Wed Jun 10 16:20:51 2009 -0400
+
+    Make setting DISPLAY work
+
+    And remove a bunch of grotty code to manipulate an environment
+    array at the same time. Instead, simply call setenv in the child_setup
+    function.
+
+ gio/gdesktopappinfo.c |  232
+ ++++++++++--------------------------------------
+ 1 files changed, 49 insertions(+), 183 deletions(-)
+
+commit 098155209912843afc3a8d81c120309adabf2b16
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Wed Jun 10 16:20:38 2009 -0400
+
+    Support automake 1.11
+
+ autogen.sh |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
+
+commit 1feacdd38b347711e9f9459790ded6f987f375cb
+Author: Benjamin Otte <otte@gnome.org>
+Date:   Mon Jun 8 15:27:12 2009 +0200
+
+    only query file info in g_file_copy() when we need it
+
+    The default implementation of g_file_copy() checked the size of
+    the file
+    to copy to give useful progress updates unconditionally. This
+    can cause
+    long delays on 1-connection FTP servers while it tries to open
+    a second
+    connection before it returns EBUSY. This patch makes this query only
+    happen when we actually send progress updates.
+
+ gio/gfile.c |   34 +++++++++++++++++++---------------
+ 1 files changed, 19 insertions(+), 15 deletions(-)
+
+commit d9b46acb72911e93c539355a3f612499b3de0652
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Tue Jun 23 15:07:00 2009 +0200
+
+    Copy namespaces correctly in g_file_copy_attributes
+
+    File attribute namespaces are delimited with "::", but
+    build_attribute_list_for_copy only used ":", so we didn't copy
+    any writable namespaces.
+
+ gio/gfile.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 00547ece56ac781c2f0c438773627e175e89c65a
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Thu Jun 18 19:43:46 2009 +0200
+
+    Use io_prio as mainloop prio for async-emulation (#579449)
+
+    I'm not sure why we used the elaborate formula to convert the
+    io-priority
+    to the priority of the mainloop idle when emulating async i/o
+    with idles.
+    However, it causes the default io priority to be less than the normal
+    idle prio, so the i/o won't be scheduled if there is an idle
+    outstanding.
+
+    There is really no great mapping to use here, doing blocking i/o in an
+    idle of any prio is generally bad and apps doing a lot of async
+    i/o should
+    initialize threads. However, if we use the io-priority directly we
+    at least
+    avoid the starvation problem above and make things easier to
+    understand.
+
+ gio/gioscheduler.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 53345997901f8faa0285f79f79a68cfa5418f6c8
+Author: A S Alam <aalam@users.sf.net>
+Date:   Thu Jun 18 06:18:03 2009 +0530
+
+    updating for Punjabi
+
+ po/pa.po |  866
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 432 insertions(+), 434 deletions(-)
+
+commit fb9d3b99522f472864fa8185a811aac7051a711b
+Author: Runa Bhattacharjee <runab@redhat.com>
+Date:   Tue Jun 9 11:55:38 2009 +0530
+
+    Updated Bengali India Translation
+
+ po/bn_IN.po |  937
+ +++++++++++++++++++++++++++++------------------------------
+ 1 files changed, 466 insertions(+), 471 deletions(-)
+
+commit 7f1729b4fd678818ae5ee1deaebb6d37c7986add
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri May 29 13:57:21 2009 -0400
+
+    Bump version to 2.20.4
+
+ configure.in |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 3c3776dce32610185914957072ca66cfff34d7bb
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri May 29 13:15:11 2009 -0400
+
+    2.20.3
+
+ po/am.po          |    8 +-
+ po/ar.po          |    8 +-
+ po/as.po          |    8 +-
+ po/az.po          |    8 +-
+ po/be.po          |    8 +-
+ po/be@latin.po    |    8 +-
+ po/bg.po          |    8 +-
+ po/bn.po          |    8 +-
+ po/bn_IN.po       |    8 +-
+ po/bs.po          |    8 +-
+ po/ca.po          |    8 +-
+ po/ca@valencia.po |  837
+ ++++++++++++++++++++++++++---------------------------
+ po/cs.po          |    8 +-
+ po/cy.po          |    8 +-
+ po/da.po          |    8 +-
+ po/de.po          |    8 +-
+ po/dz.po          |    8 +-
+ po/el.po          |    8 +-
+ po/en_CA.po       |    8 +-
+ po/en_GB.po       |    8 +-
+ po/eo.po          |    8 +-
+ po/es.po          |    8 +-
+ po/et.po          |    8 +-
+ po/eu.po          |    8 +-
+ po/fa.po          |    8 +-
+ po/fi.po          |    8 +-
+ po/fr.po          |    8 +-
+ po/ga.po          |    8 +-
+ po/gl.po          |    8 +-
+ po/gu.po          |    8 +-
+ po/he.po          |    8 +-
+ po/hi.po          |    8 +-
+ po/hr.po          |    8 +-
+ po/hu.po          |    8 +-
+ po/hy.po          |    8 +-
+ po/id.po          |    8 +-
+ po/is.po          |    8 +-
+ po/it.po          |    8 +-
+ po/ja.po          |    8 +-
+ po/ka.po          |    8 +-
+ po/kn.po          |    8 +-
+ po/ko.po          |    8 +-
+ po/ku.po          |    8 +-
+ po/lt.po          |    8 +-
+ po/lv.po          |    8 +-
+ po/mai.po         |    8 +-
+ po/mg.po          |    8 +-
+ po/mk.po          |    8 +-
+ po/ml.po          |    8 +-
+ po/mn.po          |    8 +-
+ po/mr.po          |    8 +-
+ po/ms.po          |    8 +-
+ po/nb.po          |    8 +-
+ po/ne.po          |    8 +-
+ po/nl.po          |    8 +-
+ po/nn.po          |    8 +-
+ po/oc.po          |    8 +-
+ po/or.po          |    8 +-
+ po/pa.po          |    8 +-
+ po/pl.po          |    8 +-
+ po/ps.po          |    8 +-
+ po/pt.po          |    8 +-
+ po/pt_BR.po       |    8 +-
+ po/ro.po          |    8 +-
+ po/ru.po          |    8 +-
+ po/rw.po          |    8 +-
+ po/si.po          |    8 +-
+ po/sk.po          |    8 +-
+ po/sl.po          |    8 +-
+ po/sq.po          |    8 +-
+ po/sr.po          |    8 +-
+ po/sr@ije.po      |    8 +-
+ po/sr@latin.po    |    8 +-
+ po/sv.po          |    8 +-
+ po/ta.po          |    8 +-
+ po/te.po          |    8 +-
+ po/th.po          |    8 +-
+ po/tl.po          |    8 +-
+ po/tr.po          |    8 +-
+ po/tt.po          |    8 +-
+ po/uk.po          |    8 +-
+ po/vi.po          |    8 +-
+ po/wa.po          |    8 +-
+ po/xh.po          |    8 +-
+ po/yi.po          |    8 +-
+ po/zh_CN.po       |    8 +-
+ po/zh_HK.po       |    8 +-
+ po/zh_TW.po       |    8 +-
+ 88 files changed, 764 insertions(+), 769 deletions(-)
+
+commit 61f78d562d1ca16335ade571b347cb05acfc0f40
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri May 29 01:44:17 2009 -0400
+
+    Update for 2.20.3
+
+ NEWS |   14 ++++++++++++++
+ 1 files changed, 14 insertions(+), 0 deletions(-)
+
+commit 1f32eb927e2b404d4a697fa55282425ccb4d1784
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Wed May 27 12:01:14 2009 -0400
+
+    Fix a locking problem in g_main_context_iterate()
+
+    We failed to ensure that the context is locked on every exit of
+    the function. This fixes bug 583324.
+
+ glib/gmain.c |   15 ++++++---------
+ 1 files changed, 6 insertions(+), 9 deletions(-)
+
+commit 91e8f21c938fa7d0388f59cd229427996c128b90
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Wed May 20 14:46:51 2009 +0200
+
+    Don't dereference identifier_type if it is NULL (#579558)
+
+ gio/gunixvolume.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+commit c2ed17a1a712cb446d8e62d9697bffa0cdf1a585
+Author: Robert Bragg <robert@linux.intel.com>
+Date:   Wed May 6 09:20:43 2009 +0100
+
+    Take a reference on the gio file monitors while signaling pending
+    file changes
+
+    It was possible for a signal handler to remove the last reference and
+    dispose the monitor.  If there were remaining pending_file_changes
+    they
+    tried to dereference the disposed monitor.
+
+    This patch simply calls g_object_{ref,unref} around the loop that
+    signals
+    the changes.
+
+ gio/gfilemonitor.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+commit eb6c59bc48ccec382925ffc3b32e5bfa1e0479b7
+Author: Christian Persch <chpe@gnome.org>
+Date:   Tue May 27 23:44:35 2008 +0200
+
+    Preserve errno when using g_set_error with _() and g_strerror()
+
+ gio/glocalfileoutputstream.c |    2 +-
+ glib/gspawn.c                |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit faeeebab030eee4610b41303754e44dc89239450
+Author: Shixin Zeng <zeng.shixin@gmail.com>
+Date:   Thu May 28 12:52:23 2009 +0300
+
+    Fix string length bugs in GWinHttpFile (#580347)
+
+ gio/win32/gwinhttpfile.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 8607901a7406371d55874bb6c291351b4b0c4547
+Author: Hans Breuer <hans@breuer.org>
+Date:   Wed May 27 15:12:31 2009 +0300
+
+    Correct reference and implement close_fn (#578769)
+
+    Do proper referencing and unreferencing of
+    GWinHttpFileInputStream::file and
+    GWinHttpFileInputStream::file::vfs. Implement
+    GWinHttpFileInputStream::close_fn.
+
+ gio/win32/gwinhttpfile.c            |    5 ++++-
+ gio/win32/gwinhttpfileinputstream.c |   23 ++++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
+commit cd7e05bd0d00e3d9eb4f96c1fc15eb9db8252c9f
+Author: Miquel Esplà <miquelespla@gmail.com>
+Date:   Mon May 25 00:25:21 2009 +0200
+
+    Added Valencian-Catalan translation
+
+ po/LINGUAS        |    1 +
+ po/ca@valencia.po | 1940
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 1941 insertions(+), 0 deletions(-)
+
+commit 0e79a64be20f39d7c715655396114313b217894f
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sun May 17 17:29:45 2009 -0400
+
+    Forgotten commit
+
+ po/am.po       |   20 +-
+ po/ar.po       |   20 +-
+ po/as.po       |   20 +-
+ po/az.po       |   20 +-
+ po/be.po       |   20 +-
+ po/be@latin.po |   20 +-
+ po/bg.po       |   20 +-
+ po/bn.po       |   20 +-
+ po/bn_IN.po    |   20 +-
+ po/bs.po       |   20 +-
+ po/ca.po       |  837
+ ++++++++++++++++++++++++++++----------------------------
+ po/cs.po       |  837
+ ++++++++++++++++++++++++++++----------------------------
+ po/cy.po       |   20 +-
+ po/da.po       |   20 +-
+ po/de.po       |   20 +-
+ po/dz.po       |   20 +-
+ po/el.po       |   20 +-
+ po/en_CA.po    |   20 +-
+ po/en_GB.po    |   20 +-
+ po/eo.po       |   20 +-
+ po/es.po       |   20 +-
+ po/et.po       |   20 +-
+ po/eu.po       |   20 +-
+ po/fa.po       |   20 +-
+ po/fi.po       |   20 +-
+ po/fr.po       |   20 +-
+ po/ga.po       |   20 +-
+ po/gl.po       |   20 +-
+ po/gu.po       |   20 +-
+ po/he.po       |   20 +-
+ po/hi.po       |   20 +-
+ po/hr.po       |   20 +-
+ po/hu.po       |   20 +-
+ po/hy.po       |   20 +-
+ po/id.po       |   20 +-
+ po/is.po       |   20 +-
+ po/it.po       |   20 +-
+ po/ja.po       |   20 +-
+ po/ka.po       |   20 +-
+ po/kn.po       |   20 +-
+ po/ko.po       |   20 +-
+ po/ku.po       |   20 +-
+ po/lt.po       |   20 +-
+ po/lv.po       |   20 +-
+ po/mai.po      |   20 +-
+ po/mg.po       |   20 +-
+ po/mk.po       |   20 +-
+ po/ml.po       |   20 +-
+ po/mn.po       |   20 +-
+ po/mr.po       |   20 +-
+ po/ms.po       |   20 +-
+ po/nb.po       |   20 +-
+ po/ne.po       |   20 +-
+ po/nl.po       |   20 +-
+ po/nn.po       |   20 +-
+ po/oc.po       |   20 +-
+ po/or.po       |   20 +-
+ po/pa.po       |   20 +-
+ po/pl.po       |   20 +-
+ po/ps.po       |  840
+ ++++++++++++++++++++++++++++----------------------------
+ po/pt.po       |   20 +-
+ po/pt_BR.po    |   20 +-
+ po/ro.po       |   20 +-
+ po/ru.po       |   20 +-
+ po/rw.po       |   20 +-
+ po/si.po       |   20 +-
+ po/sk.po       |   20 +-
+ po/sl.po       |   20 +-
+ po/sq.po       |   20 +-
+ po/sr.po       |   20 +-
+ po/sr@ije.po   |   20 +-
+ po/sr@latin.po |   20 +-
+ po/sv.po       |   20 +-
+ po/ta.po       |   20 +-
+ po/te.po       |   20 +-
+ po/th.po       |   20 +-
+ po/tl.po       |   20 +-
+ po/tr.po       |   20 +-
+ po/tt.po       |   20 +-
+ po/uk.po       |   20 +-
+ po/vi.po       |   20 +-
+ po/wa.po       |   20 +-
+ po/xh.po       |   20 +-
+ po/yi.po       |   20 +-
+ po/zh_CN.po    |   20 +-
+ po/zh_HK.po    |   20 +-
+ po/zh_TW.po    |   20 +-
+ 87 files changed, 2089 insertions(+), 2105 deletions(-)
+
+commit 619200637a4366af78a27b88b64541f71e336c2a
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat May 16 23:57:00 2009 -0400
+
+    Bump version
+
+ configure.in |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit abdd332535cdce0f76b307e6355e5150c75f3b17
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat May 16 22:52:14 2009 -0400
+
+    Update for 2.20.2
+
+ NEWS |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
+
+commit 56bbed816852c083d46f68f2df597c1b552a2c8a
+Author: Paul Pogonyshev <pogonyshev@gmx.net>
+Date:   Mon May 4 22:32:35 2009 +0300
+
+    Don't try to ref NULL pointer in g_desktop_app_info_dup()
+
+    Fixes bug #573246.
+
+ gio/gdesktopappinfo.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+commit 9a040209b6fe6fbf5ded7e70cfb6fe36710fc8ea
+Author: Petr Kovar <pknbe@volny.cz>
+Date:   Sun May 3 18:32:21 2009 +0200
+
+    Updated Czech translation
+
+ po/cs.po |  847
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 426 insertions(+), 421 deletions(-)
+
+commit 517636c7a837d18d58deff501ebf7944264559c3
+Author: Jordi Mas i Hernandez <jmas@softcatala.org>
+Date:   Sun Apr 26 20:15:55 2009 +0200
+
+    Minor fixes to Catalan translation
+
+ po/ca.po |  847
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 426 insertions(+), 421 deletions(-)
+
+commit d71e37892c90f19d086068656c314914ace3bc4f
+Author: Johan Bilien <jobi@litl.com>
+Date:   Wed Apr 22 19:09:34 2009 +0100
+
+    Fix translation from GIO's file attr to xattr attributes
+
+    Bug 579862 – requesting xattr::foo ends up calling getxattr(...,
+    user.:foo,...)
+
+    The patch makes sure we escape xattr::, not xattr:, before adding
+    user.
+    and calling getxattr.
+
+ gio/glocalfileinfo.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit c17d4dd117db554e501a18a41de53734f7f87003
+Author: zabeeh khan <zabeehkhan@gmail.com>
+Date:   Fri Apr 17 11:27:38 2009 +0530
+
+    Pashto Translation committed as per the request made by Zabeeh Khan
+    on the gnome-i18n list
+
+ po/ps.po |  870
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 437 insertions(+), 433 deletions(-)
+
+commit b85834c22369579d1bea86b392594d0b912a5858
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Sat Apr 11 18:10:24 2009 -0400
+
+    Bump version
+
+ configure.in |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 2c1dc529e8d9b1ab2d8ccb8abb1efed836584616
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 9 21:34:49 2009 -0400
+
+    Add a note about handling non-hal backends
+
+ gio/gvolume.c |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
+
+commit 6e11246cc828217fd04a23f16b67db11333523f9
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 9 18:47:28 2009 -0400
+
+    Release GLib 2.20.1
+
+ po/am.po       |  154 ++++----
+ po/ar.po       |  839 ++++++++++++++++++++--------------------
+ po/as.po       |  871 ++++++++++++++++++++--------------------
+ po/az.po       |  154 ++++----
+ po/be.po       |  156 ++++----
+ po/be@latin.po |  156 ++++----
+ po/bg.po       |  836 +++++++++++++++++++--------------------
+ po/bn.po       |  154 ++++----
+ po/bn_IN.po    |  154 ++++----
+ po/bs.po       |  154 ++++----
+ po/ca.po       |  836 +++++++++++++++++++--------------------
+ po/cs.po       |  154 ++++----
+ po/cy.po       |  154 ++++----
+ po/da.po       |  837 +++++++++++++++++++--------------------
+ po/de.po       |  836 +++++++++++++++++++--------------------
+ po/dz.po       |  154 ++++----
+ po/el.po       |  863 ++++++++++++++++++++--------------------
+ po/en_CA.po    |  154 ++++----
+ po/en_GB.po    |  836 +++++++++++++++++++--------------------
+ po/eo.po       |  154 ++++----
+ po/es.po       |  841 ++++++++++++++++++++--------------------
+ po/et.po       |  154 ++++----
+ po/eu.po       |  894 +++++++++++++++++++++---------------------
+ po/fa.po       |  154 ++++----
+ po/fi.po       |  154 ++++----
+ po/fr.po       |  836 +++++++++++++++++++--------------------
+ po/ga.po       |  154 ++++----
+ po/gl.po       |  836 +++++++++++++++++++--------------------
+ po/gu.po       |  154 ++++----
+ po/he.po       |  154 ++++----
+ po/hi.po       |  154 ++++----
+ po/hr.po       |  154 ++++----
+ po/hu.po       |  905 ++++++++++++++++++++++---------------------
+ po/hy.po       |  154 ++++----
+ po/id.po       |  154 ++++----
+ po/is.po       |  154 ++++----
+ po/it.po       |  839 ++++++++++++++++++++--------------------
+ po/ja.po       |  836 +++++++++++++++++++--------------------
+ po/ka.po       |  154 ++++----
+ po/kn.po       |  880 +++++++++++++++++++++--------------------
+ po/ko.po       |  154 ++++----
+ po/ku.po       |  154 ++++----
+ po/lt.po       |  836 +++++++++++++++++++--------------------
+ po/lv.po       |  154 ++++----
+ po/mai.po      |  154 ++++----
+ po/mg.po       |  154 ++++----
+ po/mk.po       |  154 ++++----
+ po/ml.po       |  886 +++++++++++++++++++++---------------------
+ po/mn.po       |  154 ++++----
+ po/mr.po       |  154 ++++----
+ po/ms.po       |  154 ++++----
+ po/nb.po       |  836 +++++++++++++++++++--------------------
+ po/ne.po       |  154 ++++----
+ po/nl.po       |  154 ++++----
+ po/nn.po       |  154 ++++----
+ po/oc.po       |  154 ++++----
+ po/or.po       |  871 ++++++++++++++++++++--------------------
+ po/pa.po       |  868 +++++++++++++++++++++--------------------
+ po/pl.po       |  836 +++++++++++++++++++--------------------
+ po/ps.po       |  154 ++++----
+ po/pt.po       |  154 ++++----
+ po/pt_BR.po    |  836 +++++++++++++++++++--------------------
+ po/ro.po       |  154 ++++----
+ po/ru.po       |  836 +++++++++++++++++++--------------------
+ po/rw.po       |  154 ++++----
+ po/si.po       |  154 ++++----
+ po/sk.po       |  154 ++++----
+ po/sl.po       | 1165
+ ++++++++++++++++++++++++++----------------------------
+ po/sq.po       |  156 ++++----
+ po/sr.po       |  154 ++++----
+ po/sr@ije.po   |  154 ++++----
+ po/sr@latin.po |  154 ++++----
+ po/sv.po       | 1203
+ +++++++++++++++++++++++++++----------------------------
+ po/ta.po       |  888 ++++++++++++++++++++---------------------
+ po/te.po       |  154 ++++----
+ po/th.po       |  154 ++++----
+ po/tl.po       |  154 ++++----
+ po/tr.po       |  154 ++++----
+ po/tt.po       |  154 ++++----
+ po/uk.po       |  154 ++++----
+ po/vi.po       |  154 ++++----
+ po/wa.po       |  154 ++++----
+ po/xh.po       |  154 ++++----
+ po/yi.po       |  154 ++++----
+ po/zh_CN.po    |  839 ++++++++++++++++++++--------------------
+ po/zh_HK.po    |  154 ++++----
+ po/zh_TW.po    |  154 ++++----
+ 87 files changed, 17103 insertions(+), 16510 deletions(-)
+
+commit 009689e09b0cd9cc0a322d1361940183330bada6
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 9 17:43:59 2009 -0400
+
+    Update for 2.20.1
+
+ NEWS |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 44 insertions(+), 0 deletions(-)
+
+commit e68a35689fbcbab965b6631882381309cb0a20d8
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 9 14:56:49 2009 -0400
+
+    Fix G_DEFINE_TYPE_EXTENDED docs
+
+    Make the docs for G_DEFINE_TYPE_EXTENDED match the actual
+    definition of the macro.  (#577985)
+
+ gobject/gtype.h |   71
+ ++++++++++++++++++++++++++----------------------------
+ 1 files changed, 34 insertions(+), 37 deletions(-)
+
+commit 856632c496d15f3f273d567b521a2b06afc32721
+Author: Gian Mario Tagliaretti <gianmt@gnome.org>
+Date:   Thu Apr 9 14:35:36 2009 -0400
+
+    Fix a typo in GFile docs
+
+    Fixed function name in GFile docs from g_set_display_name to
+    g_file_set_display_name so that gtk-doc can link correctly.  (#578002)
+
+ gio/gfile.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 950de29d0e9720ce0979a84530130e27a3a59f74
+Author: Kenneth Nielsen <k.nielsen81@gmail.com>
+Date:   Thu Apr 9 13:49:00 2009 +0200
+
+    Updated Danish translation\n\nUpdated Danish translation by Kenneth
+    Nielsen.
+
+ po/da.po |  156
+ +++++++++++++++++++++++++++++++++----------------------------
+ 1 files changed, 84 insertions(+), 72 deletions(-)
+
+commit efc2cdbfc981754db361f49c30c8ee24ac0c769e
+Author: Peter Kjellerstedt <pkj@axis.com>
+Date:   Wed Apr 8 10:26:11 2009 -0400
+
+    Fix parsing of timezones
+
+    Make g_time_val_from_iso8601 handle timezones with minutes correctly;
+    also accept comma as a fraction separator.  (#578369)
+
+ glib/gtimer.c    |    6 +++---
+ tests/testglib.c |   18 +++++++++++++++++-
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+commit d0cf7b38780b0832fc904f75eb387aa61eb2f76e
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Wed Apr 8 09:12:02 2009 +0200
+
+    Only mark regular files as backup files
+
+    Apps don't generally create backup directories, etc. So, if the file
+    ends with ~ but is not a regular file shouldn't be considered a backup
+    file. (#573673)
+
+ gio/glocalfileinfo.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+commit 85a795b9bae44b973de1443f98728b21b78c68ae
+Author: Funda Wang <fundawang@gmail.com>
+Date:   Sun Apr 5 11:05:47 2009 +0800
+
+    Updated Simplified Chinese translation from Ray Wang
+    <wanglei1123@gmail.com>
+
+ po/zh_CN.po |   87
+ ++++++++++++++++++++++++++++++++++-------------------------
+ 1 files changed, 50 insertions(+), 37 deletions(-)
+
+commit 7fd870830806def730341a328389f8b5df49fab4
+Author: Thanos Lefteris <alefteris@gmail.com>
+Date:   Fri Apr 3 20:12:27 2009 +0100
+
+    Updated Greek translation
+
+    Signed-off-by: Simos Xenitellis <simos@gnome.org>
+
+ po/el.po |  238
+ ++++++++++++++++++++++++++++++++-----------------------------
+ 1 files changed, 125 insertions(+), 113 deletions(-)
+
+commit e6e82c51a64ca263877f730cc7531454d5430b77
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Apr 3 00:35:43 2009 -0400
+
+    Move hex_digits to rodata
+
+    Turn a string into a constant array.
+
+ gio/gfileattribute.c |  260
+ ++++++++++++++++++++++++--------------------------
+ 1 files changed, 126 insertions(+), 134 deletions(-)
+
+commit 25ff8ee7486c7bdf1612d3554fc1d7d91daedfa6
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Fri Apr 3 00:23:54 2009 -0400
+
+    Don't lie about ext4 filesystems
+
+    When returning a filesystem type id, say "ext3/ext4" instead of
+    "ext3",
+    since both use the same superblock magic, so we can't discriminate
+    them without more work.
+
+ gio/glocalfile.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit e8a42bb81c46204a86259e44aa9698658487e64a
+Author: Paolo Borelli <pborelli@katamail.com>
+Date:   Fri Apr 3 00:04:39 2009 -0400
+
+    Regex leak on error path
+
+    Don't leak the GRegex struct when g_regex_new() fails.
+
+ glib/gregex.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+commit 82a5f787d68fd7d6ae973634694cebd43f126552
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 2 23:57:59 2009 -0400
+
+    Update requirements
+
+    Mention that the mimetype-functionality of GIO reqires
+    update-mime-database
+    and update-desktop-database at runtime. (#577128)
+
+ INSTALL.in |   32 +++++++++++++++----------
+ README.in  |   74
+ ++++++++++++++++++++++++++++++------------------------------
+ 2 files changed, 56 insertions(+), 50 deletions(-)
+
+commit 20774c566393af28e5123322abb8e35840ff0e5a
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 2 23:42:29 2009 -0400
+
+    Add a rule to generate ChangeLog
+
+    We use the same rule pango uses to create a ChangeLog file with
+    the help of git-log. The format is somewhat different from traditional
+    ChangeLog, but it contains the relevant information.
+
+ Makefile.am |   22 ++++++++++++++++++++--
+ 1 files changed, 20 insertions(+), 2 deletions(-)
+
+commit b7f9a1ac8337c546f9db9b7ee9ff437b256c75d8
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 2 23:14:54 2009 -0400
+
+    Rename ChangeLog to ChangeLog.pre-2-20
+
+    Rename ChangeLog to prevent old habits from luring me into adding
+    entries there. Also, this makes room for autogenerating a ChangeLog
+    at make dist.
+
+ ChangeLog          |  914
+ ----------------------------------------------------
+ ChangeLog.pre-2-20 |  914
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 914 insertions(+), 914 deletions(-)
+
+commit b160405aa0a66f3eb771af43b6d0000d076d045b
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Thu Apr 2 23:13:35 2009 -0400
+
+    remove generated files
+
+    README and INSTALL are generated files, no need to keep them
+    under source control.
+
+ INSTALL |  116 -------------------------------------
+ README  |  199
+ ---------------------------------------------------------------
+ 2 files changed, 0 insertions(+), 315 deletions(-)
+
+commit 1ce74b0dd34222b201369e5aff53b27182db7b66
+Author: Alexander Larsson <alexl@redhat.com>
+Date:   Thu Apr 2 19:01:56 2009 +0200
+
+    On trash, if rename fails with EXDEV, return G_IO_ERROR_NOT_SUPPORTED
+
+    Sometimes it seems like the trash dir and the file are on the same
+    filesystem but the rename fails with EXDEV anyway (can happen
+    e.g. with bind mounts or multiple mounts of the same device). In this
+    case we want to return the right error so that apps can fallback to
+    regular delete.
+
+ gio/glocalfile.c |   19 ++++++++++++++-----
+ 1 files changed, 14 insertions(+), 5 deletions(-)
+
+commit 20df6b6e888a1aed596c8c60ed7427708a56a453
+Author: Tobias Mueller <gnome-bugs@auftrags-killer.org>
+Date:   Wed Apr 1 21:51:00 2009 -0400
+
+    Mark glib_gettext as string translation function
+
+    Make glib_gettext with G_GNUC_FORMAT to avoid warnings with
+    -Wformat -Wformat-nonliteral.
+    Signed-off-by: Matthias Clasen <mclasen@redhat.com>
+
+ glib/glib.symbols |    2 +-
+ glib/glibintl.h   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 86aa49594feac9797ab87b83e198147aff4171fa
+Author: Hagen Schink <troja84@gmail.com>
+Date:   Wed Apr 1 21:30:51 2009 -0400
+
+    fix a typo in g_io_channel_flush docs
+
+    Refer to the correct return values.
+
+    Signed-off-by: Matthias Clasen <mclasen@redhat.com>
+
+ glib/giochannel.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 785bed2e18c18842f07ada42af2ec80cf18aca70
+Author: Matthias Clasen <mclasen@redhat.com>
+Date:   Tue Mar 31 19:39:16 2009 -0400
+
+    Update README files to refer to git
+
+    Update various README files to refer to git instead of svn.
+    Add a README.commits that is pretty much a copy of the same file
+    in GTK+. Also discontinue ChangeLog files.
+
+ ChangeLog                |    6 ++++
+ HACKING                  |    8 ++--
+ Makefile.am              |    1 +
+ README                   |   76
+ +++++++++++++++++++++++-----------------------
+ README.commits           |   72
+ +++++++++++++++++++++++++++++++++++++++++++
+ docs/reference/ChangeLog |    6 ++++
+ gio/ChangeLog            |    6 ++++
+ gmodule/ChangeLog        |    6 ++++
+ gobject/ChangeLog        |    6 ++++
+ gthread/ChangeLog        |    6 ++++
+ po/ChangeLog             |    6 ++++
+ 11 files changed, 157 insertions(+), 42 deletions(-)
+
+commit b5ef6da3c31ad1067b88f7edd53c5d48fe7f73c1
+Author: Manoj Kumar Giri <mgiri@src.gnome.org>
+Date:   Mon Mar 30 08:53:32 2009 +0000
+
+    Added entries for Oriya language Translation updation.
+
+    svn path=/trunk/; revision=8023
+
+ po/ChangeLog |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+commit b6a7cd609a1d0012ff07d62e04115830c68972e0
+Author: Manoj Kumar Giri <mgiri@src.gnome.org>
+Date:   Mon Mar 30 08:52:25 2009 +0000
+
+    Updated Oriya Translation.
+
+    svn path=/trunk/; revision=8022
+
+ po/or.po |  876
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 443 insertions(+), 433 deletions(-)
+
+commit a6ebda3d690098e28319dc391fb82a281f9113e8
+Author: Matthias Clasen <matthiasc@src.gnome.org>
+Date:   Sun Mar 29 19:08:57 2009 +0000
+
+    Copy a va_list when using it multiple times. Reported by Wim Lewis.
+
+            * glib/gmessages.c (g_logv): Copy a va_list when using it
+            multiple times. Reported by Wim Lewis.
+
+
+    svn path=/trunk/; revision=8021
+
+ ChangeLog        |    8 ++++++++
+ glib/gmessages.c |   15 ++++++++++++---
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+commit dabbea65c61c402ed63fba0c36a419e4d4abdf46
+Author: Carlos Garnacho <carlosg@gnome.org>
+Date:   Thu Mar 26 13:59:02 2009 +0000
+
+    Bug 575270 – GVolumeMonitor::mount-pre-unmount not being emitted
+
+    2009-03-26  Carlos Garnacho  <carlosg@gnome.org>
+
+            Bug 575270 – GVolumeMonitor::mount-pre-unmount not being
+            emitted
+
+            * gunixmount.c (eject_unmount_cb) (eject_unmount_do_cb)
+            (eject_unmount_do): Emit ::mount-pre-unmount and wait
+            500msec before
+            actually trying to unmount.
+
+
+    svn path=/trunk/; revision=8020
+
+ gio/ChangeLog    |    8 ++++++++
+ gio/gunixmount.c |   52
+ ++++++++++++++++++++++++++++++++++------------------
+ 2 files changed, 42 insertions(+), 18 deletions(-)
+
+commit 3476bfe846b663049b393e43d272a06883b3fe7d
+Author: Gintautas Miliauskas <gintautas@miliauskas.lt>
+Date:   Thu Mar 26 13:52:46 2009 +0000
+
+    Updated Lithuanian translation.
+
+    2009-03-26  Gintautas Miliauskas  <gintautas@miliauskas.lt>
+
+	* lt.po: Updated Lithuanian translation.
+
+
+
+    svn path=/trunk/; revision=8019
+
+ po/ChangeLog |    4 +
+ po/lt.po     |  842
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 433 insertions(+), 413 deletions(-)
+
+commit 618617acfcc8bbbb0b563e5744218be213660cbb
+Author: Shankar Prasad <sprasad@src.gnome.org>
+Date:	Thu Mar 26 05:35:36 2009 +0000
+
+    updated kn.po
+
+    svn path=/trunk/; revision=8018
+
+ po/kn.po |   90
+ ++++++++++++++++++++++++++++++++++++-------------------------
+ 1 files changed, 53 insertions(+), 37 deletions(-)
+
+commit 32f7e122b1c80171db3ce84ff8947a24d50e0e5a
+Author: Shankar Prasad <sprasad@src.gnome.org>
+Date:	Thu Mar 26 05:31:33 2009 +0000
+
+    updated kn.po
+
+    svn path=/trunk/; revision=8017
+
+ po/ChangeLog |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+commit d487ef7c2f13c66d2784a2d5371021c3c3043e12
+Author: Nickolay V. Shmyrev <nshmyrev@yandex.ru>
+Date:	Fri Mar 20 22:29:22 2009 +0000
+
+    Updated Russian translation.
+
+    2009-03-21	Nickolay V. Shmyrev <nshmyrev@yandex.ru>
+
+	* ru.po: Updated Russian translation.
+
+
+    svn path=/trunk/; revision=8016
+
+ po/ChangeLog |    4 +++
+ po/ru.po     |   77
+ +++++++++++++++++++++++++++++++++-------------------------
+ 2 files changed, 48 insertions(+), 33 deletions(-)
+
+commit edfe4405e05d832ff2449a54bf4938d964d3ae44
+Author: Kostas Papadimas <pkst@src.gnome.org>
+Date:	Wed Mar 18 15:49:52 2009 +0000
+
+    Updated Greek Translation by Fotis Tsamis.
+
+    svn path=/trunk/; revision=8015
+
+ po/ChangeLog |    4 ++
+ po/el.po     |  145
+ ++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 75 insertions(+), 74 deletions(-)
+
+commit fdcaf9381e3f084d9ddf1ffd0c35873602950151
+Author: Djihed Afifi <djihed@src.gnome.org>
+Date:	Wed Mar 18 09:20:03 2009 +0000
+
+    Updated Arabic translation
+
+    svn path=/trunk/; revision=8014
+
+ po/ChangeLog |    4 +
+ po/ar.po     |  843
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 434 insertions(+), 413 deletions(-)
+
+commit 11554d40ca7b0d8691a0a0d93b34bffef29276f0
+Author: Amitakhya Phukan <amitakhya@src.gnome.org>
+Date:	Wed Mar 18 06:31:05 2009 +0000
+
+    Updated assamese translations
+
+    svn path=/trunk/; revision=8013
+
+ po/ChangeLog |    4 +
+ po/as.po     |  873
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 445 insertions(+), 432 deletions(-)
+
+commit 07b2a7a5ad6818a692e41e9003f2a849f7220b66
+Author: Gabor Kelemen <kelemeng@gnome.hu>
+Date:	Wed Mar 18 00:05:58 2009 +0000
+
+    Translation updated.
+
+    2009-03-18	Gabor Kelemen  <kelemeng@gnome.hu>
+
+	* hu.po: Translation updated.
+
+
+    svn path=/trunk/; revision=8012
+
+ po/ChangeLog |    4 +
+ po/hu.po     |  911
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 457 insertions(+), 458 deletions(-)
+
+commit 8df23d2283b56b181c4ebac9a74d9ea980efb1ba
+Author: Ryan Lortie <ryanl@src.gnome.org>
+Date:	Tue Mar 17 23:03:33 2009 +0000
+
+    trivial spelling/whitespace fixes
+
+    svn path=/trunk/; revision=8011
+
+ ChangeLog    |   18 +++++++++---------
+ glib/gmain.c |    2 +-
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 1d1fba442fd7e605288fe92809c59d58b0b8f186
+Author: Colin Walters <walters@redhat.com>
+Date:	Tue Mar 17 21:59:18 2009 +0000
+
+    Bug 575708 - runaway inotify madness ...
+
+    2009-03-17	Colin Walters  <walters@redhat.com>
+
+	Bug 575708 - runaway inotify madness ...
+
+	* gfilemonitor.c: Queue up events in a local list and
+	fire one idle, instead of queuing lots of individual
+	idles which has bad performance behavior.
+
+
+    svn path=/trunk/; revision=8010
+
+ gio/ChangeLog	    |	 8 +++++
+ gio/gfilemonitor.c |	78
+ ++++++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 66 insertions(+), 20 deletions(-)
+
+commit 044733e2a0d5b3192c38b35611b9de4364c6c810
+Author: Tomasz Dominikowski <tdominikowski@aviary.pl>
+Date:	Tue Mar 17 17:02:00 2009 +0000
+
+    Updated Polish translation
+
+    2009-03-17	Tomasz Dominikowski  <tdominikowski@aviary.pl>
+
+	* pl.po: Updated Polish translation
+
+    svn path=/trunk/; revision=8009
+
+ po/ChangeLog |    4 +
+ po/pl.po     |  844
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 434 insertions(+), 414 deletions(-)
+
+commit bbb1d85d7233bff2dae91a5cf06600a28e91cec0
+Author: Inaki Larranaga Murgoitio <dooteo@euskalgnu.org>
+Date:	Tue Mar 17 16:49:22 2009 +0000
+
+    Updated Basque translation.
+
+    2009-03-17	Inaki Larranaga Murgoitio  <dooteo@euskalgnu.org>
+
+	* eu.po: Updated Basque translation.
+
+
+    svn path=/trunk/; revision=8008
+
+ po/ChangeLog |    4 +
+ po/eu.po     |  894
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 451 insertions(+), 447 deletions(-)
+
+commit 2ff422d461faec17797f498afd82d23bd3ea8f2e
+Author: Ani Peter <anipeter@src.gnome.org>
+Date:	Tue Mar 17 15:41:14 2009 +0000
+
+    Updated Malayalam Translation
+
+    svn path=/trunk/; revision=8007
+
+ po/ChangeLog |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+commit ad9afec76fa198fd2edc56d5fcb834fd2c9577bc
+Author: Ani Peter <anipeter@src.gnome.org>
+Date:	Tue Mar 17 15:41:04 2009 +0000
+
+    Updated Malayalam Translation
+
+    svn path=/trunk/; revision=8006
+
+ po/ml.po |  892
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 448 insertions(+), 444 deletions(-)
+
+commit 4ed58e576ea15bb84b4b1b461f8f8deea3a09d50
+Author: Ignacio Casal Quinteiro <icq@src.gnome.org>
+Date:	Tue Mar 17 14:12:26 2009 +0000
+
+    Updated Galician translation
+
+    svn path=/trunk/; revision=8005
+
+ po/ChangeLog |    4 +++
+ po/gl.po     |   84
+ ++++++++++++++++++++++++++++++++-------------------------
+ 2 files changed, 51 insertions(+), 37 deletions(-)
+
+commit ebf52321606815d09a8a25f6778eae205531a1cb
+Author: Gil Forcada Codinachs <gforcada@src.gnome.org>
+Date:	Tue Mar 17 13:52:09 2009 +0000
+
+    Updated Catalan translation
+
+    svn path=/trunk/; revision=8004
+
+ po/ChangeLog |    4 +
+ po/ca.po     |  842
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 433 insertions(+), 413 deletions(-)
+
+commit ae38feb249df9a5dc4b9ecc85c55d13f256c7477
+Author: Takeshi AIHANA <takeshi.aihana@gmail.com>
+Date:	Tue Mar 17 13:20:20 2009 +0000
+
+    Update Japanese translation.
+
+    2009-03-17	Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	* ja.po: Update Japanese translation.
+
+    svn path=/trunk/; revision=8003
+
+ po/ChangeLog |    4 +
+ po/ja.po     |  842
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 433 insertions(+), 413 deletions(-)
+
+commit fab272e104ac536fea40501594eef457955c50b8
+Author: Hendrik Richter <hendrikr@gnome.org>
+Date:	Tue Mar 17 12:08:42 2009 +0000
+
+    Updated German translation.
+
+    2009-03-17	Hendrik Richter  <hendrikr@gnome.org>
+
+	* de.po: Updated German translation.
+
+    svn path=/trunk/; revision=8002
+
+ po/ChangeLog |    4 +++
+ po/de.po     |   80
+ +++++++++++++++++++++++++++++++++------------------------
+ 2 files changed, 50 insertions(+), 34 deletions(-)
+
+commit b54278668e432f67cbc3ed8e167fce14cd44d3e8
+Author: Alexander Shopov <ash@contact.bg>
+Date:	Tue Mar 17 12:06:18 2009 +0000
+
+    Updated Bulgarian translation by Alexander Shopov <ash@contact.bg>
+
+    2009-03-17	Alexander Shopov  <ash@contact.bg>
+
+	* bg.po: Updated Bulgarian translation by
+	Alexander Shopov <ash@contact.bg>
+
+    svn path=/trunk/; revision=8001
+
+ po/ChangeLog |    5 +++
+ po/bg.po     |   79
+ +++++++++++++++++++++++++++++++++-------------------------
+ 2 files changed, 50 insertions(+), 34 deletions(-)
+
+commit a3fe42808174f1593559cfdcd581a4791d139f72
+Author: Alexander Larsson <alexl@redhat.com>
+Date:	Tue Mar 17 11:21:37 2009 +0000
+
+    fix attributes argument of query_info methods to be "const char *".
+
+    2009-03-17	Alexander Larsson  <alexl@redhat.com>
+
+	    * glocalfileinputstream.c:
+	    * glocalfileoutputstream.c:
+	fix attributes argument of query_info methods to
+	be "const char *".
+
+
+    svn path=/trunk/; revision=8000
+
+ gio/ChangeLog		      |    7 +++++++
+ gio/glocalfileinputstream.c  |    4 ++--
+ gio/glocalfileoutputstream.c |    4 ++--
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+commit 6cdd01bfcc10af04c05ccd90669e49551d6872a3
+Author: Claude Paroz <claude@2xlibre.net>
+Date:	Tue Mar 17 08:22:23 2009 +0000
+
+    Updated French translation.
+
+    2009-03-17	Claude Paroz  <claude@2xlibre.net>
+
+	* fr.po: Updated French translation.
+
+    svn path=/trunk/; revision=7999
+
+ po/ChangeLog |    4 +
+ po/fr.po     |  844
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 435 insertions(+), 413 deletions(-)
+
+commit e9de4af6761a150ad1e4cf50838e034cb8d51c78
+Author: Kjartan Maraas <kmaraas@gnome.org>
+Date:	Tue Mar 17 08:18:12 2009 +0000
+
+    Updated Norwegian bokmål translation.
+
+    2009-03-17	Kjartan Maraas	<kmaraas@gnome.org>
+
+	* nb.po: Updated Norwegian bokmål translation.
+
+    svn path=/trunk/; revision=7998
+
+ po/ChangeLog |    4 +
+ po/nb.po     |  844
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 434 insertions(+), 414 deletions(-)
+
+commit 1269ae29a1d43284894601bf090bada778bc8b4f
+Author: Jorge Gonzalez Gonzalez <jorgegonz@src.gnome.org>
+Date:	Mon Mar 16 22:11:32 2009 +0000
+
+    Updated Spanish translation
+
+    svn path=/trunk/; revision=7997
+
+ po/ChangeLog |    4 +
+ po/es.po     |  851
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 439 insertions(+), 416 deletions(-)
+
+commit 2506375ebe0a72aa02f80551db2a5dfd12a4fcde
+Author: miloc <miloc@localhost>
+Date:	Mon Mar 16 21:11:22 2009 +0000
+
+    Updated Italian translation
+
+    svn path=/trunk/; revision=7996
+
+ po/ChangeLog |    4 +
+ po/it.po     |  845
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 435 insertions(+), 414 deletions(-)
+
+commit 47500e19d2ec122f282e293c10f2ff4e64ae39bf
+Author: Og B. Maciel <ogmaciel@src.gnome.org>
+Date:	Mon Mar 16 20:53:27 2009 +0000
+
+    Updated Brazilian Portuguese translation.
+
+    svn path=/trunk/; revision=7995
+
+ po/ChangeLog |    5 +
+ po/pt_BR.po  |  846
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 436 insertions(+), 415 deletions(-)
+
+commit f008bf64d078c6d94193608a5ce3d285c59f6406
+Author: Daniel Nylander <dnylande@src.gnome.org>
+Date:	Mon Mar 16 19:01:51 2009 +0000
+
+    sv.po: Updated Swedish translation
+
+    svn path=/trunk/; revision=7994
+
+ po/ChangeLog |    4 +
+ po/sv.po     | 1209
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 625 insertions(+), 588 deletions(-)
+
+commit 669cb756888d9aedaee419b9e705869a1cecffe6
+Author: Matej Urbančič <mateju@src.gnome.org>
+Date:	Mon Mar 16 18:35:43 2009 +0000
+
+    Updated Slovenian translation
+
+    svn path=/trunk/; revision=7993
+
+ po/sl.po | 1171
+ +++++++++++++++++++++++++++++++++-----------------------------
+ 1 files changed, 618 insertions(+), 553 deletions(-)
+
+commit 8b96ff36f14a55d990660f33d1163eab680ff780
+Author: Philip Withnall <philip@tecnocode.co.uk>
+Date:	Mon Mar 16 18:21:34 2009 +0000
+
+    Updated British English translation.
+
+    2009-03-16	Philip Withnall  <philip@tecnocode.co.uk>
+
+	* en_GB.po: Updated British English translation.
+
+
+    svn path=/trunk/; revision=7992
+
+ po/ChangeLog |    4 +
+ po/en_GB.po  |  840
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 432 insertions(+), 412 deletions(-)
+
+commit 6cff88ba18b3bc0d118308f109840cb163dcea03
+Author: Alexander Larsson <alexl@redhat.com>
+Date:	Mon Mar 16 16:03:13 2009 +0000
+
+    Bug 575555 – Use fsync() when replacing files to avoid data loss on
+
+    2009-03-16	Alexander Larsson  <alexl@redhat.com>
+
+	Bug 575555 – Use fsync() when replacing files to avoid data
+	loss on crash
+
+	    * configure.in:
+	Look for fsync().
+
+	    * glib/gfileutils.c:
+	    (write_to_temp_file):
+	fsync temp file if destination file exists
+
+    2009-03-16	Alexander Larsson  <alexl@redhat.com>
+
+	Bug 575555 – Use fsync() when replacing files to avoid data
+	loss on crash
+
+	    * glocalfileoutputstream.c:
+	    (g_local_file_output_stream_close):
+	    (_g_local_file_output_stream_replace):
+	fsync temp file before closing if replacing target file
+
+
+
+    svn path=/trunk/; revision=7991
+
+ ChangeLog		      |   11 +++++++++
+ configure.in		      |    1 +
+ gio/ChangeLog		      |    9 +++++++
+ gio/glocalfileoutputstream.c |   26 +++++++++++++++++++++
+ glib/gfileutils.c	      |   51
+ ++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 94 insertions(+), 4 deletions(-)
+
+commit 0b66e52e0b0fbd0101bfbf0e1ef04421d8d7d189
+Author: Kostas Papadimas <pkst@src.gnome.org>
+Date:	Mon Mar 16 15:54:50 2009 +0000
+
+    Updated Greek Translation by Fotis Tsamis.
+
+    svn path=/trunk/; revision=7990
+
+ po/ChangeLog |    4 +
+ po/el.po     |  931
+ ++++++++++++++++++++++++++++------------------------------
+ 2 files changed, 450 insertions(+), 485 deletions(-)
+
+commit 593718fd8cabe8e0a726d9b083ef80d6ec5e879b
+Author: Alexander Shopov <ash@contact.bg>
+Date:	Mon Mar 16 10:55:58 2009 +0000
+
+    Updated Bulgarian translation by Alexander Shopov <ash@contact.bg>
+
+    2009-03-16	Alexander Shopov  <ash@contact.bg>
+
+	* bg.po: Updated Bulgarian translation by
+	Alexander Shopov <ash@contact.bg>
+
+    svn path=/trunk/; revision=7989
+
+ po/ChangeLog |    5 +
+ po/bg.po     |  838
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 426 insertions(+), 417 deletions(-)
+
+commit d421cf697c7c8800e070ba81de22e45b5382684b
+Author: Shankar Prasad <sprasad@src.gnome.org>
+Date:	Mon Mar 16 10:31:10 2009 +0000
+
+    Updated kn.po
+
+    svn path=/trunk/; revision=7988
+
+ po/ChangeLog |    4 +
+ po/kn.po     | 1004
+ ++++++++++++++++++++++++++++------------------------------
+ 2 files changed, 483 insertions(+), 525 deletions(-)
+
+commit dada55618e7d2fe2526eb01e72ec5ce3cc071846
+Author: Amanpreet Singh Alam <aman@src.gnome.org>
+Date:	Mon Mar 16 02:33:40 2009 +0000
+
+    updating for Gnome Punjabi Translation by A S Alam
+
+    svn path=/trunk/; revision=7987
+
+ po/pa.po |  907
+ +++++++++++++++++++++++++++++++-------------------------------
+ 1 files changed, 451 insertions(+), 456 deletions(-)
+
+commit b3e22d022950ce13cc6cb88d0044693d951572eb
+Author: Hendrik Richter <hendrikr@gnome.org>
+Date:	Sun Mar 15 18:19:44 2009 +0000
+
+    Updated German translation.
+
+    2009-03-15	Hendrik Richter  <hendrikr@gnome.org>
+
+	* de.po: Updated German translation.
+
+    svn path=/trunk/; revision=7986
+
+ po/ChangeLog |    4 +
+ po/de.po     |  920
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 466 insertions(+), 458 deletions(-)
+
+commit a79594b51723b64b548ceb5b5b60666ecd080c85
+Author: Felix I <ifelix@src.gnome.org>
+Date:	Sun Mar 15 08:35:41 2009 +0000
+
+    tamil translation updated
+
+    svn path=/trunk/; revision=7985
+
+ po/ChangeLog |    4 +
+ po/ta.po     | 1327
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 683 insertions(+), 648 deletions(-)
+
+commit 98346a15946fbec3a5206153e0fc809ed1cacaf4
+Author: Nickolay V. Shmyrev <nshmyrev@yandex.ru>
+Date:	Sat Mar 14 19:14:18 2009 +0000
+
+    Updated Russian translation by Yuriy Penkin.
+
+    2009-03-14	Nickolay V. Shmyrev  <nshmyrev@yandex.ru>
+
+	* ru.po: Updated Russian translation by Yuriy Penkin.
+
+
+    svn path=/trunk/; revision=7984
+
+ po/ChangeLog |    4 +
+ po/ru.po     |  885
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 448 insertions(+), 441 deletions(-)
+
+commit 516a19767d0db4d575872832c1e51323e46edc99
+Author: Kostas Papadimas <pkst@src.gnome.org>
+Date:	Sat Mar 14 16:12:38 2009 +0000
+
+    Updated Greek Translation by Jennie Petoumenou.
+
+    svn path=/trunk/; revision=7983
+
+ po/ChangeLog |    4 +
+ po/el.po     | 1721
+ ++++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 881 insertions(+), 844 deletions(-)
+
+commit 4175a8546e642ee041f92693536fd907a3fd79b3
+Author: Aron Xu <aronxu@src.gnome.org>
+Date:	Sat Mar 14 11:31:29 2009 +0000
+
+    Updated Simplified Chinese translations by Deng Xiyue
+    <manphiz@gmail.com>
+
+    svn path=/trunk/; revision=7982
+
+ po/zh_CN.po |	853
+ ++++++++++++++++++++++++++++++-----------------------------
+ 1 files changed, 429 insertions(+), 424 deletions(-)
+
+commit 1dcdbf5974812685c1b8a03c36d6217fe44ffbca
+Author: Kenneth Nielsen <kennethn@src.gnome.org>
+Date:	Sat Mar 14 03:48:26 2009 +0000
+
+    Updated Danish translation
+
+    svn path=/trunk/; revision=7981
+
+ po/ChangeLog |    4 +
+ po/da.po     |  884
+ +++++++++++++++++++++++++++++-----------------------------
+ 2 files changed, 448 insertions(+), 440 deletions(-)
+
+commit 4e9abf266574d854b0495c1b13d956c00019ac87
+Author: Ignacio Casal Quinteiro <icq@src.gnome.org>
+Date:	Fri Mar 13 18:28:21 2009 +0000
+
+    Updated Galician translation
+
+    svn path=/trunk/; revision=7980
+
+ po/ChangeLog |    4 +
+ po/gl.po     | 1075
+ +++++++++++++++++++++++++++++----------------------------
+ 2 files changed, 551 insertions(+), 528 deletions(-)
+
+commit 622f01012030fcba31ee2a68920873ac06bb62e4
+Author: Kristian Rietveld <kris@imendio.com>
+Date:	Fri Mar 13 09:22:57 2009 +0000
+
+    when defaulting to the only item in the array, check if this is
+    indeed the
+
+    2009-03-13	Kristian Rietveld  <kris@imendio.com>
+
+	* gsignal.c (signal_lookup_closure): when defaulting to the only
+	item in the array, check if this is indeed the default closure.
+	(patch by Tim Janik).
+
+
+    svn path=/trunk/; revision=7979
+
+ gobject/ChangeLog |	6 ++++++
+ gobject/gsignal.c |	9 ++++++---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+commit 621ef866b14af56865eb65062c271ba3d06cfe7d
+Author: Matthias Clasen <matthiasc@src.gnome.org>
+Date:	Fri Mar 13 05:45:53 2009 +0000
+
+    Bump version
+
+    svn path=/trunk/; revision=7978
+
+ ChangeLog    |    4 ++++
+ configure.in |    4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+commit 5a8a224ff0ca193fe797c45ef54e5ed6466bfbb7
+Author: Matthias Clasen <matthiasc@src.gnome.org>
+Date:	Fri Mar 13 05:44:11 2009 +0000
+
+    2.20.0
+
+    svn path=/trunk/; revision=7976
+
+ ChangeLog				  |    6 +
+ INSTALL				  |    4 +-
+ README					  |    2 +-
+ configure.in				  |    4 +-
+ docs/reference/ChangeLog		  |    4 +
+ docs/reference/glib/gtester-report.1	  |    4 +-
+ docs/reference/glib/gtester.1		  |    4 +-
+ docs/reference/gobject/glib-genmarshal.1 |    4 +-
+ docs/reference/gobject/glib-mkenums.1	  |    4 +-
+ docs/reference/gobject/gobject-query.1   |    4 +-
+ gio/ChangeLog				  |    4 +
+ gmodule/ChangeLog			  |    4 +
+ gobject/ChangeLog			  |    4 +
+ gthread/ChangeLog			  |    4 +
+ po/ChangeLog				  |    4 +
+ po/am.po				  |   72 +-
+ po/ar.po				  |   72 +-
+ po/as.po				  |  997
+ ++++++++++++++------------
+ po/az.po				  |   72 +-
+ po/be.po				  |   72 +-
+ po/be@latin.po				  |   72 +-
+ po/bg.po				  |   72 +-
+ po/bn.po				  |   72 +-
+ po/bn_IN.po				  |  869 +++++++++++-----------
+ po/bs.po				  |   72 +-
+ po/ca.po				  |   72 +-
+ po/cs.po				  |  829 +++++++++++-----------
+ po/cy.po				  |   72 +-
+ po/da.po				  |   72 +-
+ po/de.po				  |   72 +-
+ po/dz.po				  |   72 +-
+ po/el.po				  |   72 +-
+ po/en_CA.po				  |   72 +-
+ po/en_GB.po				  |   72 +-
+ po/eo.po				  |   72 +-
+ po/es.po				  |   72 +-
+ po/et.po				  |   72 +-
+ po/eu.po				  |   72 +-
+ po/fa.po				  |   72 +-
+ po/fi.po				  |   72 +-
+ po/fr.po				  |   72 +-
+ po/ga.po				  |   72 +-
+ po/gl.po				  |   72 +-
+ po/gu.po				  |   72 +-
+ po/he.po				  |   72 +-
+ po/hi.po				  |  862 +++++++++++-----------
+ po/hr.po				  |   72 +-
+ po/hu.po				  |   72 +-
+ po/hy.po				  |   72 +-
+ po/id.po				  |   72 +-
+ po/is.po				  |   72 +-
+ po/it.po				  |  832 +++++++++++-----------
+ po/ja.po				  |  829 +++++++++++-----------
+ po/ka.po				  |   72 +-
+ po/kn.po				  |   72 +-
+ po/ko.po				  |   72 +-
+ po/ku.po				  |   72 +-
+ po/lt.po				  |  829 +++++++++++-----------
+ po/lv.po				  |   72 +-
+ po/mai.po				  |   72 +-
+ po/mg.po				  |   72 +-
+ po/mk.po				  |   72 +-
+ po/ml.po				  |  881 ++++++++++++-----------
+ po/mn.po				  |   72 +-
+ po/mr.po				  |  853 +++++++++++-----------
+ po/ms.po				  |   72 +-
+ po/nb.po				  |   72 +-
+ po/ne.po				  |   72 +-
+ po/nl.po				  |   72 +-
+ po/nn.po				  |   72 +-
+ po/oc.po				  |   72 +-
+ po/or.po				  |  864 +++++++++++-----------
+ po/pa.po				  |   72 +-
+ po/pl.po				  |  829 +++++++++++-----------
+ po/ps.po				  |   72 +-
+ po/pt.po				  |   72 +-
+ po/pt_BR.po				  |   72 +-
+ po/ro.po				  |  856 +++++++++++-----------
+ po/ru.po				  |   72 +-
+ po/rw.po				  |   72 +-
+ po/si.po				  |   72 +-
+ po/sk.po				  |   72 +-
+ po/sl.po				  | 1158
+ ++++++++++++++----------------
+ po/sq.po				  |   72 +-
+ po/sr.po				  |   72 +-
+ po/sr@ije.po				  |   72 +-
+ po/sr@latin.po				  |   72 +-
+ po/sv.po				  |   72 +-
+ po/ta.po				  |   72 +-
+ po/te.po				  |  103 ++--
+ po/th.po				  |   72 +-
+ po/tl.po				  |   72 +-
+ po/tr.po				  |   72 +-
+ po/tt.po				  |   72 +-
+ po/uk.po				  |   72 +-
+ po/vi.po				  |   72 +-
+ po/wa.po				  |   72 +-
+ po/xh.po				  |   72 +-
+ po/yi.po				  |   72 +-
+ po/zh_CN.po				  |   72 +-
+ po/zh_HK.po				  |   72 +-
+ po/zh_TW.po				  |   72 +-
+ 102 files changed, 8495 insertions(+), 8412 deletions(-)
+
+commit 3c34e435754bbe4b5d0871603408d8e1bf9f5c19
+Author: Matthias Clasen <matthiasc@src.gnome.org>
+Date:	Fri Mar 13 04:09:21 2009 +0000
+
+    Updates
+
+    svn path=/trunk/; revision=7975
+
+ ChangeLog |	4 ++++
+ NEWS	   |   28 ++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 0 deletions(-)

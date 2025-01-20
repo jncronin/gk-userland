@@ -147,4 +147,21 @@ make -C build/openal -j 16 install
 cp build/openal/openal.pc $SYSROOT/usr/lib/pkgconfig
 cp build/openal/libopenal.a $SYSROOT/usr/lib
 
+mkdir -p build/gettext
+cd build/gettext
+../../gettext-0.23.1/configure --host=arm-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
+
+cd gettext-tiny-0.3.2
+make CROSS_COMPILE=arm-none-gkos- CFLAGS="-g -O2" CC=arm-none-gkos-gcc AR=arm-none-gkos-ar prefix=$SYSROOT/usr install
+cd ..
+
+mkdir -p build/glib
+cd build/glib
+../../glib-2.20.5/configure --host=arm-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
+make -j 16 install
+cd ../..
+
+cmake $CMAKE_OPTS -S fluidsynth-2.4.2 -B build/fluidsynth -Denable-network=OFF
+make -C build/fluidsynth -j16 install
+
 echo "Successfully built gk libraries in $SYSROOT"

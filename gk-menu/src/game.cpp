@@ -29,6 +29,10 @@ void Game::Load()
     pcinfo.keymap = keymap;
     pcinfo.graphics_texture_size = graphics_texture_size;
     pcinfo.osd = nullptr;
+    // inherit stdin/out/err, nil else
+    pcinfo.acquire_fds[0] = 1;
+    pcinfo.acquire_fds[1] = 2;
+    pcinfo.acquire_fds[2] = 3;
 
     printf("osd: %s\n", osd.c_str());
 

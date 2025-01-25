@@ -40,7 +40,11 @@ using uint = unsigned int;
 
 inline constexpr std::size_t MinOutputRate{8000};
 inline constexpr std::size_t MaxOutputRate{192000};
+#ifdef __GAMEKID__
+inline constexpr std::size_t DefaultOutputRate{11025};
+#else
 inline constexpr std::size_t DefaultOutputRate{48000};
+#endif
 
 inline constexpr std::size_t DefaultUpdateSize{960}; /* 20ms */
 inline constexpr std::size_t DefaultNumUpdates{3};

@@ -54,6 +54,9 @@ static void GK_GL_SwapWindow(_THIS);
 static int GK_GL_LoadLibrary(_THIS, const char *path);
 static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
+void OSMesaNemaEndFrame(OSMesaContext ctx);
+void OSMesaEnableNema(OSMesaContext ctx, GLboolean enable);
+
 static int GK_Available(void)
 {
     return 1;
@@ -687,6 +690,9 @@ int GK_GL_MakeCurrent(_THIS)
             return -1;
         }
 
+        if(this->screen && this->screen->flags & SDL_NEMA)
+            OSMesaEnableNema(this->gl_data, GL_TRUE);
+
         // Set first framebuffer
         GK_GPUGetScreenMode((size_t *)&this->screen->w, (size_t *)&this->screen->h, NULL);
         OSMesaMakeCurrent(this->gl_data, firstfb,
@@ -706,6 +712,8 @@ static void GK_GL_SwapWindow(_THIS)
 {
     void *next_fb;
     GK_GPU_CommandList(cmds, 4);
+
+    OSMesaNemaEndFrame(this->gl_data);
 
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);

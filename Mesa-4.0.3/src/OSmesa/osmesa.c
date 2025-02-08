@@ -94,9 +94,11 @@ struct osmesa_context {
    nema_tex_format_t nema_bb_format;
    pthread_mutex_t nema_m;
    nema_cmdlist_t nema_cl;
+   GLboolean use_nema;
 };
 
 static nema_ringbuffer_t nema_rb;
+
 
 /* A forward declaration: */
 static void osmesa_update_state( GLcontext *ctx, GLuint newstate );
@@ -363,19 +365,24 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
 	 _swsetup_Wakeup( ctx );
 	 osmesa_register_swrast_functions( ctx );
 
-      /* Initialize nema */
-      GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
+    osmesa->use_nema = GL_FALSE;
 
-      nema_init();
-      nema_ext_hold_enable(0);
-      nema_ext_hold_irq_enable(0);
-      osmesa->nema_cl = nema_cl_create();
       }
    }
    return osmesa;
 }
 
+void OSMesaEnableNema(OSMesaContext osmesa)
+{
+         /* Initialize nema */
+         GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
 
+         nema_init();
+         nema_ext_hold_enable(0);
+         nema_ext_hold_irq_enable(0);
+         osmesa->nema_cl = nema_cl_create();
+         osmesa->use_nema = GL_TRUE;
+}
 
 
 /*
@@ -511,12 +518,15 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
       _mesa_ResizeBuffersMESA();
    }
 
-   nema_cl_bind_circular(&ctx->nema_cl);
-   nema_cl_rewind(&ctx->nema_cl);
-   nema_set_clip(0, 0, width, height);
-   nema_bind_dst_tex((uintptr_t)buffer, width, height, ctx->nema_bb_format, -1);
+   if(ctx->use_nema)
+   {
+      nema_cl_bind_circular(&ctx->nema_cl);
+      nema_cl_rewind(&ctx->nema_cl);
+      nema_set_clip(0, 0, width, height);
+      nema_bind_dst_tex((uintptr_t)buffer, width, height, ctx->nema_bb_format, -1);
 
-   // TODO try pthread_mutex_lock(&ctx->nema_m) here
+      // TODO try pthread_mutex_lock(&ctx->nema_m) here
+   }
 
    return GL_TRUE;
 }
@@ -782,8 +792,10 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
-         nema_clear(nema_rgba(r, g, b, 0));
-#if 0
+          if(osmesa->use_nema)
+            nema_clear(nema_rbga(r, g, b, 0));
+         else
+         {
 	       GLuint n = osmesa->rowlength * osmesa->height;
 	       GLchan *ptr3 = (GLchan *) osmesa->buffer;
 	       GLuint i;
@@ -791,12 +803,13 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 		  PACK_RGB(ptr3, r, g, b);
 		  ptr3 += 3;
 	       }
-#endif
+         }
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
-          nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-#if 0
+          if(osmesa->use_nema)
+            nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
+         else {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLchan *ptr3 = PIXELADDR3(x, (y + i));
@@ -805,7 +818,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 		     ptr3 += 3;
 		  }
 	       }
-#endif
+         }
 	    }
 	 }
 	 else if (osmesa->format == OSMESA_BGR) {
@@ -814,8 +827,9 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
-          nema_clear(nema_rgba(r, g, b, 0));
-#if 0
+          if(osmesa->use_nema)
+            nema_clear(nema_rgba(r, g, b, 0));
+         else {
 	       const GLint n = osmesa->rowlength * osmesa->height;
 	       GLchan *ptr3 = (GLchan *) osmesa->buffer;
 	       GLint i;
@@ -823,12 +837,13 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 		  PACK_BGR(ptr3, r, g, b);
 		  ptr3 += 3;
 	       }
-#endif
+         }
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
-          nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-#if 0
+          if(osmesa->use_nema)
+            nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
+         else {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLchan *ptr3 = PIXELADDR3(x, (y + i));
@@ -837,7 +852,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 		     ptr3 += 3;
 		  }
 	       }
-#endif
+         }
 	    }
 	 }
          else if (osmesa->format == OSMESA_RGB_565) {
@@ -848,8 +863,9 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             PACK_RGB_565(clearPixel, r, g, b);
             if (all) {
                /* Clear whole RGB buffer */
-               nema_clear(nema_rgba(r, g, b, 0));
-#if 0
+               if(osmesa->use_nema)
+                  nema_clear(nema_rgba(r, g, b, 0));
+               else {
 	       const GLuint n = osmesa->rowlength * osmesa->height;
                GLushort *ptr2 = (GLushort *) osmesa->buffer;
                GLuint  i;
@@ -857,12 +873,13 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
                   *ptr2 = clearPixel;
                   ptr2++;
                }
-#endif
+               }
             }
             else {
                /* clear scissored region */
-               nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-#if 0
+               if(osmesa->use_nema)
+                  nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
+               else {
                GLint i, j;
                for (i = 0; i < height; i++) {
                   GLushort *ptr2 = (GLushort *) PIXELADDR2(x, (y + i));
@@ -871,7 +888,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
                      ptr2++;
                   }
                }
-#endif
+               }
             }
          }
 	 else {
@@ -885,11 +902,15 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    clr[osmesa->aInd] = ctx->Color.ClearColor[3];
 	    if (all) {
 	       /* Clear whole RGBA buffer */
+          if(osmesa->use_nema)
+          {
           nema_clear(nema_rgba(ctx->Color.ClearColor[0],
             ctx->Color.ClearColor[1],
             ctx->Color.ClearColor[2],
             ctx->Color.ClearColor[3]));
-#if 0
+          }
+          else
+          {
 	       const GLuint n = osmesa->rowlength * osmesa->height;
 	       GLuint *ptr4 = (GLuint *) osmesa->buffer;
 	       GLuint i;
@@ -901,15 +922,17 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	       else {
 		  BZERO(ptr4, n * sizeof(GLuint));
 	       }
-#endif
+          }
 	    }
 	    else {
 	       /* Clear part of RGBA buffer */
-          nema_fill_rect(x, y, width, height, nema_rgba(ctx->Color.ClearColor[0],
-            ctx->Color.ClearColor[1],
-            ctx->Color.ClearColor[2],
-            ctx->Color.ClearColor[3]));
-#if 0
+          if(osmesa->use_nema)
+          {
+            nema_fill_rect(x, y, width, height, nema_rgba(ctx->Color.ClearColor[0],
+               ctx->Color.ClearColor[1],
+               ctx->Color.ClearColor[2],
+               ctx->Color.ClearColor[3]));
+          } else {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLuint *ptr4 = (GLuint *) PIXELADDR4(x, (y + i));
@@ -917,7 +940,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 		     *ptr4++ = clearPixel;
 		  }
 	       }
-#endif
+          }
 	    }
 #else
 	    const GLchan r = ctx->Color.ClearColor[0];
@@ -1925,13 +1948,16 @@ static void smooth_rgba_z_triangle( GLcontext *ctx,
                                     const SWvertex *v1,
                                     const SWvertex *v2 )
 {
-   fprintf(stderr, "smooth_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
-      v0->win[0], v0->win[1], v0->win[2],
-      v1->win[0], v1->win[1], v1->win[2],
-      v2->win[0], v2->win[1], v2->win[2],
-      v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
-
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
+
+   if(osmesa->use_nema)
+   {
+      fprintf(stderr, "nema notimple: smooth_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+         v0->win[0], v0->win[1], v0->win[2],
+         v1->win[0], v1->win[1], v1->win[2],
+         v2->win[0], v2->win[1], v2->win[2],
+         v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+   }
 
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -1973,13 +1999,17 @@ static void flat_rgba_z_triangle( GLcontext *ctx,
                                   const SWvertex *v1,
                                   const SWvertex *v2 )
 {
-   fprintf(stderr, "flat_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
-   v0->win[0], v0->win[1], v0->win[2],
-   v1->win[0], v1->win[1], v1->win[2],
-   v2->win[0], v2->win[1], v2->win[2],
-   v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
-
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
+
+   if(osmesa->use_nema)
+   {
+      fprintf(stderr, "nema notimpl: flat_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
+         v0->win[0], v0->win[1], v0->win[2],
+         v1->win[0], v1->win[1], v1->win[2],
+         v2->win[0], v2->win[1], v2->win[2],
+         v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
+   }
+   
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
 #define SETUP_CODE						\

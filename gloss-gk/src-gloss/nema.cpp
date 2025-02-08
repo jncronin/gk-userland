@@ -130,10 +130,29 @@ int nema_wait_irq_cl(int cl_id)
     static int last_cl_id = -1;
     last_cl_id = nema_reg_read(GPU2D_CLID);
 
+    timespec until;
+    clock_get_now_monotonic(&until);
+    until.tv_nsec += 16666667;
+    while(until.tv_nsec >= 1000000000)
+    {
+        until.tv_nsec -= 1000000000;
+        until.tv_sec++;
+    }
+
     while(last_cl_id < cl_id)
     {
         nema_wait_irq();
-        last_cl_id = nema_reg_read(GPU2D_CLID);        
+        last_cl_id = nema_reg_read(GPU2D_CLID);       
+
+        timespec now;
+        clock_get_now_monotonic(&now);
+        if(now.tv_sec > until.tv_sec)
+            return 0;
+        if(now.tv_sec == until.tv_sec)
+        {
+            if(now.tv_nsec >= until.tv_nsec)
+                return 0;
+        }
     }
 
     return 0;

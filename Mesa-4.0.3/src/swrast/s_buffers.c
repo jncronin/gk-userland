@@ -38,7 +38,6 @@
 
 #include <nema_core.h>
 
-
 /*
  * Clear the color buffer when glColorMask or glIndexMask is in effect.
  */
@@ -111,21 +110,22 @@ clear_color_buffer(GLcontext *ctx)
       GLchan span[MAX_WIDTH][4];
       GLint i;
 
-      nema_clear(nema_rgba(r, g, b, a));
-#if 0
-      ASSERT(*((GLuint *) &ctx->Color.ColorMask) == 0xffffffff);
+      if(ctx->use_nema)
+         nema_clear(nema_rgba(r, g, b, a));
+      else {
+         ASSERT(*((GLuint *) &ctx->Color.ColorMask) == 0xffffffff);
 
-      for (i = 0; i < width; i++) {
-         span[i][RCOMP] = r;
-         span[i][GCOMP] = g;
-         span[i][BCOMP] = b;
-         span[i][ACOMP] = a;
+         for (i = 0; i < width; i++) {
+            span[i][RCOMP] = r;
+            span[i][GCOMP] = g;
+            span[i][BCOMP] = b;
+            span[i][ACOMP] = a;
+         }
+         for (i = 0; i < height; i++) {
+            (*swrast->Driver.WriteRGBASpan)( ctx, width, x, y + i,
+                                          (CONST GLchan (*)[4]) span, NULL );
+         }
       }
-      for (i = 0; i < height; i++) {
-         (*swrast->Driver.WriteRGBASpan)( ctx, width, x, y + i,
-                                       (CONST GLchan (*)[4]) span, NULL );
-      }
-#endif
    }
    else {
       /* Color index mode */

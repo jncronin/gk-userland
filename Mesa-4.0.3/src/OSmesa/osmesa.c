@@ -94,7 +94,6 @@ struct osmesa_context {
    nema_tex_format_t nema_bb_format;
    pthread_mutex_t nema_m;
    nema_cmdlist_t nema_cl;
-   GLboolean use_nema;
 };
 
 static nema_ringbuffer_t nema_rb;
@@ -365,7 +364,7 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
 	 _swsetup_Wakeup( ctx );
 	 osmesa_register_swrast_functions( ctx );
 
-    osmesa->use_nema = GL_FALSE;
+    ctx->use_nema = GL_FALSE;
 
       }
    }
@@ -383,11 +382,11 @@ void OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
       nema_ext_hold_enable(0);
       nema_ext_hold_irq_enable(0);
       osmesa->nema_cl = nema_cl_create();
-      osmesa->use_nema = GL_TRUE;
+      osmesa->gl_ctx.use_nema = GL_TRUE;
    }
    else
    {
-      osmesa->use_nema = GL_FALSE;
+      osmesa->gl_ctx.use_nema = GL_FALSE;
    }
 }
 
@@ -525,7 +524,7 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
       _mesa_ResizeBuffersMESA();
    }
 
-   if(ctx->use_nema)
+   if(ctx->gl_ctx.use_nema)
    {
       nema_cl_bind_circular(&ctx->nema_cl);
       nema_cl_rewind(&ctx->nema_cl);
@@ -540,7 +539,7 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
 
 GLAPI void GLAPIENTRY OSMesaNemaEndFrame(OSMesaContext ctx)
 {
-   if(ctx->use_nema)
+   if(ctx->gl_ctx.use_nema)
    {
       nema_ext_hold_assert(0, 0);
       nema_cl_unbind();
@@ -802,7 +801,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
             nema_clear(nema_rbga(r, g, b, 0));
          else
          {
@@ -817,7 +816,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
             nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
          else {
 	       GLint i, j;
@@ -837,7 +836,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
             nema_clear(nema_rgba(r, g, b, 0));
          else {
 	       const GLint n = osmesa->rowlength * osmesa->height;
@@ -851,7 +850,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
             nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
          else {
 	       GLint i, j;
@@ -873,7 +872,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             PACK_RGB_565(clearPixel, r, g, b);
             if (all) {
                /* Clear whole RGB buffer */
-               if(osmesa->use_nema)
+               if(osmesa->gl_ctx.use_nema)
                   nema_clear(nema_rgba(r, g, b, 0));
                else {
 	       const GLuint n = osmesa->rowlength * osmesa->height;
@@ -887,7 +886,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             }
             else {
                /* clear scissored region */
-               if(osmesa->use_nema)
+               if(osmesa->gl_ctx.use_nema)
                   nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
                else {
                GLint i, j;
@@ -912,7 +911,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    clr[osmesa->aInd] = ctx->Color.ClearColor[3];
 	    if (all) {
 	       /* Clear whole RGBA buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
           {
           nema_clear(nema_rgba(ctx->Color.ClearColor[0],
             ctx->Color.ClearColor[1],
@@ -936,7 +935,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGBA buffer */
-          if(osmesa->use_nema)
+          if(osmesa->gl_ctx.use_nema)
           {
             nema_fill_rect(x, y, width, height, nema_rgba(ctx->Color.ClearColor[0],
                ctx->Color.ClearColor[1],
@@ -1960,7 +1959,7 @@ static void smooth_rgba_z_triangle( GLcontext *ctx,
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
 
-   if(osmesa->use_nema)
+   if(osmesa->gl_ctx.use_nema)
    {
       fprintf(stderr, "nema notimple: smooth_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
          v0->win[0], v0->win[1], v0->win[2],
@@ -2011,7 +2010,7 @@ static void flat_rgba_z_triangle( GLcontext *ctx,
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
 
-   if(osmesa->use_nema)
+   if(osmesa->gl_ctx.use_nema)
    {
       fprintf(stderr, "nema notimpl: flat_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
          v0->win[0], v0->win[1], v0->win[2],

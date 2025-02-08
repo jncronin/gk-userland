@@ -1577,13 +1577,16 @@ _mesa_clear_depth_buffer( GLcontext *ctx )
       /* clear whole buffer */
       if (ctx->Visual.depthBits <= 16) {
          const GLushort clearValue = (GLushort) (ctx->Depth.Clear * ctx->DepthMax);
-		nema_bind_dst_tex((uintptr_t)ctx->DrawBuffer->DepthBuffer,
-			ctx->DrawBuffer->Width,
-			ctx->DrawBuffer->Height,
-			NEMA_Z16, -1);
-		nema_clear(clearValue);
-		nema_rebind_framebuffer(ctx->DriverCtx);
-#if 0
+		 if(ctx->use_nema)
+		 {
+			nema_bind_dst_tex((uintptr_t)ctx->DrawBuffer->DepthBuffer,
+				ctx->DrawBuffer->Width,
+				ctx->DrawBuffer->Height,
+				NEMA_Z16, -1);
+			nema_clear(clearValue);
+			nema_rebind_framebuffer(ctx->DriverCtx);
+		 }
+		else {
          if ((clearValue & 0xff) == (clearValue >> 8)) {
             if (clearValue == 0) {
                BZERO(ctx->DrawBuffer->DepthBuffer,
@@ -1616,7 +1619,7 @@ _mesa_clear_depth_buffer( GLcontext *ctx )
                n--;
             }
          }
-#endif
+		}
       }
       else {
          /* >16 bit depth buffer */

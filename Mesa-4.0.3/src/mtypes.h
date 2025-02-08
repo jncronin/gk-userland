@@ -1604,6 +1604,8 @@ struct __GLcontextRec {
    void *swtnl_im;
    void *acache_context;
    void *aelt_context;
+
+   GLboolean use_nema;
 };
 
 

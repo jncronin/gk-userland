@@ -533,10 +533,13 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
 
 GLAPI void GLAPIENTRY OSMesaNemaEndFrame(OSMesaContext ctx)
 {
-   nema_ext_hold_assert(0, 0);
-   nema_cl_unbind();
-   //pthread_mutex_lock(&ctx->nema_m);
-   nema_cl_submit(&ctx->nema_cl);
+   if(ctx->use_nema)
+   {
+      nema_ext_hold_assert(0, 0);
+      nema_cl_unbind();
+      //pthread_mutex_lock(&ctx->nema_m);
+      nema_cl_submit(&ctx->nema_cl);
+   }
 }
 
 GLAPI void GLAPIENTRY nema_rebind_framebuffer(OSMesaContext ctx)

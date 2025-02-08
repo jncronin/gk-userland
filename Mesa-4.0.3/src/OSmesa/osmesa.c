@@ -94,6 +94,7 @@ struct osmesa_context {
    nema_tex_format_t nema_bb_format;
    pthread_mutex_t nema_m;
    nema_cmdlist_t nema_cl;
+   GLboolean nema_inited;
 };
 
 static nema_ringbuffer_t nema_rb;
@@ -156,6 +157,7 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
       indexBits = 8;
       rshift = gshift = bshift = ashift = 0;
       rgbmode = GL_FALSE;
+      nema_bb = NEMA_L8;
    }
    else if (format==OSMESA_RGBA) {
       indexBits = 0;
@@ -365,23 +367,29 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
 	 osmesa_register_swrast_functions( ctx );
 
     ctx->use_nema = GL_FALSE;
+    osmesa->nema_inited = GL_FALSE;
 
       }
    }
    return osmesa;
 }
 
-void OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
+GLAPI void GLAPIENTRY OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
 {
    if(enable)
    {
-      /* Initialize nema */
-      GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
+      if(!osmesa->nema_inited)
+      {
+         /* Initialize nema */
+         GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
 
-      nema_init();
-      nema_ext_hold_enable(0);
-      nema_ext_hold_irq_enable(0);
-      osmesa->nema_cl = nema_cl_create();
+         nema_init();
+         nema_ext_hold_enable(0);
+         nema_ext_hold_irq_enable(0);
+         osmesa->nema_cl = nema_cl_create();
+         osmesa->nema_inited = GL_TRUE;
+      }
+
       osmesa->gl_ctx.use_nema = GL_TRUE;
    }
    else
@@ -550,7 +558,7 @@ GLAPI void GLAPIENTRY OSMesaNemaEndFrame(OSMesaContext ctx)
 
 GLAPI void GLAPIENTRY nema_rebind_framebuffer(OSMesaContext ctx)
 {
-   nema_bind_dst_tex(ctx->buffer, ctx->width, ctx->height, ctx->nema_bb_format, -1);
+   nema_bind_dst_tex((uintptr_t)ctx->buffer, ctx->width, ctx->height, ctx->nema_bb_format, -1);
 }
 
 int32_t nema_sys_init()
@@ -802,7 +810,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    if (all) {
 	       /* Clear whole RGB buffer */
           if(osmesa->gl_ctx.use_nema)
-            nema_clear(nema_rbga(r, g, b, 0));
+            nema_clear(nema_rgba(r, g, b, 0));
          else
          {
 	       GLuint n = osmesa->rowlength * osmesa->height;

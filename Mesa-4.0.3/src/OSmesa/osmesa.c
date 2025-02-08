@@ -372,16 +372,23 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
    return osmesa;
 }
 
-void OSMesaEnableNema(OSMesaContext osmesa)
+void OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
 {
-         /* Initialize nema */
-         GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
+   if(enable)
+   {
+      /* Initialize nema */
+      GK_NemaEnable((void **)&nema_rb, &osmesa->nema_m);
 
-         nema_init();
-         nema_ext_hold_enable(0);
-         nema_ext_hold_irq_enable(0);
-         osmesa->nema_cl = nema_cl_create();
-         osmesa->use_nema = GL_TRUE;
+      nema_init();
+      nema_ext_hold_enable(0);
+      nema_ext_hold_irq_enable(0);
+      osmesa->nema_cl = nema_cl_create();
+      osmesa->use_nema = GL_TRUE;
+   }
+   else
+   {
+      osmesa->use_nema = GL_FALSE;
+   }
 }
 
 

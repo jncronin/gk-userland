@@ -32,6 +32,7 @@ static int GK_GL_LoadLibrary(_THIS, const char *path);
 static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
 void OSMesaNemaEndFrame(OSMesaContext ctx);
+void OSMesaEnableNema(OSMesaContext ctx, GLboolean enable);
 
 typedef struct
 {
@@ -413,6 +414,9 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
             return NULL;
     }
     gk_window->gl_ctx = OSMesaCreateContext(glpf, NULL);
+
+    if(window->flags & SDL_WINDOW_NEMA)
+        OSMesaEnableNema(gk_window->gl_ctx, GL_TRUE);
 
     // Set first framebuffer
     GK_GPUGetScreenMode((size_t *)&window->w, (size_t *)&window->h, NULL);

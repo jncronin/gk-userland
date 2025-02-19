@@ -529,7 +529,7 @@ void GK_InitOSKeymap(_THIS)
     keymap[GK_SCANCODE_0] = SDLK_0;
     for(int i = 0; i < 9; i++)
     {
-        keymap[GK_SCANCODE_KP_1] = SDLK_KP1 + i;
+        keymap[GK_SCANCODE_KP_1 + i] = SDLK_KP1 + i;
     }
     keymap[GK_SCANCODE_KP_0] = SDLK_KP0;
 

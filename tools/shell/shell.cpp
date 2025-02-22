@@ -93,6 +93,11 @@ int sh_main(int argc, const char *argv[], shell_state *sst)
                 }
             }
         }
+        else
+        {
+            sst->exit_code = -1;
+            sst->to_exit = true;
+        }
     }
 
     return sst->exit_code;

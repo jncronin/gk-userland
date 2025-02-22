@@ -358,6 +358,8 @@ static int parse_game()
         sq_pop(v, 1);
     }
 
+    printf("loaded: %s\n", g.name.c_str());
+
     games.push_back(g);
     return 0;
 }

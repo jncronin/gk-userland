@@ -11,6 +11,7 @@
 #include <GL/osmesa.h>
 
 #include "../../events/SDL_keyboard_c.h"
+#include "../../events/SDL_mouse_c.h"
 
 static int GK_VideoInit(_THIS);
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode);
@@ -370,6 +371,28 @@ void GK_PumpEvents(_THIS)
                 break;
             case KeyUp:
                 SDL_SendKeyboardKey(SDL_RELEASED, (SDL_Scancode)ev.key);
+                break;
+            case MouseMove:
+                SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
+                    ev.mouse_data.x, ev.mouse_data.y);
+                break;
+            case MouseUp:
+                if(ev.mouse_data.is_rel)
+                {
+                    SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
+                        ev.mouse_data.x, ev.mouse_data.y);
+                }
+                SDL_SendMouseButton(SDL_GetKeyboardFocus(), 0, SDL_RELEASED,
+                    ev.mouse_data.buttons == 1 ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT);
+                break;
+            case MouseDown:
+                if(ev.mouse_data.is_rel)
+                {
+                    SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
+                        ev.mouse_data.x, ev.mouse_data.y);
+                }
+                SDL_SendMouseButton(SDL_GetKeyboardFocus(), 0, SDL_PRESSED,
+                    ev.mouse_data.buttons == 1 ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT);
                 break;
             default:
                 break;

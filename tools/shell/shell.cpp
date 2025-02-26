@@ -4,6 +4,7 @@
 #include <map>
 #include <unistd.h>
 #include "shell.h"
+#include "args.h"
 
 #define LINE_MAX    1024
 
@@ -31,6 +32,13 @@ int sh_main(int argc, const char *argv[], shell_state *sst)
     // sh always generates a new shell state
     shell_state _sst;
     sst = &_sst;
+
+    // parse arguments
+    Args a;
+    a.AddHelp();
+    a.AddArg("", 0, "-r", "", "don't exit on EOF on stdin");
+    auto args = a.ParseArgs(argc, argv);
+    auto dont_exit_on_eof = args.second.find("-r") != args.second.end();
 
     // builtins
     ADD_BUILTIN(ls);
@@ -93,7 +101,7 @@ int sh_main(int argc, const char *argv[], shell_state *sst)
                 }
             }
         }
-        else
+        else if(!dont_exit_on_eof)
         {
             sst->exit_code = -1;
             sst->to_exit = true;

@@ -102,11 +102,17 @@ int main(int argc, char *argv[])
     dup2(pipes_sh_to_console[1], STDOUT_FILENO);
     dup2(pipes_sh_to_console[1], STDERR_FILENO);
 
+    fflush(stdin);
+    fflush(stdout);
+    fflush(stderr);
+
     close(pipes_console_to_sh[0]);
     close(pipes_sh_to_console[1]);
 
     auto pipe_console_write = pipes_console_to_sh[1];
     auto pipe_console_read = pipes_sh_to_console[0];
+    
+    pthread_mutex_init(&m_lvgl, nullptr);
 
     lv_timer_handler();
 
@@ -115,7 +121,6 @@ int main(int argc, char *argv[])
     pthread_create(&pt1, nullptr, lvgl_thread, (void *)(intptr_t)pipe_console_write);
     pthread_create(&pt2, nullptr, read_sh_thread, (void *)(intptr_t)pipe_console_read);
 
-    pthread_mutex_init(&m_lvgl, nullptr);
 
     setvbuf(stdout, nullptr, _IOLBF, BUFSIZ);
     setvbuf(stderr, nullptr, _IONBF, BUFSIZ);
@@ -123,12 +128,16 @@ int main(int argc, char *argv[])
     // launch sh in the main thread
     int sh_main(int argc, const char *argv[], shell_state *sst);
     const char sh[] = "sh";
-    const char *sh_argv[] = { sh, nullptr };
-    auto ret = sh_main(1, sh_argv, nullptr);
+    const char *sh_argv[] = { sh, "-r", nullptr };
+    auto ret = sh_main(2, sh_argv, nullptr);
 
     freopen("/dev/stdin", "r", stdin);
     freopen("/dev/stdout", "w", stdout);
     freopen("/dev/stderr", "w", stderr);
+
+    fflush(stdin);
+    fflush(stdout);
+    fflush(stderr);
 
     return ret;
 }

@@ -314,8 +314,8 @@ static int GK_LockHWSurface(_THIS, SDL_Surface *surface)
         gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
         gmsgs[0].dx = 0;
         gmsgs[0].dy = 0;
-        gmsgs[0].w = surface->w;
-        gmsgs[0].h = surface->h;
+        gmsgs[0].dw = surface->w;
+        gmsgs[0].dh = surface->h;
         gmsgs[0].dp = surface->pitch;
         gmsgs[0].dest_pf = spf;
         
@@ -341,8 +341,8 @@ static void GK_UnlockHWSurface(_THIS, SDL_Surface *surface)
         gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
         gmsgs[0].dx = 0;
         gmsgs[0].dy = 0;
-        gmsgs[0].w = surface->w;
-        gmsgs[0].h = surface->h;
+        gmsgs[0].dw = surface->w;
+        gmsgs[0].dh = surface->h;
         gmsgs[0].dp = surface->pitch;
         gmsgs[0].dest_pf = spf;
         
@@ -443,8 +443,8 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
         gmsgs[i].dest_addr = (uint32_t)(uintptr_t)src->pixels;
         gmsgs[i].dx = srcrect->x;
         gmsgs[i].dy = srcrect->y;
-        gmsgs[i].w = srcrect->w;
-        gmsgs[i].h = srcrect->h;
+        gmsgs[i].dw = srcrect->w;
+        gmsgs[i].dh = srcrect->h;
         gmsgs[i].dp = src->pitch;
         gmsgs[i].dest_pf = spf;
 

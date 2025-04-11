@@ -66,6 +66,19 @@ extern "C" int inet_aton(const char *cp, in_addr *inp)
     return 0;
 }
 
+extern "C" in_addr_t inet_addr(const char *cp)
+{
+    in_addr ia;
+    if(inet_aton(cp, &ia) == 0)
+    {
+        return ia.s_addr;
+    }
+    else
+    {
+        return (in_addr_t)-1;
+    }
+}
+
 extern "C" hostent *gethostbyaddr(const void *addr, socklen_t len, int type)
 {
     return nullptr;

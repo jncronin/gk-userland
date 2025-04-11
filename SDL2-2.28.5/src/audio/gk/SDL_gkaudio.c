@@ -94,23 +94,9 @@ static int GKAUDIO_OpenDevice(_THIS, const char *devname)
     }
 
     // only allow supported audio frequencies
-    if(this->spec.freq < 11025)
-        this->spec.freq = 8000;
-    else if(this->spec.freq < 12000)
-        this->spec.freq = 11025;
-    else if(this->spec.freq < 16000)
-        this->spec.freq = 12000;
-    else if(this->spec.freq < 22050)
-        this->spec.freq = 16000;
-    else if(this->spec.freq < 24000)
-        this->spec.freq = 22050;
-    else if(this->spec.freq < 32000)
-        this->spec.freq = 24000;
-    else if(this->spec.freq < 44100)
-        this->spec.freq = 32000;
-    else if(this->spec.freq < 48000)
-        this->spec.freq = 44100;
-    else
+    if(this->spec.freq < 4000)
+        this->spec.freq = 4000;
+    if(this->spec.freq > 48000)
         this->spec.freq = 48000;
 
     // cap nsamps if required - hard limit of 32 kiB/2 = 16 kiB buffer in GK

@@ -1,5 +1,6 @@
 #include <syscalls.h>
 #include "deferred.h"
+#include <sys/timeb.h>
 
 void clock_get_now(struct timespec *tp);
 void clock_get_now_monotonic(struct timespec *tp);
@@ -29,4 +30,22 @@ extern "C" int clock_gettime(clockid_t clk_id, struct timespec *tp)
                 return deferred_call(__syscall_clock_gettime, &p);
             }
     }
+}
+
+extern "C" int ftime(struct timeb *tp)
+{
+    if(!tp)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    tp->time = ts.tv_sec;
+    tp->millitm = ts.tv_nsec / 1000000;
+    tp->timezone = 0;
+    tp->dstflag = 0;
+
+    return 0;
 }

@@ -5765,12 +5765,12 @@ int texturedPolygon(SDL_Surface * dst, const Sint16 * vx, const Sint16 * vy, int
 /*!
 \brief Global cache for NxM pixel font surfaces created at runtime.
 */
-static SDL_Surface *gfxPrimitivesFont[256];
+static SDL_Surface *gfxPrimitivesFont[256] = { 0 };
 
 /*!
 \brief Global cache of the color used for the font surfaces created at runtime.
 */
-static Uint32 gfxPrimitivesFontColor[256];
+static Uint32 gfxPrimitivesFontColor[256] = { 0 };
 
 /*!
 \brief Pointer to the current font data. Default is a 8x8 pixel internal font. 

@@ -406,6 +406,45 @@ static void GK_DestroyTexture(SDL_Renderer *renderer, SDL_Texture *texture)
     texture->driverdata = NULL;
 }
 
+static int GK_LockTexture(SDL_Renderer *renderer, SDL_Texture *texture,
+    const SDL_Rect *rect, void **pixels, int *pitch)
+{
+    char *dest = ((GK_TextureData *)texture->driverdata)->addr;
+
+    if(rect && (rect->x || rect->y))
+    {
+        uint32_t tpf = GK_GetPixelFormat(texture->format);
+        unsigned int pixel_size = 1;
+        switch(tpf)
+        {
+            case GK_PIXELFORMAT_ARGB8888:
+            case GK_PIXELFORMAT_XRGB8888:
+                return 4;
+            case GK_PIXELFORMAT_RGB888:
+                return 3;
+            case GK_PIXELFORMAT_RGB565:
+                return 2;
+        }
+        dest = (dest + texture->pitch * rect->y) + rect->x + pixel_size;
+    }
+
+    if(pixels)
+    {
+        *pixels = dest;
+    }
+
+    if(pitch)
+    {
+        *pitch = texture->pitch;
+    }
+
+    return 0;
+}
+
+static void GK_UnlockTexture(SDL_Renderer *renderer, SDL_Texture *texture)
+{
+}
+
 static int GK_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     const SDL_Rect *rect, const void *pixels, int pitch)
 {
@@ -482,6 +521,8 @@ static SDL_Renderer *GK_CreateRenderer(SDL_Window *window, Uint32 flags)
     renderer->CreateTexture = GK_CreateTexture;
     renderer->UpdateTexture = GK_UpdateTexture;
     renderer->DestroyTexture = GK_DestroyTexture;
+    renderer->LockTexture = GK_LockTexture;
+    renderer->UnlockTexture = GK_UnlockTexture;
 
     renderer->info = GK_RenderDriver.info;
     renderer->driverdata = data;

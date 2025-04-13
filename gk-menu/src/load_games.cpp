@@ -324,6 +324,10 @@ static int parse_game()
     read_bool("joystick_is_joystick", &jij);
     g.keymap.joystick_is_joystick = jij ? 1 : 0;
 
+    bool jim = g.keymap.joystick_is_mouse != 0;
+    read_bool("joystick_is_mouse", &jij);
+    g.keymap.joystick_is_mouse = jij ? 1 : 0;
+
     bool tim = g.keymap.touch_is_mouse != 0;
     read_bool("touch_is_mouse", &tim);
     g.keymap.touch_is_mouse = tim ? 1 : 0;

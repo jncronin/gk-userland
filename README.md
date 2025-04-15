@@ -1,6 +1,6 @@
 # Userland for gkos #
 
-This is a collection of build tools and userspace libraries for gkos (https://github.com/jncronin/gk), a relatively feature-complete multitasking operating system for the STM32H747 microcontroller.  Userspace applications on gkos only run on the M7 core (the M4 core is reserved for operating system purposes) and therefore all code here is optimised for the M7.
+This is a collection of build tools and userspace libraries for gkos (https://github.com/jncronin/gk), a relatively feature-complete multitasking operating system for the STM32H7S7 microcontroller.
 
 This repository contains sources for many other projects each under their own respective licences.
 

@@ -9,6 +9,7 @@
 #include <SDL_mixer.h>
 #include <cstdio>
 #include <unistd.h>
+#include <fstream>
 
 std::vector<Game> games;
 
@@ -190,6 +191,24 @@ int main(int argc, char *argv[])
     };
     constexpr auto n_neon_colors = sizeof(neon_colors) / sizeof(neon_colors[0]);
 
+
+    /* Determine if there is a previous game to highlight */
+    lv_obj_t *focus_btn = nullptr;
+    int focus_idx = -1;
+    std::string focus_name;
+    {
+        std::ifstream f("last_game");
+        if(f.is_open())
+        {
+            std::string fidx_str, fname_str;
+            if(std::getline(f, fidx_str) && std::getline(f, fname_str))
+            {
+                focus_idx = std::stoi(fidx_str);
+                focus_name = fname_str;
+            }
+        }
+    }
+
     for(int i = 0; i < games.size(); i++)
     {
         const auto &g = games[i];
@@ -252,6 +271,12 @@ int main(int argc, char *argv[])
                 lv_img_set_zoom(limg, 256/h_scale);
             }
         }
+
+        /* Is this the focus game? */
+        if(i == focus_idx && g.name == focus_name)
+        {
+            focus_btn = lbtn;
+        }
     }
 
     lv_obj_delete(load_text);
@@ -277,6 +302,12 @@ int main(int argc, char *argv[])
         }
     }
 
+    /* Scroll to last selected game */
+    if(focus_btn)
+    {
+        lv_group_focus_obj(focus_btn);
+    }
+
     while(1)
     {
         if(nrefresh)
@@ -292,8 +323,18 @@ int main(int argc, char *argv[])
 
 void game_click(lv_event_t *e)
 {
-    auto &g = games[(int)e->user_data];
+    auto gidx = (int)e->user_data;
+    auto &g = games[gidx];
     Mix_HaltMusic();
+
+    /* Save the game just selected */
+    {
+        std::ofstream f("last_game");
+        if(f.is_open())
+        {
+            f << std::to_string(gidx) << std::endl << g.name << std::endl;
+        }
+    }
     g.Load();
     lv_obj_invalidate(lv_scr_act());    // redraw screen after the game is finished and for a few more frames
     nrefresh = 3;

@@ -305,6 +305,7 @@ int main(int argc, char *argv[])
     /* Scroll to last selected game */
     if(focus_btn)
     {
+        lv_obj_scroll_to_view_recursive(focus_btn, LV_ANIM_OFF);
         lv_group_focus_obj(focus_btn);
     }
 

@@ -111,6 +111,7 @@ int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
     unsigned int gkpf;
+    static const unsigned int refresh_rates[] = { 60, 50, 40, 30, 25, 24 };
 
     /* Get current mode */
     GK_GPUGetScreenMode((size_t *)&mode.w, (size_t *)&mode.h, &gkpf);
@@ -127,57 +128,60 @@ int GK_VideoInit(_THIS)
     }
 
     /* Allow 640x480, 320x240, 160x120 at 32-/24-/16-/8-bpp */
-    for(int sdiv = 1; sdiv <= 3; sdiv++)
+    for(int rr_idx = 0; rr_idx < (sizeof(refresh_rates) / sizeof(refresh_rates[0])); rr_idx++)
     {
-        mode.w = 640 / sdiv;
-        mode.h = 480 / sdiv;
-        mode.refresh_rate = 60;
+        for(int sdiv = 1; sdiv <= 3; sdiv++)
+        {
+            mode.w = 640 / sdiv;
+            mode.h = 480 / sdiv;
+            mode.refresh_rate = refresh_rates[rr_idx];
 
-        mode.format = SDL_PIXELFORMAT_ARGB8888;
-        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
-        if(!mode.driverdata)
-        {
-            return -1;
-        }
-        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_ARGB8888;        
-        SDL_AddDisplayMode(&_this->displays[0], &mode);
-        if(sdiv == 1)
-        {
-            if(SDL_AddBasicVideoDisplay(&mode) < 0)
+            mode.format = SDL_PIXELFORMAT_ARGB8888;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
             {
                 return -1;
             }
-        }
-        else
-        {
-        }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_ARGB8888;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
+            if(sdiv == 1)
+            {
+                if(SDL_AddBasicVideoDisplay(&mode) < 0)
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+            }
 
-        mode.format = SDL_PIXELFORMAT_RGB24;
-        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
-        if(!mode.driverdata)
-        {
-            return -1;
-        }
-        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB888;        
-        SDL_AddDisplayMode(&_this->displays[0], &mode);
+            mode.format = SDL_PIXELFORMAT_RGB24;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
+            {
+                return -1;
+            }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB888;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
 
-        mode.format = SDL_PIXELFORMAT_RGB565;
-        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
-        if(!mode.driverdata)
-        {
-            return -1;
-        }
-        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB565;        
-        SDL_AddDisplayMode(&_this->displays[0], &mode);
+            mode.format = SDL_PIXELFORMAT_RGB565;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
+            {
+                return -1;
+            }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB565;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
 
-        mode.format = SDL_PIXELFORMAT_INDEX8;
-        mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
-        if(!mode.driverdata)
-        {
-            return -1;
+            mode.format = SDL_PIXELFORMAT_INDEX8;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
+            {
+                return -1;
+            }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_L8;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
         }
-        ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_L8;        
-        SDL_AddDisplayMode(&_this->displays[0], &mode);
     }
 
     SDL_zero(mode);
@@ -234,6 +238,7 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
             g.w = mode->w;
             g.h = mode->h;
             g.dest_pf = (uint32_t)pf;
+            g.sx = mode->refresh_rate;
             GK_GPUEnqueueMessages(&g, 1);
         }
         return 0;

@@ -111,7 +111,7 @@ int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
     unsigned int gkpf;
-    static const unsigned int refresh_rates[] = { 60, 50, 40, 30, 25, 24 };
+    static const unsigned int refresh_rates[] = { 60, 50, 48, 40, 30, 25, 24 };
 
     /* Get current mode */
     GK_GPUGetScreenMode((size_t *)&mode.w, (size_t *)&mode.h, &gkpf);

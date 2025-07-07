@@ -297,6 +297,7 @@ static int parse_game()
     read_int("screen_w", &g.screen_w);
     read_int("screen_h", &g.screen_h);
     read_int("screen_pf", &g.screen_pf);
+    read_int("screen_refresh", &g.screen_refresh);
     read_bool("screen_ignore_vsync", &g.screen_ignore_vsync);
     read_bool("screen_overwritten_each_frame", &g.screen_overwritten_each_frame);
 

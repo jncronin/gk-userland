@@ -22,6 +22,7 @@ class Game
         int screen_w = 640;
         int screen_h = 320;
         int screen_pf = GK_PIXELFORMAT_RGB565;
+        int screen_refresh = 60;
 
         bool screen_ignore_vsync = true;
         bool screen_overwritten_each_frame = false;

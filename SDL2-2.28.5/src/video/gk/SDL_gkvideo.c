@@ -114,7 +114,7 @@ int GK_VideoInit(_THIS)
     static const unsigned int refresh_rates[] = { 60, 50, 48, 40, 30, 25, 24 };
 
     /* Get current mode */
-    GK_GPUGetScreenMode((size_t *)&mode.w, (size_t *)&mode.h, &gkpf);
+    GK_GPUGetScreenModeEx((size_t *)&mode.w, (size_t *)&mode.h, &gkpf, &mode.refresh_rate);
     mode.format = gkpf_to_pformat(gkpf);
     mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
     if(!mode.driverdata)

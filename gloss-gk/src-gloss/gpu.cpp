@@ -236,7 +236,7 @@ int GK_GPUFlipBuffersEx(void *cmdlist, void **next_buffer, void **old_buffer)
     return 0;
 }
 
-int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf)
+int GK_GPUSetScreenModeEx(void *cmdlist, size_t w, size_t h, unsigned int pf, int refresh)
 {
     auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);
     if(hdr->__ncmds >= hdr->__max_cmds)
@@ -248,8 +248,14 @@ int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf)
     msg->w = w;
     msg->h = h;
     msg->dest_pf = pf;
+    msg->sx = refresh;
 
     return 0;
+}
+
+int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf)
+{
+    return GK_GPUSetScreenModeEx(cmdlist, w, h, pf, 0);
 }
 
 int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t bpp, size_t stride)
@@ -299,6 +305,16 @@ int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf)
     p.y = (int *)h;
     p.pf = (int *)pf;
     return deferred_call(__syscall_getscreenmode, &p);
+}
+
+int GK_GPUGetScreenModeEx(size_t *w, size_t *h, unsigned int *pf, int *refresh)
+{
+    __syscall_getscreenmodeex_params p;
+    p.x = (int *)w;
+    p.y = (int *)h;
+    p.pf = (int *)pf;
+    p.refresh = (int *)refresh;
+    return deferred_call(__syscall_getscreenmodeex, &p);
 }
 
 int GK_WindowSetTitle(const char *title)

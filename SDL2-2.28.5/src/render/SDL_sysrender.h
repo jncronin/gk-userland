@@ -308,6 +308,7 @@ extern SDL_RenderDriver PSP_RenderDriver;
 extern SDL_RenderDriver SW_RenderDriver;
 extern SDL_RenderDriver VITA_GXM_RenderDriver;
 extern SDL_RenderDriver GK_RenderDriver;
+extern SDL_RenderDriver GKNema_RenderDriver;
 
 /* Blend mode functions */
 extern SDL_BlendFactor SDL_GetBlendModeSrcColorFactor(SDL_BlendMode blendMode);

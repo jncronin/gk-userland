@@ -125,6 +125,7 @@ static const SDL_RenderDriver *render_drivers[] = {
     &VITA_GXM_RenderDriver,
 #endif
 #if SDL_VIDEO_RENDER_GK
+    &GKNema_RenderDriver,
     &GK_RenderDriver,
 #endif
 #if SDL_VIDEO_RENDER_SW

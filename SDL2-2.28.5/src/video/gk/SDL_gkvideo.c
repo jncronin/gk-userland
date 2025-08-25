@@ -18,6 +18,7 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
 static void GK_VideoQuit(_THIS);
 static int GK_CreateWindow(_THIS, SDL_Window *window);
 static void GK_DestroyWindow(_THIS, SDL_Window *window);
+static void GK_SetWindowTitle(_THIS, SDL_Window *window);
 static int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
     void **pixels, int *pitch);
 static int GK_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects);
@@ -90,6 +91,7 @@ static SDL_VideoDevice *GK_CreateDevice(void)
     device->free = GK_DeleteDevice;
     device->CreateSDLWindow = GK_CreateWindow;
     device->DestroyWindow = GK_DestroyWindow;
+    device->SetWindowTitle = GK_SetWindowTitle;
 
     device->GL_LoadLibrary = GK_GL_LoadLibrary;
     device->GL_GetProcAddress = GK_GL_GetProcAddress;
@@ -286,6 +288,11 @@ void GK_DestroyWindow(_THIS, SDL_Window *window)
     }
 
     window->driverdata = NULL;
+}
+
+void GK_SetWindowTitle(_THIS, SDL_Window *window)
+{
+    GK_WindowSetTitle(window->title);
 }
 
 int GK_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,

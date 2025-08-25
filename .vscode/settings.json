@@ -51,7 +51,8 @@
         "internet": "cpp",
         "ostream": "cpp",
         "iomanip": "cpp",
-        "lv_display_private.h": "c"
+        "lv_display_private.h": "c",
+        "sdl_hints.h": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

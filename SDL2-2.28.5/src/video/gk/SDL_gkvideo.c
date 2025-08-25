@@ -49,7 +49,7 @@ typedef struct
 } GK_ModeData;
 
 
-static uint32_t gkpf_to_pformat(unsigned int gkpf)
+uint32_t gkpf_to_pformat(unsigned int gkpf)
 {
     switch(gkpf)
     {

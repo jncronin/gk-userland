@@ -57,21 +57,39 @@ nema_buffer_t nema_buffer_create(int size)
         ret.size = size;
         ret.base_phys = (uintptr_t)mret;
         ret.base_virt = mret;
+        ret.fd = 0;
     }
     else
     {
-        ret.size = 0;
-        ret.base_phys = 0;
-        ret.base_virt = 0;
+        auto mallret = malloc(size);
+        if(mallret)
+        {
+            ret.size = size;
+            ret.base_virt = mallret;
+            ret.base_phys = (uintptr_t)mallret;
+            ret.fd = 1;
+        }
+        else
+        {
+            ret.size = 0;
+            ret.base_phys = 0;
+            ret.base_virt = 0;
+            ret.fd = 0;
+        }
     }
-    ret.fd = 0;
 
     return ret;
 }
 
 void nema_buffer_destroy(nema_buffer_t *bo)
 {
-    munmap(bo->base_virt, bo->size);
+    if(bo->base_virt)
+    {
+        if(bo->fd == 0)
+            munmap(bo->base_virt, bo->size);
+        else
+            free(bo->base_virt);
+    }
 }
 
 void *nema_buffer_map(nema_buffer_t *bo)
@@ -95,6 +113,10 @@ void nema_host_free(void *ptr)
 
 void nema_buffer_flush(nema_buffer_t *bo)
 {
+    if(bo->base_virt && bo->fd == 1)
+    {
+        GK_CacheFlush(bo->base_virt, bo->size, false);
+    }
 }
 
 int nema_mutex_lock(int mutex_id)

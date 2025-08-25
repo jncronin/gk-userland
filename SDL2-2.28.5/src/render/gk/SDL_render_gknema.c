@@ -382,6 +382,7 @@ static int GKNema_LockTexture(SDL_Renderer *renderer, SDL_Texture *texture,
 
 static void GKNema_UnlockTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 {
+    GK_ICACHEInvalidate();
 }
 
 static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
@@ -401,7 +402,7 @@ static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     gmsgs[0].dp = pitch;
     gmsgs[0].dest_pf = tpf;
 
-    gmsgs[1].type = BlitImage;
+    gmsgs[1].type = BlitImageNoBlend;
     gmsgs[1].dest_addr = (uint32_t)(uintptr_t)dest;
     gmsgs[1].dest_pf = tpf;
     gmsgs[1].dx = rect->x;
@@ -420,6 +421,7 @@ static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     gmsgs[2].type = SignalThread;
 
     GK_GPUEnqueueMessages(gmsgs, 3);
+    GK_ICACHEInvalidate();
 
     return 0;
 }

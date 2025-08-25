@@ -135,7 +135,7 @@ int nema_mutex_unlock(int mutex_id)
 
 int nema_wait_irq()
 {
-    timespec now;
+    /*timespec now;
     clock_get_now_monotonic(&now);
     now.tv_nsec += 16666667;
     while(now.tv_nsec >= 1000000000)
@@ -144,12 +144,13 @@ int nema_wait_irq()
         now.tv_sec++;
     }
 
-    return sem_clockwait(&nema_irq_sem, CLOCK_MONOTONIC, &now);
+    return sem_clockwait(&nema_irq_sem, CLOCK_MONOTONIC, &now);*/
+    return sem_wait(&nema_irq_sem);
 }
 
 int nema_wait_irq_cl(int cl_id)
 {
-    static int last_cl_id = -1;
+    static int last_cl_id = 0;
     last_cl_id = nema_reg_read(GPU2D_CLID);
 
     timespec until;
@@ -161,12 +162,12 @@ int nema_wait_irq_cl(int cl_id)
         until.tv_sec++;
     }
 
-    while(last_cl_id < cl_id)
+    do
     {
         nema_wait_irq();
         last_cl_id = nema_reg_read(GPU2D_CLID);       
 
-        timespec now;
+        /*timespec now;
         clock_get_now_monotonic(&now);
         if(now.tv_sec > until.tv_sec)
             return 0;
@@ -174,8 +175,13 @@ int nema_wait_irq_cl(int cl_id)
         {
             if(now.tv_nsec >= until.tv_nsec)
                 return 0;
-        }
-    }
+        }*/
+    } while(last_cl_id < cl_id);
 
     return 0;
+}
+
+int GK_ICACHEInvalidate()
+{
+    return deferred_call<void *>(__syscall_icacheinvalidate, nullptr);
 }

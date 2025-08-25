@@ -154,6 +154,15 @@ static int GK_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_Text
     return 0;
 }
 
+static int GK_QueueCopyEx(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_Texture *texture,
+                       const SDL_Rect *srcquad, const SDL_FRect *dstrect,
+                       const double angle, const SDL_FPoint *center, const SDL_RendererFlip flip, float scale_x, float scale_y)
+{
+    // don't support scaling etc
+    cmd->command = SDL_RENDERCMD_COPY;
+    return GK_QueueCopy(renderer, cmd, texture, srcquad, dstrect);
+}
+
 static int GK_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, void *vertices, size_t vertsize)
 {
     GK_RenderData *data = (GK_RenderData *)renderer->driverdata;
@@ -516,6 +525,7 @@ static SDL_Renderer *GK_CreateRenderer(SDL_Window *window, Uint32 flags)
     renderer->QueueDrawLines = GK_QueueDrawLines;
     renderer->QueueFillRects = GK_QueueFillRects;
     renderer->QueueCopy = GK_QueueCopy;
+    renderer->QueueCopyEx = GK_QueueCopyEx;
     renderer->RunCommandQueue = GK_RunCommandQueue;
     renderer->RenderPresent = GK_RenderPresent;
     renderer->CreateTexture = GK_CreateTexture;

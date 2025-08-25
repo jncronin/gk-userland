@@ -19,6 +19,7 @@ __attribute__((weak)) void nema_ext_hold_assert(uint32_t, int32_t) {}
 __attribute__((weak)) void nema_cl_unbind() {}
 __attribute__((weak)) void nema_cl_submit(nema_cmdlist_t *) {}
 __attribute__((weak)) void nema_cl_bind_circular(nema_cmdlist_t *) {}
+__attribute__((weak)) void nema_cl_bind(nema_cmdlist_t *) {}
 __attribute__((weak)) void nema_cl_rewind(nema_cmdlist_t *) {}
 __attribute__((weak)) void nema_bind_dst_tex(uintptr_t, uint32_t, uint32_t,
     nema_tex_format_t, int32_t) {}
@@ -32,6 +33,7 @@ __attribute__((weak)) int nema_init() { return -1; }
 __attribute__((weak)) int nema_rb_init(nema_ringbuffer_t *, int) { return -1; }
 __attribute__((weak)) void nema_ext_hold_irq_enable(uint32_t) {}
 __attribute__((weak)) nema_cmdlist_t nema_cl_create() { nema_cmdlist_t ret = { 0 }; return ret; }
+__attribute__((weak)) nema_cmdlist_t nema_cl_create_sized(int) { nema_cmdlist_t ret = { 0 }; return ret; }
 __attribute__((weak)) void nema_ext_hold_enable(uint32_t) {}
 
 typedef struct GKNema_RenderData_t
@@ -62,7 +64,7 @@ static nema_tex_format_t sdlpf_to_nemapf(uint32_t sdlpf)
         case SDL_PIXELFORMAT_RGB24:
             return NEMA_RGB24;
         case SDL_PIXELFORMAT_ARGB8888:
-            return NEMA_ARGB8888;
+            return NEMA_RGBA8888;
         case SDL_PIXELFORMAT_RGB565:
             return NEMA_RGB565;
         default:
@@ -76,7 +78,7 @@ static nema_tex_format_t gkpf_to_nemapf(unsigned int gkpf)
     switch(gkpf)
     {
         case GK_PIXELFORMAT_ARGB8888:
-            return NEMA_ARGB8888;
+            return NEMA_RGBA8888;
         case GK_PIXELFORMAT_RGB888:
             return NEMA_RGB24;
         case GK_PIXELFORMAT_RGB565:
@@ -94,6 +96,7 @@ static unsigned int nemapf_to_gkpf(nema_tex_format_t nemapf)
     switch(nemapf)
     {
         case NEMA_ARGB8888:
+        case NEMA_RGBA8888:
             return GK_PIXELFORMAT_ARGB8888;
         case NEMA_RGB24:
             return GK_PIXELFORMAT_RGB888;
@@ -112,6 +115,7 @@ static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
     switch(nemapf)
     {
         case NEMA_ARGB8888:
+        case NEMA_RGBA8888:
             return 4;
         case NEMA_XRGB8888:
             return 4;
@@ -129,8 +133,8 @@ static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
 
 static void nema_start_frame(GKNema_RenderData *rd)
 {
-    nema_cl_bind(&rd->nema_cl);
-    nema_cl_rewind(&rd->nema_cl);
+    nema_cl_bind_circular(&rd->nema_cl);
+    //nema_cl_rewind(&rd->nema_cl);
 
     nema_bind_dst_tex((uintptr_t)rd->fb, rd->w, rd->h, rd->fb_pf, -1);
     nema_set_clip(0, 0, rd->w, rd->h);
@@ -143,8 +147,8 @@ static void nema_start_frame(GKNema_RenderData *rd)
 
 static void nema_end_frame(GKNema_RenderData *rd)
 {
-    nema_ext_hold_assert(0, 0);
-    nema_cl_unbind();
+    //nema_ext_hold_assert(0, 0);
+    //nema_cl_unbind();
     nema_cl_submit(&rd->nema_cl);
     nema_cl_wait(&rd->nema_cl);
 }
@@ -392,8 +396,8 @@ static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     gmsgs[0].dest_addr = (uint32_t)(uintptr_t)pixels;
     gmsgs[0].dx = 0;
     gmsgs[0].dy = 0;
-    gmsgs[0].w = rect->w;
-    gmsgs[0].h = rect->h;
+    gmsgs[0].dw = rect->w;
+    gmsgs[0].dh = rect->h;
     gmsgs[0].dp = pitch;
     gmsgs[0].dest_pf = tpf;
 
@@ -452,9 +456,9 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
     data->h = window->h;
     data->nema_m = nema_m;
 
-    nema_ext_hold_enable(0);
-    nema_ext_hold_irq_enable(0);
-    data->nema_cl = nema_cl_create();
+    //nema_ext_hold_enable(0);
+    //nema_ext_hold_irq_enable(0);
+    data->nema_cl = nema_cl_create_sized(32*1024);
 
     // Flip screens once to get current fb addr
     {

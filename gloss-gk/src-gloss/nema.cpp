@@ -16,14 +16,16 @@ static sem_t nema_irq_sem;
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 void clock_get_now_monotonic(struct timespec *tp);
 
-int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex)
+int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_b)
 {
     __syscall_nemaenable_params p {
         .mutexes = nema_mutexes,
         .nmutexes = MUTEX_MAX + 1,
         .rb = rb,
         .irq_sem = &nema_irq_sem,
-        .eof_mutex = eof_mutex
+        .eof_mutex = eof_mutex,
+        .cl_a = cl_a,
+        .cl_b = cl_b
     };
     auto ret = deferred_call(__syscall_nemaenable, &p);
     return ret;
@@ -44,11 +46,14 @@ void nema_reg_write(uint32_t reg, uint32_t value)
 
 nema_buffer_t nema_buffer_create_pool(int pool, int size)
 {
+    printf("nema_buffer_create_pool(%d, %d)\n", pool, size);
     return nema_buffer_create(size);
 }
 
 nema_buffer_t nema_buffer_create(int size)
 {
+    printf("nema_buffer_create(%d)\n", size);
+
     auto mret = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SYNC | MAP_ANON, 0, 0);
     
     nema_buffer_t ret;
@@ -87,8 +92,9 @@ void nema_buffer_destroy(nema_buffer_t *bo)
     {
         if(bo->fd == 0)
             munmap(bo->base_virt, bo->size);
-        else
+        else if(bo->fd == 1)
             free(bo->base_virt);
+        // fd == 2 is pre-allocated by gk - don't free
     }
 }
 

@@ -34,12 +34,14 @@ __attribute__((weak)) int nema_rb_init(nema_ringbuffer_t *, int) { return -1; }
 __attribute__((weak)) void nema_ext_hold_irq_enable(uint32_t) {}
 __attribute__((weak)) nema_cmdlist_t nema_cl_create() { nema_cmdlist_t ret = { 0 }; return ret; }
 __attribute__((weak)) nema_cmdlist_t nema_cl_create_sized(int) { nema_cmdlist_t ret = { 0 }; return ret; }
+__attribute__((weak)) nema_cmdlist_t nema_cl_create_prealloc(nema_buffer_t *) { nema_cmdlist_t ret = { 0 }; return ret; }
 __attribute__((weak)) void nema_ext_hold_enable(uint32_t) {}
 
 typedef struct GKNema_RenderData_t
 {
     pthread_mutex_t nema_m;
-    nema_cmdlist_t nema_cl;
+    nema_cmdlist_t nema_cl_a, nema_cl_b;
+    nema_cmdlist_t *nema_cl;
     size_t w, h;
     void *fb;
     nema_tex_format_t fb_pf;
@@ -133,7 +135,7 @@ static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
 
 static void nema_start_frame(GKNema_RenderData *rd)
 {
-    nema_cl_bind_circular(&rd->nema_cl);
+    nema_cl_bind_circular(rd->nema_cl);
     //nema_cl_rewind(&rd->nema_cl);
 
     nema_bind_dst_tex((uintptr_t)rd->fb, rd->w, rd->h, rd->fb_pf, -1);
@@ -148,10 +150,18 @@ static void nema_start_frame(GKNema_RenderData *rd)
 
 static void nema_end_frame(GKNema_RenderData *rd)
 {
-    //nema_ext_hold_assert(0, 0);
+    nema_ext_hold_assert(0, 0);
+    //printf("nema: cl size: %d, offset: %d\n", rd->nema_cl.size, rd->nema_cl.offset); // CL typically 8k
     //nema_cl_unbind();
-    nema_cl_submit(&rd->nema_cl);
-    nema_cl_wait(&rd->nema_cl);
+    nema_cl_submit(rd->nema_cl);
+
+    // TODO: remove once gk is doing triple buffering for us
+    nema_cl_wait(rd->nema_cl);
+
+    if(rd->nema_cl == &rd->nema_cl_a)
+        rd->nema_cl = &rd->nema_cl_b;
+    else
+        rd->nema_cl = &rd->nema_cl_a;
 }
 
 int32_t nema_sys_init()
@@ -448,8 +458,9 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
     SDL_Renderer *renderer;
     GKNema_RenderData *data;
     pthread_mutex_t nema_m;
+    nema_buffer_t buf_cl_a, buf_cl_b;
 
-    GK_NemaEnable((void **)&nema_rb, &nema_m);
+    GK_NemaEnable((void **)&nema_rb, &nema_m, (void **)&buf_cl_a, (void **)&buf_cl_b);
     if(nema_init() < 0)
     {
         return NULL;
@@ -477,7 +488,9 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
 
     //nema_ext_hold_enable(0);
     //nema_ext_hold_irq_enable(0);
-    data->nema_cl = nema_cl_create_sized(32*1024);
+    data->nema_cl_a = nema_cl_create_prealloc(&buf_cl_a);
+    data->nema_cl_b = nema_cl_create_prealloc(&buf_cl_b);
+    data->nema_cl = &data->nema_cl_a;
 
     // Flip screens once to get current fb addr
     {

@@ -142,7 +142,8 @@ static void nema_start_frame(GKNema_RenderData *rd)
     nema_fill_rect(0, 0, rd->w, rd->h, nema_rgba(0, 0, 0, 255));
 
     nema_set_blend_fill(NEMA_BL_SIMPLE);
-    nema_set_blend_blit(NEMA_BL_SIMPLE);
+    nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
+        NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
 }
 
 static void nema_end_frame(GKNema_RenderData *rd)
@@ -173,9 +174,9 @@ static int GKNema_QueueSetViewport(SDL_Renderer *r, SDL_RenderCommand *cmd)
 static int GKNema_QueueSetDrawColor(SDL_Renderer *r, SDL_RenderCommand *cmd)
 {
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
-    rd->draw_col = nema_rgba(cmd->data.color.r,
+    rd->draw_col = nema_rgba(cmd->data.color.b,
         cmd->data.color.g,
-        cmd->data.color.b,
+        cmd->data.color.r,
         cmd->data.color.a);
     return 0;
 }
@@ -184,6 +185,7 @@ static int GKNema_QueueDrawPoints(SDL_Renderer *r, SDL_RenderCommand *cmd, const
                            int count)
 {
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
+    nema_set_blend_fill(NEMA_BL_SIMPLE);
     for(int i = 0; i < count; i++)
     {
         nema_draw_line((int)points[i].x, (int)points[i].y, (int)points[i].x, (int)points[i].y,
@@ -196,6 +198,7 @@ static int GKNema_QueueDrawLines(SDL_Renderer *r, SDL_RenderCommand *cmd,
     const SDL_FPoint *points, int count)
 {
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
+    nema_set_blend_fill(NEMA_BL_SIMPLE);
     for(int i = 0; i < count - 1; i++)
     {
         nema_draw_line((int)points[i].x, (int)points[i].y, (int)points[i + 1].x, (int)points[i + 1].y,
@@ -208,6 +211,7 @@ static int GKNema_QueueFillRects(SDL_Renderer *r, SDL_RenderCommand *cmd,
     const SDL_FRect *rects, int count)
 {
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
+    nema_set_blend_fill(NEMA_BL_SIMPLE);
     for(int i = 0; i < count; i++)
     {
         nema_fill_rect((int)rects[i].x, (int)rects[i].y, (int)rects[i].w, (int)rects[i].h,
@@ -220,6 +224,9 @@ static int GKNema_QueueCopy(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Texture
                      const SDL_Rect *srcrect, const SDL_FRect *dstrect)
 {
     GKNema_TextureData *td = (GKNema_TextureData *)texture->driverdata;
+    uint8_t tr, tg, tb, ta;
+    SDL_GetTextureColorMod(texture, &tr, &tg, &tb);
+    SDL_GetTextureAlphaMod(texture, &ta);
 
     // srcrect can be partial texture here - set up the texture appropriately
     {
@@ -230,6 +237,9 @@ static int GKNema_QueueCopy(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Texture
         nema_bind_src_tex(srcaddr, srcrect->w, srcrect->h, td->pf, texture->pitch,
             NEMA_FILTER_PS | NEMA_TEX_CLAMP);
     }
+    nema_set_const_color(nema_rgba(tb, tg, tr, ta));    // RGB -> BGR
+    nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
+        NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
     nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
     return 0;
 }
@@ -241,6 +251,9 @@ static int GKNema_QueueCopyEx(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Textu
     // TODO: support rotation - use nema_blit_quad_fit with transformed dest points, 
     // flipped if necessary
     GKNema_TextureData *td = (GKNema_TextureData *)texture->driverdata;
+    uint8_t tr, tg, tb, ta;
+    SDL_GetTextureColorMod(texture, &tr, &tg, &tb);
+    SDL_GetTextureAlphaMod(texture, &ta);
 
     // srcrect can be partial texture here - set up the texture appropriately
     {
@@ -251,6 +264,10 @@ static int GKNema_QueueCopyEx(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Textu
         nema_bind_src_tex(srcaddr, srcrect->w, srcrect->h, td->pf, texture->pitch,
             NEMA_FILTER_PS | NEMA_TEX_CLAMP);
     }
+
+    nema_set_const_color(nema_rgba(tb, tg, tr, ta));        // RGB -> BGR
+    nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
+        NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
     nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
     return 0;    
 }

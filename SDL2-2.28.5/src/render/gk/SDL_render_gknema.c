@@ -67,6 +67,10 @@ static nema_tex_format_t sdlpf_to_nemapf(uint32_t sdlpf)
             return NEMA_RGB24;
         case SDL_PIXELFORMAT_ARGB8888:
             return NEMA_RGBA8888;
+        case SDL_PIXELFORMAT_ARGB1555:
+            return NEMA_RGBA5551;
+        case SDL_PIXELFORMAT_ARGB4444:
+            return NEMA_RGBA4444;
         case SDL_PIXELFORMAT_RGB565:
             return NEMA_RGB565;
         default:
@@ -85,6 +89,10 @@ static nema_tex_format_t gkpf_to_nemapf(unsigned int gkpf)
             return NEMA_RGB24;
         case GK_PIXELFORMAT_RGB565:
             return NEMA_RGB565;
+        case GK_PIXELFORMAT_ARGB4444:
+            return NEMA_RGBA4444;
+        case GK_PIXELFORMAT_ARGB1555:
+            return NEMA_RGBA5551;
         case GK_PIXELFORMAT_L8:
             return NEMA_L8;
         default:
@@ -100,6 +108,10 @@ static unsigned int nemapf_to_gkpf(nema_tex_format_t nemapf)
         case NEMA_ARGB8888:
         case NEMA_RGBA8888:
             return GK_PIXELFORMAT_ARGB8888;
+        case NEMA_RGBA4444:
+            return GK_PIXELFORMAT_ARGB4444;
+        case NEMA_RGBA5551:
+            return GK_PIXELFORMAT_ARGB1555;
         case NEMA_RGB24:
             return GK_PIXELFORMAT_RGB888;
         case NEMA_RGB565:
@@ -124,6 +136,8 @@ static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
         case NEMA_RGB24:
             return 3;
         case NEMA_RGB565:
+        case NEMA_RGBA4444:
+        case NEMA_RGBA5551:
             return 2;
         case NEMA_L8:
             return 1;

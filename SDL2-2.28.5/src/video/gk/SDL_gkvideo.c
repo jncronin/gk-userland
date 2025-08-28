@@ -59,6 +59,10 @@ uint32_t gkpf_to_pformat(unsigned int gkpf)
             return SDL_PIXELFORMAT_RGB24;
         case GK_PIXELFORMAT_RGB565:
             return SDL_PIXELFORMAT_RGB565;
+        case GK_PIXELFORMAT_ARGB4444:
+            return SDL_PIXELFORMAT_ARGB4444;
+        case GK_PIXELFORMAT_ARGB1555:
+            return SDL_PIXELFORMAT_ARGB1555;
         case GK_PIXELFORMAT_L8:
             return SDL_PIXELFORMAT_INDEX8;
         default:
@@ -175,6 +179,24 @@ int GK_VideoInit(_THIS)
             ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_RGB565;        
             SDL_AddDisplayMode(&_this->displays[0], &mode);
 
+            mode.format = SDL_PIXELFORMAT_ARGB4444;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
+            {
+                return -1;
+            }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_ARGB4444;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+            mode.format = SDL_PIXELFORMAT_ARGB1555;
+            mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+            if(!mode.driverdata)
+            {
+                return -1;
+            }
+            ((GK_ModeData *)mode.driverdata)->gkpf = GK_PIXELFORMAT_ARGB1555;        
+            SDL_AddDisplayMode(&_this->displays[0], &mode);
+
             mode.format = SDL_PIXELFORMAT_INDEX8;
             mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
             if(!mode.driverdata)
@@ -207,6 +229,8 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
         case 0:
         case 1:
         case 2:
+        case 3:
+        case 4:
         case 5:
             break;
         default:

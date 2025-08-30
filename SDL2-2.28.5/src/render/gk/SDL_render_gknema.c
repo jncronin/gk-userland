@@ -21,6 +21,10 @@
 //  NEMA_BGRA8888 = B@0, G@1, R@2, A@3 - this is the same as GK_ARGB8888 and SDL_ARGB8888 / SDL_BGRA32, used for framebuffer
 
 
+// Cache word size of the ICACHE is 32 bytes - presumably the minimum granularity Nema supports
+//  Therefore, align all textures to this
+static const uintptr_t tex_align = 32;
+
 // define the following as weak to allow usage when we don't link libnemagfx
 __attribute__((weak)) void nema_set_clip(int32_t, int32_t, uint32_t, uint32_t) {}
 __attribute__((weak)) void nema_ext_hold_assert(uint32_t, int32_t) {}
@@ -59,6 +63,7 @@ typedef struct GKNema_RenderData_t
 typedef struct GKNema_TextureData_t
 {
     void *addr;
+    void *free_addr;
     int is_mmap;
     nema_tex_format_t pf;
 } GKNema_TextureData;
@@ -216,6 +221,10 @@ int32_t nema_sys_init()
 
 static int GKNema_QueueSetViewport(SDL_Renderer *r, SDL_RenderCommand *cmd)
 {
+    printf("nema: setviewport(%d, %d, %d, %d)\n", cmd->data.viewport.rect.x,
+        cmd->data.viewport.rect.y,
+        cmd->data.viewport.rect.w,
+        cmd->data.viewport.rect.h);
     nema_set_clip(cmd->data.viewport.rect.x,
         cmd->data.viewport.rect.y,
         cmd->data.viewport.rect.w,
@@ -350,9 +359,10 @@ static int GKNema_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 {
     GKNema_TextureData *td;
     void *tmem = MAP_FAILED;
+    void *free_addr = NULL;
     int is_mmap = 1;
 
-    texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + 3) & ~3);
+    texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + (tex_align - 1)) & ~(tex_align - 1));
 
     printf("GKNema_CreateTexture: %d x %d (pformat: %u, bpp: %d), access: %u\n",
         texture->w, texture->h, texture->format, texture->pitch, texture->access);
@@ -371,13 +381,18 @@ static int GKNema_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
     if(tmem == MAP_FAILED)
     {
         // Probably out of MPU slots - it's first come first served on GK
-        tmem = malloc(texture->h * texture->pitch);
+        free_addr = malloc(texture->h * texture->pitch + tex_align);
         is_mmap = 0;
 
-        if(!tmem)
+        if(!free_addr)
         {
             printf("malloc(%d x %d = %d) failed\n", texture->h, texture->pitch,
                 texture->h * texture->pitch);
+            tmem = NULL;
+        }
+        else
+        {
+            tmem = (void *)(((uintptr_t)free_addr + (tex_align - 1)) & ~(tex_align - 1));
         }
     }
     if(!tmem)
@@ -395,14 +410,17 @@ static int GKNema_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
         }
         else
         {
-            free(tmem);
+            free(free_addr);
             return -1;
         }
     }
     td->addr = tmem;
     td->is_mmap = is_mmap;
+    td->free_addr = free_addr;
     td->pf = sdlpf_to_nemapf(texture->format);
     texture->driverdata = td;
+
+    printf("Nema: allocated texture @ %08x\n", (uint32_t)(uintptr_t)td->addr);
 
     return 0;
 }
@@ -418,7 +436,7 @@ static void GKNema_DestroyTexture(SDL_Renderer *renderer, SDL_Texture *texture)
         }
         else
         {
-            free(td->addr);
+            free(td->free_addr);
         }
         SDL_free(td);
         texture->driverdata = NULL;
@@ -461,6 +479,12 @@ static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
 
     char *dest = ((GKNema_TextureData *)texture->driverdata)->addr;
     uint32_t tpf = nemapf_to_gkpf(((GKNema_TextureData *)texture->driverdata)->pf);
+
+    printf("GKNema_UpdateTexture: from %08x (%d x %d, pitch = %d, pf = %d), to %08x (%d,%d, %d x %d, pitch=%d)\n",
+        (uint32_t)(uintptr_t)pixels, rect->w, rect->h, pitch, tpf,
+        (uint32_t)(uintptr_t)dest,
+        rect->x, rect->y, rect->w, rect->h,
+        texture->pitch);
     
     gmsgs[0].type = CleanCache;
     gmsgs[0].dest_addr = (uint32_t)(uintptr_t)pixels;

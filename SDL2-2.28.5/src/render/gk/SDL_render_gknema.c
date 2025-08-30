@@ -60,6 +60,8 @@ typedef struct GKNema_RenderData_t
     void *fb;
     nema_tex_format_t fb_pf;
     uint32_t draw_col;
+    void *ones_64bytes;
+    void *zeros_64bytes;
 } GKNema_RenderData;
 
 typedef struct GKNema_TextureData_t
@@ -227,10 +229,12 @@ int32_t nema_sys_init()
 
 static int GKNema_QueueSetViewport(SDL_Renderer *r, SDL_RenderCommand *cmd)
 {
+#if DEBUG_GKNEMA
     printf("nema: setviewport(%d, %d, %d, %d)\n", cmd->data.viewport.rect.x,
         cmd->data.viewport.rect.y,
         cmd->data.viewport.rect.w,
         cmd->data.viewport.rect.h);
+#endif
     nema_set_clip(cmd->data.viewport.rect.x,
         cmd->data.viewport.rect.y,
         cmd->data.viewport.rect.w,
@@ -277,12 +281,23 @@ static int GKNema_QueueDrawLines(SDL_Renderer *r, SDL_RenderCommand *cmd,
 static int GKNema_QueueFillRects(SDL_Renderer *r, SDL_RenderCommand *cmd,
     const SDL_FRect *rects, int count)
 {
+    // nema_fill_rect seems to not do anything sometimes - unclear why
+    //  instead, use a pre-populated texture of ones and modulate with draw_col then blit
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
-    nema_set_blend_fill(NEMA_BL_SIMPLE);
+    //nema_set_clip(0, 0, rd->w, rd->h);
+    //nema_set_blend_fill(NEMA_BL_SRC);
     for(int i = 0; i < count; i++)
     {
-        nema_fill_rect((int)rects[i].x, (int)rects[i].y, (int)rects[i].w, (int)rects[i].h,
-            rd->draw_col);
+        nema_bind_src_tex((uintptr_t)rd->ones_64bytes,
+            4, 4, NEMA_RGBA8888, 16,
+            NEMA_FILTER_PS | NEMA_TEX_CLAMP);
+        nema_set_const_color(rd->draw_col);
+        nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
+            NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
+        nema_blit_rect_fit(rects[i].x, rects[i].y, rects[i].w, rects[i].h);
+        // printf("rect: %f x %f @ %f,%f, col %08x\n", rects[i].w, rects[i].h, rects[i].x, rects[i].y, rd->draw_col);
+        //nema_fill_rect_f(rects[i].x, rects[i].y, rects[i].w, rects[i].h,
+        //    rd->draw_col);
     }
     return 0;
 }
@@ -584,8 +599,10 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
     GKNema_RenderData *data;
     pthread_mutex_t nema_m;
     nema_buffer_t buf_cl_a, buf_cl_b;
+    void *ones, *zeros;
 
-    GK_NemaEnable((void **)&nema_rb, &nema_m, (void **)&buf_cl_a, (void **)&buf_cl_b);
+    GK_NemaEnable((void **)&nema_rb, &nema_m, (void **)&buf_cl_a, (void **)&buf_cl_b,
+        (void **)&ones, (void **)&zeros);
     if(nema_init() < 0)
     {
         return NULL;
@@ -616,6 +633,8 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
     data->nema_cl_a = nema_cl_create_prealloc(&buf_cl_a);
     data->nema_cl_b = nema_cl_create_prealloc(&buf_cl_b);
     data->nema_cl = &data->nema_cl_a;
+    data->ones_64bytes = ones;
+    data->zeros_64bytes = zeros;
 
     // Flip screens once to get current fb addr
     {

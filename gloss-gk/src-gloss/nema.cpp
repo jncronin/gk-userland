@@ -16,7 +16,8 @@ static sem_t nema_irq_sem;
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 void clock_get_now_monotonic(struct timespec *tp);
 
-int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_b)
+int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_b,
+    void **ones, void **zeros)
 {
     __syscall_nemaenable_params p {
         .mutexes = nema_mutexes,
@@ -25,7 +26,9 @@ int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_
         .irq_sem = &nema_irq_sem,
         .eof_mutex = eof_mutex,
         .cl_a = cl_a,
-        .cl_b = cl_b
+        .cl_b = cl_b,
+        .ones = ones,
+        .zeros = zeros
     };
     auto ret = deferred_call(__syscall_nemaenable, &p);
     return ret;

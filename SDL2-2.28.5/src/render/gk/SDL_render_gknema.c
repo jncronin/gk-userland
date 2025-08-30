@@ -118,6 +118,7 @@ static nema_tex_format_t gkpf_to_nemapf(unsigned int gkpf)
     }
 }
 
+#if 0
 // this is just used for DMA2D blits without blending, therefore just need to get BPP right
 static unsigned int nemapf_to_gkpf(nema_tex_format_t nemapf)
 {
@@ -142,6 +143,7 @@ static unsigned int nemapf_to_gkpf(nema_tex_format_t nemapf)
             return 0;
     }
 }
+#endif
 
 static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
 {
@@ -313,10 +315,70 @@ static int GKNema_QueueCopyEx(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Textu
                        const SDL_Rect *srcrect, const SDL_FRect *dstrect,
                        const double angle, const SDL_FPoint *center, const SDL_RendererFlip flip, float scale_x, float scale_y)
 {
-    // TODO: support rotation - use nema_blit_quad_fit with transformed dest points, 
-    // flipped if necessary
     GKNema_TextureData *td = (GKNema_TextureData *)texture->driverdata;
     uint8_t tr, tg, tb, ta;
+    float points[8];
+
+    // support flipping
+#define TL_X (dstrect->x)
+#define TL_Y (dstrect->y)
+#define TR_X (dstrect->x + dstrect->w)
+#define TR_Y (dstrect->y)
+#define BL_X (dstrect->x)
+#define BL_Y (dstrect->y + dstrect->h)
+#define BR_X (dstrect->x + dstrect->w)
+#define BR_Y (dstrect->y + dstrect->h)
+
+    switch((int)flip)
+    {
+        case SDL_FLIP_HORIZONTAL:
+            points[0] = TR_X;
+            points[1] = TR_Y;
+            points[2] = TL_X;
+            points[3] = TL_Y;
+            points[4] = BL_X;
+            points[5] = BL_Y;
+            points[6] = BR_X;
+            points[7] = BR_Y;
+            break;
+
+        case SDL_FLIP_VERTICAL:
+            points[0] = BL_X;
+            points[1] = BL_Y;
+            points[2] = BR_X;
+            points[3] = BR_Y;
+            points[4] = TR_X;
+            points[5] = TR_Y;
+            points[6] = TL_X;
+            points[7] = TL_Y;
+            break;
+
+        case SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL:
+            points[0] = BR_X;
+            points[1] = BR_Y;
+            points[2] = BL_X;
+            points[3] = BL_Y;
+            points[4] = TL_X;
+            points[5] = TL_Y;
+            points[6] = TR_X;
+            points[7] = TR_Y;
+            break;
+
+        default:
+            points[0] = TL_X;
+            points[1] = TL_Y;
+            points[2] = TR_X;
+            points[3] = TR_Y;
+            points[4] = BR_X;
+            points[5] = BR_Y;
+            points[6] = BL_X;
+            points[7] = BL_Y;
+            break;
+    }
+
+    // TODO: support rotation - transform points[] based upon translate back to centre, rotate, translate forward
+
+
     SDL_GetTextureColorMod(texture, &tr, &tg, &tb);
     SDL_GetTextureAlphaMod(texture, &ta);
 
@@ -333,7 +395,9 @@ static int GKNema_QueueCopyEx(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Textu
     nema_set_const_color(nema_rgba(tr, tg, tb, ta));
     nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
         NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
-    nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
+    nema_blit_quad_fit(points[0], points[1], points[2], points[3],
+        points[4], points[5], points[6], points[7]);
+    //nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
     return 0;    
 }
 
@@ -484,7 +548,6 @@ static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     const SDL_Rect *rect, const void *pixels, int pitch)
 {
     char *dest = ((GKNema_TextureData *)texture->driverdata)->addr;
-    uint32_t tpf = nemapf_to_gkpf(((GKNema_TextureData *)texture->driverdata)->pf);
 
 #if DEBUG_GKNEMA
     printf("GKNema_UpdateTexture: from %08x (%d x %d, pitch = %d, pf = %d), to %08x (%d,%d, %d x %d, pitch=%d)\n",

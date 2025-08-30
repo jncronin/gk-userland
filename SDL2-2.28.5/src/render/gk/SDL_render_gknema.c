@@ -13,6 +13,14 @@
 
 #include <nema_core.h>
 
+// Nema pixel formats
+
+
+//  NEMA_RGBA8888 = R@0, G@1, B@2, A@3 - same as SDL_ABGR8888 / SDL_RGBA32 - used for PNG textures
+//  NEMA_RGBA4444 = A@0-low, B@0-high, G@1-low, R@1-high - NOT the same as GK_ARGB4444
+//  NEMA_BGRA8888 = B@0, G@1, R@2, A@3 - this is the same as GK_ARGB8888 and SDL_ARGB8888 / SDL_BGRA32, used for framebuffer
+
+
 // define the following as weak to allow usage when we don't link libnemagfx
 __attribute__((weak)) void nema_set_clip(int32_t, int32_t, uint32_t, uint32_t) {}
 __attribute__((weak)) void nema_ext_hold_assert(uint32_t, int32_t) {}
@@ -62,10 +70,12 @@ static nema_tex_format_t sdlpf_to_nemapf(uint32_t sdlpf)
     switch(sdlpf)
     {
         case SDL_PIXELFORMAT_XRGB8888:
-            return NEMA_XRGB8888;
+            return NEMA_RGBX8888;
         case SDL_PIXELFORMAT_RGB24:
             return NEMA_RGB24;
         case SDL_PIXELFORMAT_ARGB8888:
+            return NEMA_BGRA8888;
+        case SDL_PIXELFORMAT_ABGR8888:
             return NEMA_RGBA8888;
         case SDL_PIXELFORMAT_ARGB1555:
             return NEMA_RGBA5551;
@@ -84,13 +94,13 @@ static nema_tex_format_t gkpf_to_nemapf(unsigned int gkpf)
     switch(gkpf)
     {
         case GK_PIXELFORMAT_ARGB8888:
-            return NEMA_RGBA8888;
+            return NEMA_BGRA8888;
         case GK_PIXELFORMAT_RGB888:
             return NEMA_RGB24;
         case GK_PIXELFORMAT_RGB565:
             return NEMA_RGB565;
         case GK_PIXELFORMAT_ARGB4444:
-            return NEMA_RGBA4444;
+            return NEMA_BGRA4444;
         case GK_PIXELFORMAT_ARGB1555:
             return NEMA_RGBA5551;
         case GK_PIXELFORMAT_L8:
@@ -101,14 +111,16 @@ static nema_tex_format_t gkpf_to_nemapf(unsigned int gkpf)
     }
 }
 
+// this is just used for DMA2D blits without blending, therefore just need to get BPP right
 static unsigned int nemapf_to_gkpf(nema_tex_format_t nemapf)
 {
     switch(nemapf)
     {
         case NEMA_ARGB8888:
         case NEMA_RGBA8888:
+        case NEMA_BGRA8888:
             return GK_PIXELFORMAT_ARGB8888;
-        case NEMA_RGBA4444:
+        case NEMA_BGRA4444:
             return GK_PIXELFORMAT_ARGB4444;
         case NEMA_RGBA5551:
             return GK_PIXELFORMAT_ARGB1555;
@@ -130,6 +142,7 @@ static int nemapf_to_pixelsize(nema_tex_format_t nemapf)
     {
         case NEMA_ARGB8888:
         case NEMA_RGBA8888:
+        case NEMA_BGRA8888:
             return 4;
         case NEMA_XRGB8888:
             return 4;
@@ -164,6 +177,18 @@ static void nema_start_frame(GKNema_RenderData *rd)
 
 static void nema_end_frame(GKNema_RenderData *rd)
 {
+    //  NEMA_RGBA8888 = R@0, G@1, B@2, A@3
+    //  NEMA_RGBA4444 = A@0-low, B@0-high, G@1-low, R@1-high
+    //  NEMA_BGRA8888 = B@0, G@1, R@2, A@3 - this is the same as GK_ARGB8888 and SDL_ARGB8888 = SDL_BGRA32
+    //nema_bind_dst_tex((uintptr_t)rd->fb, rd->w, rd->h, NEMA_RGBA4444, -1);
+    nema_set_clip(0, 0, rd->w, rd->h);
+    nema_set_blend_fill(NEMA_BL_SRC);
+    nema_fill_rect(0, 0, 50, 50, nema_rgba(255, 0, 0, 127));
+    nema_fill_rect(50, 0, 50, 50, nema_rgba(0, 255, 0, 127));
+    nema_fill_rect(100, 0, 50, 50, nema_rgba(0, 0, 255, 127));
+    //nema_clear(nema_rgba(250, 200, 100, 50));
+    printf("nema pf: %u\n", rd->fb_pf);
+
     nema_ext_hold_assert(0, 0);
     //printf("nema: cl size: %d, offset: %d\n", rd->nema_cl.size, rd->nema_cl.offset); // CL typically 8k
     //nema_cl_unbind();
@@ -171,6 +196,9 @@ static void nema_end_frame(GKNema_RenderData *rd)
 
     // TODO: remove once gk is doing triple buffering for us
     nema_cl_wait(rd->nema_cl);
+
+    //uint8_t *fb_b = (uint8_t *)rd->fb;
+    //printf("fb: %u, %u, %u, %u\n", fb_b[0], fb_b[1], fb_b[2], fb_b[3]);
 
     if(rd->nema_cl == &rd->nema_cl_a)
         rd->nema_cl = &rd->nema_cl_b;
@@ -198,9 +226,9 @@ static int GKNema_QueueSetViewport(SDL_Renderer *r, SDL_RenderCommand *cmd)
 static int GKNema_QueueSetDrawColor(SDL_Renderer *r, SDL_RenderCommand *cmd)
 {
     GKNema_RenderData *rd = (GKNema_RenderData *)r->driverdata;
-    rd->draw_col = nema_rgba(cmd->data.color.b,
+    rd->draw_col = nema_rgba(cmd->data.color.r,
         cmd->data.color.g,
-        cmd->data.color.r,
+        cmd->data.color.b,
         cmd->data.color.a);
     return 0;
 }
@@ -261,7 +289,7 @@ static int GKNema_QueueCopy(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Texture
         nema_bind_src_tex(srcaddr, srcrect->w, srcrect->h, td->pf, texture->pitch,
             NEMA_FILTER_PS | NEMA_TEX_CLAMP);
     }
-    nema_set_const_color(nema_rgba(tb, tg, tr, ta));    // RGB -> BGR
+    nema_set_const_color(nema_rgba(tr, tg, tb, ta));
     nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
         NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
     nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
@@ -289,7 +317,7 @@ static int GKNema_QueueCopyEx(SDL_Renderer *r, SDL_RenderCommand *cmd, SDL_Textu
             NEMA_FILTER_PS | NEMA_TEX_CLAMP);
     }
 
-    nema_set_const_color(nema_rgba(tb, tg, tr, ta));        // RGB -> BGR
+    nema_set_const_color(nema_rgba(tr, tg, tb, ta));
     nema_set_blend_blit(nema_blending_mode(NEMA_BF_SRCALPHA, NEMA_BF_INVSRCALPHA,
         NEMA_BLOP_MODULATE_A | NEMA_BLOP_MODULATE_RGB));
     nema_blit_rect_fit(dstrect->x, dstrect->y, dstrect->w, dstrect->h);
@@ -554,12 +582,13 @@ SDL_RenderDriver GKNema_RenderDriver = {
     .info = {
         .name = "GKNema renderer",
         .flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC,
-        .num_texture_formats = 4,   // TODO: can we use more?
+        .num_texture_formats = 5,   // TODO: can we use more?
         .texture_formats = {
             [0] = SDL_PIXELFORMAT_ARGB8888,
-            [1] = SDL_PIXELFORMAT_RGB888,
-            [2] = SDL_PIXELFORMAT_RGB565,
-            [3] = SDL_PIXELFORMAT_INDEX8
+            [1] = SDL_PIXELFORMAT_ABGR8888,
+            [2] = SDL_PIXELFORMAT_RGB888,
+            [3] = SDL_PIXELFORMAT_RGB565,
+            [4] = SDL_PIXELFORMAT_INDEX8,
         },        
         .max_texture_width = 2048,
         .max_texture_height = 2048

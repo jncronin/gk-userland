@@ -13,6 +13,8 @@
 
 #include <nema_core.h>
 
+#define DEBUG_GKNEMA    0
+
 // Nema pixel formats
 
 
@@ -186,6 +188,7 @@ static void nema_end_frame(GKNema_RenderData *rd)
     //  NEMA_RGBA4444 = A@0-low, B@0-high, G@1-low, R@1-high
     //  NEMA_BGRA8888 = B@0, G@1, R@2, A@3 - this is the same as GK_ARGB8888 and SDL_ARGB8888 = SDL_BGRA32
     //nema_bind_dst_tex((uintptr_t)rd->fb, rd->w, rd->h, NEMA_RGBA4444, -1);
+#if DEBUG_GKNEMA
     nema_set_clip(0, 0, rd->w, rd->h);
     nema_set_blend_fill(NEMA_BL_SRC);
     nema_fill_rect(0, 0, 50, 50, nema_rgba(255, 0, 0, 127));
@@ -193,6 +196,7 @@ static void nema_end_frame(GKNema_RenderData *rd)
     nema_fill_rect(100, 0, 50, 50, nema_rgba(0, 0, 255, 127));
     //nema_clear(nema_rgba(250, 200, 100, 50));
     printf("nema pf: %u\n", rd->fb_pf);
+#endif
 
     nema_ext_hold_assert(0, 0);
     //printf("nema: cl size: %d, offset: %d\n", rd->nema_cl.size, rd->nema_cl.offset); // CL typically 8k
@@ -364,8 +368,10 @@ static int GKNema_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 
     texture->pitch = (((texture->w * SDL_BYTESPERPIXEL(texture->format)) + (tex_align - 1)) & ~(tex_align - 1));
 
+#if DEBUG_GKNEMA
     printf("GKNema_CreateTexture: %d x %d (pformat: %u, bpp: %d), access: %u\n",
         texture->w, texture->h, texture->format, texture->pitch, texture->access);
+#endif
 
     if(texture->access != SDL_TEXTUREACCESS_STATIC)
     {
@@ -420,7 +426,9 @@ static int GKNema_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
     td->pf = sdlpf_to_nemapf(texture->format);
     texture->driverdata = td;
 
+#if DEBUG_GKNEMA
     printf("Nema: allocated texture @ %08x\n", (uint32_t)(uintptr_t)td->addr);
+#endif
 
     return 0;
 }
@@ -475,46 +483,34 @@ static void GKNema_UnlockTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 static int GKNema_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     const SDL_Rect *rect, const void *pixels, int pitch)
 {
-    struct gpu_message gmsgs[3];
-
     char *dest = ((GKNema_TextureData *)texture->driverdata)->addr;
     uint32_t tpf = nemapf_to_gkpf(((GKNema_TextureData *)texture->driverdata)->pf);
 
+#if DEBUG_GKNEMA
     printf("GKNema_UpdateTexture: from %08x (%d x %d, pitch = %d, pf = %d), to %08x (%d,%d, %d x %d, pitch=%d)\n",
         (uint32_t)(uintptr_t)pixels, rect->w, rect->h, pitch, tpf,
         (uint32_t)(uintptr_t)dest,
         rect->x, rect->y, rect->w, rect->h,
         texture->pitch);
-    
-    gmsgs[0].type = CleanCache;
-    gmsgs[0].dest_addr = (uint32_t)(uintptr_t)pixels;
-    gmsgs[0].dx = 0;
-    gmsgs[0].dy = 0;
-    gmsgs[0].dw = rect->w;
-    gmsgs[0].dh = rect->h;
-    gmsgs[0].dp = pitch;
-    gmsgs[0].dest_pf = tpf;
+#endif
 
-    gmsgs[1].type = BlitImageNoBlend;
-    gmsgs[1].dest_addr = (uint32_t)(uintptr_t)dest;
-    gmsgs[1].dest_pf = tpf;
-    gmsgs[1].dx = rect->x;
-    gmsgs[1].dy = rect->y;
-    gmsgs[1].dw = rect->w;
-    gmsgs[1].dh = rect->h;
-    gmsgs[1].dp = texture->pitch;
-    gmsgs[1].w = rect->w;
-    gmsgs[1].h = rect->h;
-    gmsgs[1].src_addr_color = (uint32_t)(uintptr_t)pixels;
-    gmsgs[1].src_pf = tpf;
-    gmsgs[1].sx = 0;
-    gmsgs[1].sy = 0;
-    gmsgs[1].sp = pitch;
-    
-    gmsgs[2].type = SignalThread;
+    {
+        int bpp = SDL_BYTESPERPIXEL(texture->format);
+        uint8_t *from = ((uint8_t *)pixels) + rect->y * pitch + rect->x * bpp;
+        uint8_t *to = (uint8_t *)dest;
+        GK_GPU_CommandList(cc, 1);
 
-    GK_GPUEnqueueMessages(gmsgs, 3);
-    GK_ICACHEInvalidate();
+        for(int y = 0; y < rect->h; y++)
+        {
+            memcpy(to, from, rect->w * bpp);
+            from += pitch;
+            to += texture->pitch;
+        }
+
+        GK_GPUCleanCache(&cc, dest, rect->w, rect->h, bpp*4, texture->pitch);
+        GK_GPUFlush(&cc);
+        GK_ICACHEInvalidate();
+    }
 
     return 0;
 }
@@ -574,7 +570,7 @@ static SDL_Renderer *GKNema_CreateRenderer(SDL_Window *window, Uint32 flags)
         data->fb_pf = gkpf_to_nemapf(gkpf);
     }
 
-#if DEBUG_GK
+#if DEBUG_GKNEMA
     printf("GKNema_CreateRenderer\n");
 #endif
 

@@ -1,3 +1,5 @@
+#if __GAMEKID__ != 4
+
 #define _POSIX_THREADS
 
 #include "gk.h"
@@ -194,3 +196,5 @@ int GK_ICACHEInvalidate()
 {
     return deferred_call<void *>(__syscall_icacheinvalidate, nullptr);
 }
+
+#endif

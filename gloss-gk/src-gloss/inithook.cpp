@@ -1,4 +1,6 @@
 /* Newlib clobbers argc/argv during startup.  Here we restore them. */
+
+#if __GAMEKID__ != 4
 #include "syscalls.h"
 
 extern "C" void software_init_hook() __attribute__((naked));
@@ -17,3 +19,4 @@ extern "C" void software_init_hook()
         :: "r"((int)__syscall_newlibinithook)
     );
 }
+#endif

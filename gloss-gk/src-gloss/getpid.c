@@ -13,7 +13,7 @@ int getppid()
 	int pid = _getpid();
 	int ret, _errno;
 
-	__syscall(__syscall_getppid, &ret, (void *)pid, &_errno);
+	__syscall(__syscall_getppid, &ret, (void *)(intptr_t)pid, &_errno);
 	if(ret < 0)
 	{
 		errno = _errno;

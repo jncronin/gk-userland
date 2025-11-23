@@ -7,8 +7,8 @@ extern "C" void _threadexit(void *retval);
 
 extern "C" void _exit(int rc)
 {
-	_threadexit((void *)rc);
-	__syscall(__syscall_exit, (void *)rc, NULL, NULL);
+	_threadexit((void *)(uintptr_t)rc);
+	__syscall(__syscall_exit, (void *)(uintptr_t)rc, NULL, NULL);
 	while(true);
 }
 

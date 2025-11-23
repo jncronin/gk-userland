@@ -194,6 +194,10 @@ arm*-*-gkos*)
 			targ_emul=armelf_gkos
 			targ_extra_emuls="armelf"
 			;;
+aarch64*-*-gkos*)
+			targ_emul=aarch64elf_gkos
+			targ_extra_emuls="aarch64elf"
+			;;
 armeb-*-netbsd*)	targ_emul=armelfb_nbsd;
 			targ_extra_emuls="armelf_nbsd armelf"
 			;;

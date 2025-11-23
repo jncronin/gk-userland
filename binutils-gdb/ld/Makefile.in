@@ -241,21 +241,22 @@ am__depfiles_remade = ./$(DEPDIR)/deffilep.Po \
 	./$(DEPDIR)/eaarch64cloudabi.Po \
 	./$(DEPDIR)/eaarch64cloudabib.Po ./$(DEPDIR)/eaarch64elf.Po \
 	./$(DEPDIR)/eaarch64elf32.Po ./$(DEPDIR)/eaarch64elf32b.Po \
-	./$(DEPDIR)/eaarch64elfb.Po ./$(DEPDIR)/eaarch64fbsd.Po \
-	./$(DEPDIR)/eaarch64fbsdb.Po ./$(DEPDIR)/eaarch64haiku.Po \
-	./$(DEPDIR)/eaarch64linux.Po ./$(DEPDIR)/eaarch64linux32.Po \
-	./$(DEPDIR)/eaarch64linux32b.Po ./$(DEPDIR)/eaarch64linuxb.Po \
-	./$(DEPDIR)/eaarch64nto.Po ./$(DEPDIR)/eaarch64pe.Po \
-	./$(DEPDIR)/eaix5ppc.Po ./$(DEPDIR)/eaix5rs6.Po \
-	./$(DEPDIR)/eaixppc.Po ./$(DEPDIR)/eaixrs6.Po \
-	./$(DEPDIR)/ealpha.Po ./$(DEPDIR)/ealphavms.Po \
-	./$(DEPDIR)/earcelf.Po ./$(DEPDIR)/earclinux.Po \
-	./$(DEPDIR)/earclinux_nps.Po ./$(DEPDIR)/earcv2elf.Po \
-	./$(DEPDIR)/earcv2elfx.Po ./$(DEPDIR)/earm64pe.Po \
-	./$(DEPDIR)/earm_wince_pe.Po ./$(DEPDIR)/earmelf.Po \
-	./$(DEPDIR)/earmelf_fbsd.Po ./$(DEPDIR)/earmelf_fuchsia.Po \
-	./$(DEPDIR)/earmelf_gkos.Po ./$(DEPDIR)/earmelf_haiku.Po \
-	./$(DEPDIR)/earmelf_linux.Po ./$(DEPDIR)/earmelf_linux_eabi.Po \
+	./$(DEPDIR)/eaarch64elf_gkos.Po ./$(DEPDIR)/eaarch64elfb.Po \
+	./$(DEPDIR)/eaarch64fbsd.Po ./$(DEPDIR)/eaarch64fbsdb.Po \
+	./$(DEPDIR)/eaarch64haiku.Po ./$(DEPDIR)/eaarch64linux.Po \
+	./$(DEPDIR)/eaarch64linux32.Po ./$(DEPDIR)/eaarch64linux32b.Po \
+	./$(DEPDIR)/eaarch64linuxb.Po ./$(DEPDIR)/eaarch64nto.Po \
+	./$(DEPDIR)/eaarch64pe.Po ./$(DEPDIR)/eaix5ppc.Po \
+	./$(DEPDIR)/eaix5rs6.Po ./$(DEPDIR)/eaixppc.Po \
+	./$(DEPDIR)/eaixrs6.Po ./$(DEPDIR)/ealpha.Po \
+	./$(DEPDIR)/ealphavms.Po ./$(DEPDIR)/earcelf.Po \
+	./$(DEPDIR)/earclinux.Po ./$(DEPDIR)/earclinux_nps.Po \
+	./$(DEPDIR)/earcv2elf.Po ./$(DEPDIR)/earcv2elfx.Po \
+	./$(DEPDIR)/earm64pe.Po ./$(DEPDIR)/earm_wince_pe.Po \
+	./$(DEPDIR)/earmelf.Po ./$(DEPDIR)/earmelf_fbsd.Po \
+	./$(DEPDIR)/earmelf_fuchsia.Po ./$(DEPDIR)/earmelf_gkos.Po \
+	./$(DEPDIR)/earmelf_haiku.Po ./$(DEPDIR)/earmelf_linux.Po \
+	./$(DEPDIR)/earmelf_linux_eabi.Po \
 	./$(DEPDIR)/earmelf_linux_fdpiceabi.Po \
 	./$(DEPDIR)/earmelf_nacl.Po ./$(DEPDIR)/earmelf_nbsd.Po \
 	./$(DEPDIR)/earmelf_phoenix.Po ./$(DEPDIR)/earmelf_vxworks.Po \
@@ -1081,6 +1082,7 @@ ALL_64_EMULATION_SOURCES = \
 	eaarch64elfb.c \
 	eaarch64fbsd.c \
 	eaarch64fbsdb.c \
+	eaarch64elf_gkos.c \
 	eaarch64haiku.c \
 	eaarch64linux.c \
 	eaarch64linux32.c \
@@ -1462,6 +1464,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64elf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64elf32.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64elf32b.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64elf_gkos.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64elfb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64fbsd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eaarch64fbsdb.Po@am__quote@ # am--include-marker
@@ -2290,6 +2293,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/eaarch64elf.Po
 	-rm -f ./$(DEPDIR)/eaarch64elf32.Po
 	-rm -f ./$(DEPDIR)/eaarch64elf32b.Po
+	-rm -f ./$(DEPDIR)/eaarch64elf_gkos.Po
 	-rm -f ./$(DEPDIR)/eaarch64elfb.Po
 	-rm -f ./$(DEPDIR)/eaarch64fbsd.Po
 	-rm -f ./$(DEPDIR)/eaarch64fbsdb.Po
@@ -2773,6 +2777,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/eaarch64elf.Po
 	-rm -f ./$(DEPDIR)/eaarch64elf32.Po
 	-rm -f ./$(DEPDIR)/eaarch64elf32b.Po
+	-rm -f ./$(DEPDIR)/eaarch64elf_gkos.Po
 	-rm -f ./$(DEPDIR)/eaarch64elfb.Po
 	-rm -f ./$(DEPDIR)/eaarch64fbsd.Po
 	-rm -f ./$(DEPDIR)/eaarch64fbsdb.Po

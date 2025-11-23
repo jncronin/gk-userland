@@ -386,6 +386,7 @@ ALL_64_EMULATION_SOURCES = \
 	eaarch64elfb.c \
 	eaarch64fbsd.c \
 	eaarch64fbsdb.c \
+	eaarch64elf_gkos.c \
 	eaarch64haiku.c \
 	eaarch64linux.c \
 	eaarch64linux32.c \

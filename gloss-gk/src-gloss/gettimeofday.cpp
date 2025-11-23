@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include <errno.h>
 
+#if __GAMEKID__ != 4
 #define STM32H747xx
 #define CORE_CM7
 #include <stm32h7xx.h>
@@ -125,3 +126,31 @@ extern "C" uint64_t GK_GetCurUs()
 {
     return clock_cur_us();
 }
+
+#else
+
+void clock_get_now(struct timespec *tp)
+{
+    if(!tp) return;
+    tp->tv_sec = 0;
+    tp->tv_nsec = 0;
+}
+
+void clock_get_now_monotonic(struct timespec *tp)
+{
+    if(!tp) return;
+    tp->tv_sec = 0;
+    tp->tv_nsec = 0;
+}
+
+uint64_t clock_cur_us()
+{
+    return 0;
+}
+
+extern "C" uint64_t GK_GetCurUs()
+{
+    return clock_cur_us();
+}
+
+#endif

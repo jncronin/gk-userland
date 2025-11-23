@@ -29,7 +29,7 @@ int GK_AudioGetBufferPos(size_t *nbufs, size_t *curbuf, size_t *buflen, size_t *
 
 int GK_AudioEnable(int enable)
 {
-    return deferred_call(__syscall_audioenable, (void*)enable);
+    return deferred_call(__syscall_audioenable, (void*)(intptr_t)enable);
 }
 
 int GK_AudioQueueBuffer(const void *buffer, void **next_buffer)
@@ -45,5 +45,5 @@ int GK_AudioWaitFree()
 
 int GK_AudioSetFreq(int freq)
 {
-    return deferred_call(__syscall_audiosetfreq, (void*)freq);
+    return deferred_call(__syscall_audiosetfreq, (void*)(intptr_t)freq);
 }

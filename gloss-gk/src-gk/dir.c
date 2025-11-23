@@ -6,7 +6,7 @@
 int fchdir(int fd)
 {
     int ret, _errno;
-    __syscall(__syscall_fchdir, &ret, (void *)fd, &_errno);
+    __syscall(__syscall_fchdir, &ret, (void *)(intptr_t)fd, &_errno);
     if(_errno)
     {
         errno = _errno;

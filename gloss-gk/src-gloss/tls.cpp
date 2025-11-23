@@ -1,3 +1,5 @@
+#if __GAMEKID__ != 4
+
 #include "syscalls.h"
 
 extern "C" void *__aeabi_read_tp_c()
@@ -36,3 +38,5 @@ extern "C" void *__aeabi_read_tp()
         ".word " xstr(GK_TLS_POINTER_ADDRESS) " \n"
         ::: "memory");
 }
+
+#endif

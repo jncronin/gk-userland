@@ -158,6 +158,7 @@ case ${generic_target} in
   arm-*-freebsd* | armeb-*-freebsd*)	fmt=elf  em=armfbsdeabi ;;
   arm*-*-freebsd*)			fmt=elf  em=armfbsdvfp ;;
   arm*-*-gkos*)       fmt=elf em=linux ;;
+  aarch64*-*-gkos*)   fmt=elf ;;
   arm-*-linux-*eabi*)			fmt=elf  em=armlinuxeabi ;;
   arm-*-linux-*)			fmt=elf  em=linux ;;
   arm-*-uclinux*eabi*)			fmt=elf  em=armlinuxeabi ;;

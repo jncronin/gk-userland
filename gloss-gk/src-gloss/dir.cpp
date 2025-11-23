@@ -84,5 +84,5 @@ extern "C" void rewinddir(DIR *dirp)
     {
         return;
     }
-    deferred_call(__syscall_rewinddir, (void *)dirp->dd_fd);
+    deferred_call(__syscall_rewinddir, (void *)(intptr_t)dirp->dd_fd);
 }

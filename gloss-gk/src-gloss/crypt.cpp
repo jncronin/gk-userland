@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include <cstring>
+#include <string.h>
 
 static char crypt_val[14];
 

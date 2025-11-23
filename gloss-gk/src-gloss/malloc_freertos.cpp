@@ -1,3 +1,5 @@
+#if __GAMEKID__ != 4
+
 /* This is a GK adaptation of FreeRTOS heap_4.c, chosen because we utilise a fixed
     heap therefore can avoid multiple calls to sbrk() etc.
     
@@ -698,3 +700,5 @@ extern "C" void *_calloc_r(_reent *, size_t n, size_t val)
 {
     return calloc(n, val);
 }
+
+#endif

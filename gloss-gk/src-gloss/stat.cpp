@@ -25,8 +25,8 @@ extern "C" int _stat(char *file, struct stat *st)
 		saved_errno = errno;
 	}
 
-	deferred_call(__syscall_close1, (void *)fd);
-	deferred_call(__syscall_close2, (void *)fd);
+	deferred_call(__syscall_close1, (void *)(intptr_t)fd);
+	deferred_call(__syscall_close2, (void *)(intptr_t)fd);
 	if(ret < 0)
 	{
 		errno = saved_errno;

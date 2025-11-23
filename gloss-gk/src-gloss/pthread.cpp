@@ -104,7 +104,7 @@ extern "C" int pthread_getschedparam(pthread_t t, int *policy, sched_param *para
 {
     if(policy)
         *policy = SCHED_RR;
-    int sched_priority = deferred_call(__syscall_get_thread_priority, (void *)((uint32_t)t));
+    int sched_priority = deferred_call(__syscall_get_thread_priority, (void *)((uintptr_t)t));
     if(sched_priority > 0)
     {
         if(param)
@@ -122,7 +122,7 @@ extern "C" int pthread_setschedparam(pthread_t t, int policy, const sched_param 
         return EINVAL;
     if(param->sched_priority > 9)
         return EINVAL;
-    __syscall_set_thread_priority_params p { (void *)((uint32_t)t), param->sched_priority };
+    __syscall_set_thread_priority_params p { (void *)((uintptr_t)t), param->sched_priority };
     int ret = deferred_call(__syscall_set_thread_priority, &p);
     if(ret == 0)
         return 0;
@@ -141,7 +141,7 @@ extern "C" int sched_get_priority_max(int policy)
 
 int pthread_join(pthread_t thread, void **retval)
 {
-    __syscall_pthread_join_params p { (void *)((uint32_t)thread), retval };
+    __syscall_pthread_join_params p { (void *)((uintptr_t)thread), retval };
     int ret = deferred_call(__syscall_pthread_join, &p);
     if(ret == 0)
         return 0;
@@ -150,7 +150,7 @@ int pthread_join(pthread_t thread, void **retval)
 
 extern "C" int pthread_detach(pthread_t thread)
 {
-    int ret = deferred_call(__syscall_pthread_detach, (void *)thread);
+    int ret = deferred_call(__syscall_pthread_detach, (void *)(uintptr_t)thread);
     if(ret == 0)
         return 0;
     return errno;
@@ -158,7 +158,7 @@ extern "C" int pthread_detach(pthread_t thread)
 
 extern "C" int pthread_cancel(pthread_t thread)
 {
-    int ret = deferred_call(__syscall_pthread_cancel, (void *)thread);
+    int ret = deferred_call(__syscall_pthread_cancel, (void *)(uintptr_t)thread);
     if(ret == 0)
         return 0;
     return errno;

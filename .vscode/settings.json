@@ -53,7 +53,8 @@
         "iomanip": "cpp",
         "lv_display_private.h": "c",
         "sdl_hints.h": "c",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "setjmp.h": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

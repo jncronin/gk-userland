@@ -1,6 +1,7 @@
 #include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_GK
+#if __GAMEKID__ != 4
 
 #include "../SDL_sysrender.h"
 #include "SDL_video.h"
@@ -697,4 +698,5 @@ SDL_RenderDriver GKNema_RenderDriver = {
     }
 };
 
+#endif
 #endif

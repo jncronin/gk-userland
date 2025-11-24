@@ -226,7 +226,7 @@ case $basic_machine in
 	1750a | 580 \
 	| a29k \
 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
+	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | aarch64* \
 	| c4x | clipper \
 	| d10v | d30v | dsp16xx \
 	| fr30 \

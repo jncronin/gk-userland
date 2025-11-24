@@ -153,4 +153,26 @@ extern "C" uint64_t GK_GetCurUs()
     return clock_cur_us();
 }
 
+extern "C" int _gettimeofday(struct timeval *tv, timezone *tz)
+{
+    if(!tv)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    timespec ts;
+    clock_get_now(&ts);
+    tv->tv_sec = ts.tv_sec;
+    tv->tv_usec = ts.tv_nsec / 1000;
+
+    if(tz)
+    {
+        // just return UTC for now
+        tz->tz_minuteswest = 0;
+        tz->tz_dsttime = DST_NONE;
+    }
+    return 0;
+}
+
 #endif

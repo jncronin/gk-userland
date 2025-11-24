@@ -22,10 +22,25 @@
 #ifndef GCC_AARCH64_ELF_GKOS_H
 #define GCC_AARCH64_ELF_GKOS_H
 
-#define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
+#define STARTFILE_SPEC \
+  "%{!shared:                     \
+      crt0%O%s                    \
+    }                             \
+   %:if-exists(crti%O%s)          \
+   %{static:%:if-exists-else(crtbeginT%O%s crtbegin%O%s)} \
+   %{!static:                   \
+     %{!shared:                 \
+       %{!pie:crtbegin%O%s}     \
+       %{pie:crtbeginS%O%s}}    \
+     %{shared:crtbeginS%O%s}}"
+
 #define ENDFILE_SPEC \
-  " crtend%O%s crtn%O%s " \
-  "%{Ofast|ffast-math|funsafe-math-optimizations:%{!shared:crtfastmath.o%s}}"
+  "%{!shared:                   \
+    %{!pie:crtend%O%s}          \
+    %{pie:crtendS%O%s}}         \
+   %{shared:crtendS%O%s}        \
+   %:if-exists(crtn%O%s)        \
+  %{Ofast|ffast-math|funsafe-math-optimizations:%{!shared:crtfastmath.o%s}}"
 
 #ifndef LINK_SPEC
 #define LINK_SPEC "%{h*}			\

@@ -661,7 +661,7 @@ if(USE_GCC OR USE_CLANG OR USE_INTELCC OR USE_QCC)
     # FIXME: use generator expression instead of appending to EXTRA_LDFLAGS_BUILD
     list(APPEND EXTRA_LDFLAGS_BUILD "-Wl,-compatibility_version,${DYLIB_COMPATIBILITY_VERSION}")
     list(APPEND EXTRA_LDFLAGS_BUILD "-Wl,-current_version,${DYLIB_CURRENT_VERSION}")
-  elseif(NOT OPENBSD)
+  elseif(NOT OPENBSD AND NOT GAMEKID)
     set(CMAKE_REQUIRED_FLAGS "-Wl,--no-undefined")
     check_c_compiler_flag("" HAVE_NO_UNDEFINED)
     set(CMAKE_REQUIRED_FLAGS ${ORIG_CMAKE_REQUIRED_FLAGS})

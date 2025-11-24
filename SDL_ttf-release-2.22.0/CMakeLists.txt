@@ -165,7 +165,9 @@ if(SDL2TTF_BUILD_SHARED_LIBS)
 endif()
 
 if(SDL2TTF_BUILD_SHARED_LIBS)
+if(NOT GAMEKID)
     sdl_target_link_options_no_undefined(SDL2_ttf)
+endif()
 endif()
 
 if(SDL2TTF_BUILD_SHARED_LIBS)

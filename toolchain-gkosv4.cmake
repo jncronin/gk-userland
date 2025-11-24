@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 set(CMAKE_SYSTEM_NAME GNU)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)

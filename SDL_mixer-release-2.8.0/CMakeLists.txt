@@ -323,7 +323,9 @@ if(SDL2MIXER_BUILD_SHARED_LIBS)
 endif()
 
 if(SDL2MIXER_BUILD_SHARED_LIBS)
+if(NOT GAMEKID)
     sdl_target_link_options_no_undefined(SDL2_mixer)
+endif()
 endif()
 
 if(SDL2MIXER_BUILD_SHARED_LIBS)

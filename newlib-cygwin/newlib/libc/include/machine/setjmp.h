@@ -439,7 +439,7 @@ typedef	int jmp_buf[_JBLEN];
 
 _END_STD_C
 
-#if (defined(__CYGWIN__) || defined(__rtems__)) && __POSIX_VISIBLE
+#if (defined(__CYGWIN__) || defined(__rtems__) || defined(__GAMEKID__)) && __POSIX_VISIBLE
 #include <signal.h>
 
 #ifdef __cplusplus

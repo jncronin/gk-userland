@@ -65,9 +65,13 @@
 #include "tnl/t_context.h"
 #include "tnl/t_pipeline.h"
 
+#if defined(__GAMEKID__)
+#if __GAMEKID__ != 4
 #include <nema_core.h>
+#endif
 #include <pthread.h>
 #include <gk.h>
+#endif
 
 /*
  * This is the OS/Mesa context struct.
@@ -91,14 +95,17 @@ struct osmesa_context {
    GLchan *rowaddr[MAX_HEIGHT];	/* address of first pixel in each image row */
    GLboolean yup;		/* TRUE  -> Y increases upward */
 				/* FALSE -> Y increases downward */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    nema_tex_format_t nema_bb_format;
    pthread_mutex_t nema_m;
    nema_cmdlist_t nema_cl;
    GLboolean nema_inited;
+#endif
 };
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 static nema_ringbuffer_t nema_rb;
-
+#endif
 
 /* A forward declaration: */
 static void osmesa_update_state( GLcontext *ctx, GLuint newstate );
@@ -147,7 +154,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
    GLint rind, gind, bind, aind;
    GLint indexBits = 0, redBits = 0, greenBits = 0, blueBits = 0, alphaBits =0;
    GLboolean rgbmode;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    nema_tex_format_t nema_bb;
+#endif
    const GLuint i4 = 1;
    const GLubyte *i1 = (GLubyte *) &i4;
    const GLint little_endian = *i1;
@@ -157,7 +166,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
       indexBits = 8;
       rshift = gshift = bshift = ashift = 0;
       rgbmode = GL_FALSE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_L8;
+#endif
    }
    else if (format==OSMESA_RGBA) {
       indexBits = 0;
@@ -182,7 +193,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
          ashift = 0;
       }
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_RGBA8888;
+#endif
    }
    else if (format==OSMESA_BGRA) {
       indexBits = 0;
@@ -207,7 +220,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
          ashift = 0;
       }
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_BGRA8888;
+#endif
    }
    else if (format==OSMESA_ARGB) {
       indexBits = 0;
@@ -232,7 +247,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
          bshift = 0;
       }
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_ARGB8888;
+#endif
    }
    else if (format==OSMESA_RGB) {
       indexBits = 0;
@@ -248,7 +265,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
       gind = 1;
       bind = 2;
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_RGB24;
+#endif
    }
    else if (format==OSMESA_BGR) {
       indexBits = 0;
@@ -264,7 +283,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
       gind = 1;
       bind = 0;
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_BGR24;
+#endif
    }
    else if (format==OSMESA_RGB_565) {
       indexBits = 0;
@@ -280,7 +301,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
       gind = 0;
       bind = 0;
       rgbmode = GL_TRUE;
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       nema_bb = NEMA_RGB565;
+#endif
    }
    else {
       return NULL;
@@ -289,7 +312,9 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
 
    osmesa = (OSMesaContext) CALLOC_STRUCT(osmesa_context);
    if (osmesa) {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       osmesa->nema_bb_format = nema_bb;
+#endif
       osmesa->gl_visual = _mesa_create_visual( rgbmode,
                                                GL_FALSE,    /* double buffer */
                                                GL_FALSE,    /* stereo */
@@ -366,14 +391,17 @@ OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits,
 	 _swsetup_Wakeup( ctx );
 	 osmesa_register_swrast_functions( ctx );
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
     ctx->use_nema = GL_FALSE;
     osmesa->nema_inited = GL_FALSE;
+#endif
 
       }
    }
    return osmesa;
 }
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 GLAPI void GLAPIENTRY OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
 {
    if(enable)
@@ -397,7 +425,7 @@ GLAPI void GLAPIENTRY OSMesaEnableNema(OSMesaContext osmesa, GLboolean enable)
       osmesa->gl_ctx.use_nema = GL_FALSE;
    }
 }
-
+#endif
 
 /*
  * Destroy an Off-Screen Mesa rendering context.
@@ -532,6 +560,7 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
       _mesa_ResizeBuffersMESA();
    }
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->gl_ctx.use_nema)
    {
       nema_cl_bind_circular(&ctx->nema_cl);
@@ -541,10 +570,12 @@ OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type,
 
       // TODO try pthread_mutex_lock(&ctx->nema_m) here
    }
+#endif
 
    return GL_TRUE;
 }
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 GLAPI void GLAPIENTRY OSMesaNemaEndFrame(OSMesaContext ctx)
 {
    if(ctx->gl_ctx.use_nema)
@@ -567,7 +598,7 @@ int32_t nema_sys_init()
     if(ret < 0) return ret;
     return 0;
 }
-
+#endif
 
 GLAPI OSMesaContext GLAPIENTRY OSMesaGetCurrentContext( void )
 {
@@ -809,9 +840,11 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
             nema_clear(nema_rgba(r, g, b, 0));
          else
+#endif
          {
 	       GLuint n = osmesa->rowlength * osmesa->height;
 	       GLchan *ptr3 = (GLchan *) osmesa->buffer;
@@ -824,9 +857,12 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
             nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-         else {
+         else
+#endif
+         {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLchan *ptr3 = PIXELADDR3(x, (y + i));
@@ -844,9 +880,12 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    const GLchan b = ctx->Color.ClearColor[2];
 	    if (all) {
 	       /* Clear whole RGB buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
             nema_clear(nema_rgba(r, g, b, 0));
-         else {
+         else
+#endif
+         {
 	       const GLint n = osmesa->rowlength * osmesa->height;
 	       GLchan *ptr3 = (GLchan *) osmesa->buffer;
 	       GLint i;
@@ -858,9 +897,12 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGB buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
             nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-         else {
+         else
+#endif
+         {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLchan *ptr3 = PIXELADDR3(x, (y + i));
@@ -880,9 +922,12 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             PACK_RGB_565(clearPixel, r, g, b);
             if (all) {
                /* Clear whole RGB buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
                if(osmesa->gl_ctx.use_nema)
                   nema_clear(nema_rgba(r, g, b, 0));
-               else {
+               else
+#endif
+               {
 	       const GLuint n = osmesa->rowlength * osmesa->height;
                GLushort *ptr2 = (GLushort *) osmesa->buffer;
                GLuint  i;
@@ -894,9 +939,12 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             }
             else {
                /* clear scissored region */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
                if(osmesa->gl_ctx.use_nema)
                   nema_fill_rect(x, y, width, height, nema_rgba(r, g, b, 0));
-               else {
+               else
+#endif
+               {
                GLint i, j;
                for (i = 0; i < height; i++) {
                   GLushort *ptr2 = (GLushort *) PIXELADDR2(x, (y + i));
@@ -919,6 +967,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    clr[osmesa->aInd] = ctx->Color.ClearColor[3];
 	    if (all) {
 	       /* Clear whole RGBA buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
           {
           nema_clear(nema_rgba(ctx->Color.ClearColor[0],
@@ -927,6 +976,7 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
             ctx->Color.ClearColor[3]));
           }
           else
+#endif
           {
 	       const GLuint n = osmesa->rowlength * osmesa->height;
 	       GLuint *ptr4 = (GLuint *) osmesa->buffer;
@@ -1967,6 +2017,7 @@ static void smooth_rgba_z_triangle( GLcontext *ctx,
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(osmesa->gl_ctx.use_nema)
    {
       fprintf(stderr, "nema notimple: smooth_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1975,6 +2026,7 @@ static void smooth_rgba_z_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -2018,6 +2070,7 @@ static void flat_rgba_z_triangle( GLcontext *ctx,
 {
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(osmesa->gl_ctx.use_nema)
    {
       fprintf(stderr, "nema notimpl: flat_rgba_z_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -2026,6 +2079,7 @@ static void flat_rgba_z_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
    
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE

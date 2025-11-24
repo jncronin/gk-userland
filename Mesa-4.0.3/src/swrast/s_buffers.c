@@ -36,7 +36,9 @@
 #include "s_masking.h"
 #include "s_stencil.h"
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 #include <nema_core.h>
+#endif
 
 /*
  * Clear the color buffer when glColorMask or glIndexMask is in effect.
@@ -110,9 +112,12 @@ clear_color_buffer(GLcontext *ctx)
       GLchan span[MAX_WIDTH][4];
       GLint i;
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
       if(ctx->use_nema)
          nema_clear(nema_rgba(r, g, b, a));
-      else {
+      else
+#endif
+      {
          ASSERT(*((GLuint *) &ctx->Color.ColorMask) == 0xffffffff);
 
          for (i = 0; i < width; i++) {

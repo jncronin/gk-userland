@@ -51,7 +51,9 @@
 #include "s_triangle.h"
 #include "s_trispan.h"
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 #include <nema_core.h>
+#endif
 
 GLboolean _mesa_cull_triangle( GLcontext *ctx,
 			    const SWvertex *v0,
@@ -142,6 +144,7 @@ static void flat_rgba_triangle( GLcontext *ctx,
 				const SWvertex *v1,
 				const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       GLchan r = (GLchan)((((int)v0->color[0]) + ((int)v1->color[0]) + ((int)v2->color[0])) / 3);
@@ -155,6 +158,7 @@ static void flat_rgba_triangle( GLcontext *ctx,
       
       return;
    }
+#endif
 #define INTERP_Z 1
 #define INTERP_FOG 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -189,6 +193,7 @@ static void smooth_rgba_triangle( GLcontext *ctx,
 				  const SWvertex *v1,
 				  const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema: notimpl: smooth_rgba_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -197,6 +202,7 @@ static void smooth_rgba_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -245,6 +251,7 @@ static void simple_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: simple_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -253,6 +260,7 @@ static void simple_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_INT_TEX 1
 #define S_SCALE twidth
@@ -308,6 +316,7 @@ static void simple_z_textured_triangle( GLcontext *ctx,
 					const SWvertex *v1,
 					const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: simple_z_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -316,6 +325,7 @@ static void simple_z_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
@@ -661,6 +671,7 @@ static void affine_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: affine_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -669,6 +680,7 @@ static void affine_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -966,6 +978,7 @@ static void persp_textured_triangle( GLcontext *ctx,
 				     const SWvertex *v1,
 				     const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: persp_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -974,6 +987,7 @@ static void persp_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -1379,6 +1393,7 @@ static void general_textured_triangle( GLcontext *ctx,
 				       const SWvertex *v1,
 				       const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: general_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1387,6 +1402,7 @@ static void general_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -1459,6 +1475,7 @@ static void general_textured_spec_triangle( GLcontext *ctx,
 					    const SWvertex *v1,
 					    const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: general_textured_spec_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1467,6 +1484,7 @@ static void general_textured_spec_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -1501,6 +1519,7 @@ __attribute__((hot)) static void lambda_textured_triangle( GLcontext *ctx,
 				      const SWvertex *v1,
 				      const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: lambda_textured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1509,6 +1528,7 @@ __attribute__((hot)) static void lambda_textured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -1544,6 +1564,7 @@ static void lambda_textured_spec_triangle( GLcontext *ctx,
 					   const SWvertex *v1,
 					   const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: lambda_textured_spec_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1552,6 +1573,7 @@ static void lambda_textured_spec_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1
@@ -1587,6 +1609,7 @@ lambda_multitextured_triangle( GLcontext *ctx,
                                const SWvertex *v1,
                                const SWvertex *v2 )
 {
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
    if(ctx->use_nema)
    {
       fprintf(stderr, "nema notimpl: lambda_multitextured_triangle: (%f,%f,%f),(%f,%f,%f),(%f,%f,%f) col %u,%u,%u,%u\n",
@@ -1595,6 +1618,7 @@ lambda_multitextured_triangle( GLcontext *ctx,
          v2->win[0], v2->win[1], v2->win[2],
          v2->color[0], v2->color[1], v2->color[2], v2->color[3]);
    }
+#endif
 
 #define INTERP_Z 1
 #define INTERP_FOG 1

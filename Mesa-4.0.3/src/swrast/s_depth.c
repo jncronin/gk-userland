@@ -34,9 +34,11 @@
 #include "s_context.h"
 #include "s_pb.h"
 
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 #include <nema_core.h>
 
 void nema_rebind_framebuffer(void *ctx);
+#endif
 
 /*
  * Return address of depth buffer value for given window coord.
@@ -1577,6 +1579,7 @@ _mesa_clear_depth_buffer( GLcontext *ctx )
       /* clear whole buffer */
       if (ctx->Visual.depthBits <= 16) {
          const GLushort clearValue = (GLushort) (ctx->Depth.Clear * ctx->DepthMax);
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
 		 if(ctx->use_nema)
 		 {
 			nema_bind_dst_tex((uintptr_t)ctx->DrawBuffer->DepthBuffer,
@@ -1586,7 +1589,9 @@ _mesa_clear_depth_buffer( GLcontext *ctx )
 			nema_clear(clearValue);
 			nema_rebind_framebuffer(ctx->DriverCtx);
 		 }
-		else {
+		else
+#endif
+		{
          if ((clearValue & 0xff) == (clearValue >> 8)) {
             if (clearValue == 0) {
                BZERO(ctx->DrawBuffer->DepthBuffer,

@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 
         auto lbtn = lv_button_create(list);
         lv_obj_set_flex_flow(lbtn, LV_FLEX_FLOW_COLUMN);
-        lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)i);
+        lv_obj_add_event_cb(lbtn, game_click, LV_EVENT_CLICKED, (void *)(intptr_t)i);
         lv_obj_set_size(lbtn, LV_PCT(100), LV_SIZE_CONTENT);
 
         auto col_id = i % n_neon_colors;
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUSED);
         lv_obj_set_style_outline_opa(lbtn, LV_OPA_100, LV_STATE_FOCUS_KEY);
 
-        lv_obj_add_event_cb(lbtn, btn_focus, LV_EVENT_FOCUSED, (void *)lv_color_to_u32(col));
+        lv_obj_add_event_cb(lbtn, btn_focus, LV_EVENT_FOCUSED, (void *)(uintptr_t)lv_color_to_u32(col));
 
         lv_group_add_obj(grp, lbtn);
 
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 
 void game_click(lv_event_t *e)
 {
-    auto gidx = (int)e->user_data;
+    auto gidx = (int)(intptr_t)e->user_data;
     auto &g = games[gidx];
     Mix_HaltMusic();
 
@@ -343,6 +343,6 @@ void game_click(lv_event_t *e)
 
 void btn_focus(lv_event_t *e)
 {
-    auto col = (uint32_t)e->user_data;
+    auto col = (uint32_t)(uintptr_t)e->user_data;
     GK_SetLED(1, col);
 }

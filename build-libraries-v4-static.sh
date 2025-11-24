@@ -25,14 +25,13 @@ export TOOLSDIR
 export PATH
 
 # cmake options
-CMAKE_OPTS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5  -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkosv4.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr"
-CMAKE_OPTS_STATIC="-DCMAKE_POLICY_VERSION_MINIMUM=3.5  -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkosv4-static.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr"
+CMAKE_OPTS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5  -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkosv4-static.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr"
 
-rm $SYSROOT/aarch64-none-gkos/include/iconv.h
+#rm $SYSROOT/aarch64-none-gkos/include/iconv.h
 cmake $CMAKE_OPTS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -S libiconv-cmake-master/ -B build-v4/libiconv
 make -C build-v4/libiconv -j16 install
-cp -dpf $SYSROOT/usr/lib/liblibiconv.so $SYSROOT/usr/lib/libiconv.so
-cp -dpf $SYSROOT/usr/lib/liblibcharset.so $SYSROOT/usr/lib/libcharset.so
+cp -dpf $SYSROOT/usr/lib/liblibiconv.a $SYSROOT/usr/lib/libiconv.a
+cp -dpf $SYSROOT/usr/lib/liblibcharset.a $SYSROOT/usr/lib/libcharset.a
 
 cmake $CMAKE_OPTS -S zlib-1.3 -B build-v4/zlib
 make -C build-v4/zlib -j16 install
@@ -68,11 +67,11 @@ chmod ugo+x $SYSROOT/usr/lib/pkgconfig/sdl.pc
 
 mkdir -p build-v4/sdl_gfx
 cd build-v4/sdl_gfx
-../../SDL_gfx-2.0.27/configure --host=aarch64-none-gkos --enable-shared --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
+../../SDL_gfx-2.0.27/configure --host=aarch64-none-gkos --disable-shared --enable-static --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
 make -j16 install
 cd ../..
 
-cmake $CMAKE_OPTS_STATIC -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log\;cobalt\;test -DBOOST_RUNTIME_LINK=static -DBUILD_TESTING=OFF -S boost-1.85.0/ -B build-v4/boost
+cmake $CMAKE_OPTS -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log\;cobalt\;test -DBOOST_RUNTIME_LINK=static -DBUILD_TESTING=OFF -S boost-1.85.0/ -B build-v4/boost
 make -C build-v4/boost -j16 install
 
 cp -dpR glm/ $SYSROOT/usr/include
@@ -100,7 +99,7 @@ make -C build-v4/squirrel3 -j16 install
 
 mkdir -p build-v4/tcl8
 cd build-v4/tcl8
-../../tcl8.6.14/unix/configure --host=aarch64-none-gkos --enable-shared --disable-load --disable-unload --prefix=$SYSROOT/usr
+../../tcl8.6.14/unix/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-load --disable-unload --prefix=$SYSROOT/usr
 make -j16 libtcl8.6.a
 make -j16 libtclstub8.6.a
 make install-headers
@@ -116,6 +115,7 @@ cmake $CMAKE_OPTS -S lvgl-9.1.0/ -B build-v4/lvgl9
 make -C build-v4/lvgl9 -j 16 install
 
 cp toolchain-gkosv4.cmake mpg123-1.32.7/ports
+cp toolchain-gkosv4-static.cmake mpg123-1.32.7/ports
 cmake $CMAKE_OPTS -S mpg123-1.32.7/ports/cmake -B build-v4/mpg123
 make -C build-v4/mpg123 install
 
@@ -123,8 +123,10 @@ cmake $CMAKE_OPTS -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER
 make -C build-v4/sdl2_mixer -j16 install
 
 # build script doesn't like installing with static libraries
-cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build-v4/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DLIBTYPE=SHARED
+cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build-v4/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DALSOFT_INSTALL=OFF -DLIBTYPE=STATIC
 make -C build-v4/openal -j 16 install
+cp build/openal/openal.pc $SYSROOT/usr/lib/pkgconfig
+cp build/openal/libopenal.a $SYSROOT/usr/lib
 
 cd gettext-tiny-0.3.2
 make CROSS_COMPILE=aarch64-none-gkos- CFLAGS="-g -O2" CC=aarch64-none-gkos-gcc AR=aarch64-none-gkos-ar prefix=$SYSROOT/usr install
@@ -136,7 +138,7 @@ cd build-v4/glib
 make -j 16 install
 cd ../..
 
-cmake $CMAKE_OPTS_STATIC -S fluidsynth-2.4.2 -B build-v4/fluidsynth -Denable-network=OFF
+cmake $CMAKE_OPTS -S fluidsynth-2.4.2 -B build-v4/fluidsynth -Denable-network=OFF
 make -C build-v4/fluidsynth -j16 install
 
 echo "Successfully built gk libraries in $SYSROOT"

@@ -1,10 +1,10 @@
 {
     "cmake.configureSettings": {
-        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-gkos.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../toolchain-gkosv4-static.cmake"
     },
     "cmake.environment": {
-        "SYSROOT": "${env:HOME}/opt/gk",
-        "PATH": "${env:HOME}/opt/gk-build/bin:${env:PATH}"
+        "SYSROOT": "${env:HOME}/opt/gkv4",
+        "PATH": "${env:HOME}/opt/gkv4-build/bin:${env:PATH}"
     },
     "files.associations": {
         "cctype": "cpp",

@@ -215,7 +215,7 @@ int GK_GPUFlipBuffers(void *cmdlist, void **next_buffer)
     auto msg = &msgs[hdr->__ncmds++];
 
     msg->type = FlipBuffers;
-    msg->dest_addr = (uint32_t)(uintptr_t)next_buffer;
+    msg->dest_addr = (decltype(msg->dest_addr))(uintptr_t)next_buffer;
     msg->src_addr_color = 0;
 
     return 0;
@@ -230,8 +230,8 @@ int GK_GPUFlipBuffersEx(void *cmdlist, void **next_buffer, void **old_buffer)
     auto msg = &msgs[hdr->__ncmds++];
 
     msg->type = FlipBuffers;
-    msg->dest_addr = (uint32_t)(uintptr_t)next_buffer;
-    msg->src_addr_color = (uint32_t)(uintptr_t)old_buffer;
+    msg->dest_addr = (decltype(msg->dest_addr))(uintptr_t)next_buffer;
+    msg->src_addr_color = (decltype(msg->dest_addr))(uintptr_t)old_buffer;
 
     return 0;
 }

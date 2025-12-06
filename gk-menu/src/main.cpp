@@ -40,6 +40,8 @@ const lv_image_dsc_t bbg {
 
 int main(int argc, char *argv[])
 {
+    fprintf(stderr, "gkmenu 2025-12-05 16:07 startup\n");
+    
     lv_init();
 
     auto display = lv_gk_display_create();

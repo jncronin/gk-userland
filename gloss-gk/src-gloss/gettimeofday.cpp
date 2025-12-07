@@ -1,6 +1,7 @@
 #include <syscalls.h>
 #include <sys/time.h>
 #include <errno.h>
+#include "_gk_memaddrs.h"
 
 #if __GAMEKID__ != 4
 #define STM32H747xx
@@ -129,23 +130,82 @@ extern "C" uint64_t GK_GetCurUs()
 
 #else
 
+#define _cur_s ((volatile uint64_t *)(GK_CUR_S_ADDRESS))
+#define _cur_sc_ns_val ((volatile uint32_t *)(GK_TIM3 + 0x24ULL))
+#define _tim_precision_ns ((volatile uint64_t *)(GK_TIM_PRECISION_NS_ADDRESS))
+#define toffset ((volatile timespec *)(GK_TOFFSET_ADDRESS))
+
+timespec clock_cur()
+{
+    while(true)
+    {
+        uint64_t _s_a = *_cur_s;
+        uint64_t _cur_sc_ns = *_cur_sc_ns_val;
+        uint64_t _s_b = *_cur_s;
+
+        if(_s_a == _s_b)
+        {
+            timespec ret;
+            ret.tv_nsec = _cur_sc_ns * *_tim_precision_ns;
+            ret.tv_sec = _s_a;
+            return ret;
+        }
+    }
+}
+
+void clock_get_timebase(struct timespec *tp)
+{
+    /* we can't use the spinlock here.  However, given the kernel is
+        the only one who can use the spinlock, by simply checking
+        the value hasn't changed between reads we can be happy we
+        don't have a half-updated value because any syscall would
+        complete between two checks of the value */
+    
+    if(!tp) return;
+
+    while(true)
+    {
+        struct timespec tp2;
+
+        tp->tv_sec = toffset->tv_sec;
+        tp->tv_nsec = toffset->tv_nsec;
+
+        tp2.tv_sec = toffset->tv_sec;
+        tp2.tv_nsec = toffset->tv_nsec;
+        
+        if(tp->tv_sec == tp2.tv_sec &&
+            tp->tv_nsec == tp2.tv_nsec)
+        {
+            return;
+        }
+    }
+}
+
 void clock_get_now(struct timespec *tp)
 {
     if(!tp) return;
-    tp->tv_sec = 0;
-    tp->tv_nsec = 0;
+    clock_get_timebase(tp);
+    auto cc = clock_cur();
+
+    tp->tv_nsec += cc.tv_nsec;
+    while(tp->tv_nsec >= 1000000000)
+    {
+        tp->tv_sec++;
+        tp->tv_nsec -= 1000000000;
+    }
+    tp->tv_sec += cc.tv_sec;
 }
 
 void clock_get_now_monotonic(struct timespec *tp)
 {
     if(!tp) return;
-    tp->tv_sec = 0;
-    tp->tv_nsec = 0;
+    *tp = clock_cur();
 }
 
 uint64_t clock_cur_us()
 {
-    return 0;
+    auto cc = clock_cur();
+    return (cc.tv_sec * 1000000LL) + (cc.tv_nsec / 1000LL);
 }
 
 extern "C" uint64_t GK_GetCurUs()

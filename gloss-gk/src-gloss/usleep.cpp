@@ -96,7 +96,7 @@ extern "C" int nanosleep(const timespec *duration, timespec *rem)
     auto start_time = clock_cur_us();
 
     // use sleep_us
-    uint64_t usec = (uint64_t)(duration->tv_sec * 1000) +
+    uint64_t usec = (uint64_t)(duration->tv_sec * 1000000) +
         (uint64_t)(duration->tv_nsec / 1000);
     deferred_call(__syscall_sleep_us, &usec);
     auto now_time = clock_cur_us();

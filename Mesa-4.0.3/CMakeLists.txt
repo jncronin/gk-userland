@@ -15,7 +15,7 @@ file(GLOB SOURCES_MATH CONFIGURE_DEPENDS
 )
 
 file(GLOB SOURCES_OSMESA CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/OSMesa/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/OSmesa/*.c
 )
 
 file(GLOB SOURCES_SWRAST CONFIGURE_DEPENDS
@@ -30,6 +30,10 @@ file(GLOB SOURCES_GLU CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src-glu/*.c
 )
 
+file(GLOB SOURCES_TNL CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tnl/*.c
+)
+
 add_library(GL)
 
 target_sources(GL
@@ -40,6 +44,7 @@ target_sources(GL
         ${SOURCES_OSMESA}
         ${SOURCES_SWRAST}
         ${SOURCES_SWRAST_SETUP}
+        ${SOURCES_TNL}
 )
 
 target_include_directories(GL

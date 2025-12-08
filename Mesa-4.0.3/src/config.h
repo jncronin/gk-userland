@@ -112,8 +112,13 @@
 #define MAX_TEXTURE_UNITS 8
 
 /* Maximum viewport/image size: */
+#if __GAMEKID__ == 4
+#define MAX_WIDTH 1024
+#define MAX_HEIGHT 768
+#else
 #define MAX_WIDTH 640
 #define MAX_HEIGHT 480
+#endif
 
 /* Maxmimum size for CVA.  May be overridden by the drivers.  */
 #define MAX_ARRAY_LOCK_SIZE 3000

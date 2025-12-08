@@ -39,8 +39,17 @@ make -C build-v4/zlib -j16 install
 cmake $CMAKE_OPTS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -S libpng-1.6.40 -B build-v4/libpng
 make -C build-v4/libpng -j16 install
 
-cmake $CMAKE_OPTS Mesa-4.0.3/ -B build-v4/mesa4/
-make -C build-v4/mesa4 -j16 install
+mkdir -p build/mesa4
+cd build/mesa4
+../../Mesa-4.0.3/configure --host=aarch64-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
+cd src && make -j16 install && cd ..
+cd include && make install && cd ..
+cd src-glu && make install && cd ..
+cd ../..
+
+# combine -lGL and -lOSMesa
+echo -n -e "create $SYSROOT/usr/lib/libGL2.a\naddlib $SYSROOT/usr/lib/libGL.a\naddlib $SYSROOT/usr/lib/libOSMesa.a\nsave\nend\n" | aarch64-none-gkos-ar -M
+mv $SYSROOT/usr/lib/libGL2.a $SYSROOT/usr/lib/libGL.a
 
 cmake $CMAKE_OPTS -DUNIX=ON -DSDL_LIBC=ON -DSDL_PTHREADS=ON -DSDL_THREADS=ON -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -DSDL_CLOCK_GETTIME=ON -S SDL2-2.28.5/ -B build-v4/sdl2
 make -C build-v4/sdl2 -j16 install

@@ -713,7 +713,8 @@ static void GK_GL_SwapWindow(_THIS)
     void *next_fb;
     GK_GPU_CommandList(cmds, 4);
 
-    OSMesaNemaEndFrame(this->gl_data);
+    if(this->screen && this->screen->flags & SDL_NEMA)
+        OSMesaNemaEndFrame(this->gl_data);
 
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);

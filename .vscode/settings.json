@@ -55,7 +55,8 @@
         "sdl_hints.h": "c",
         "charconv": "cpp",
         "setjmp.h": "c",
-        "threads.h": "c"
+        "threads.h": "c",
+        "stacktrace": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

@@ -993,13 +993,17 @@ __attribute__((hot)) static void clear( GLcontext *ctx, GLbitfield mask, GLboole
 	    }
 	    else {
 	       /* Clear part of RGBA buffer */
+#if defined(__GAMEKID__) && __GAMEKID__ != 4
           if(osmesa->gl_ctx.use_nema)
           {
             nema_fill_rect(x, y, width, height, nema_rgba(ctx->Color.ClearColor[0],
                ctx->Color.ClearColor[1],
                ctx->Color.ClearColor[2],
                ctx->Color.ClearColor[3]));
-          } else {
+          }
+          else
+#endif
+          {
 	       GLint i, j;
 	       for (i = 0; i < height; i++) {
 		  GLuint *ptr4 = (GLuint *) PIXELADDR4(x, (y + i));

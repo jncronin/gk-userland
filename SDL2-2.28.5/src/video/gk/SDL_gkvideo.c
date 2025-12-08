@@ -503,7 +503,8 @@ int GK_GL_SwapWindow(_THIS, SDL_Window *window)
     GK_Window *gk_window = window->driverdata;
     GK_GPU_CommandList(cmds, 4);
 
-    OSMesaNemaEndFrame(gk_window->gl_ctx);
+    if(window->flags & SDL_WINDOW_NEMA)
+        OSMesaNemaEndFrame(gk_window->gl_ctx);
 
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);

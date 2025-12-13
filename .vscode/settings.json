@@ -56,7 +56,8 @@
         "charconv": "cpp",
         "setjmp.h": "c",
         "threads.h": "c",
-        "stacktrace": "c"
+        "stacktrace": "c",
+        "gk.h": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

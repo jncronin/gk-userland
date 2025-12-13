@@ -213,6 +213,18 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
     unsigned int gk_pf;
 
     /* Sanitize request */
+#if __GAMEKID__ == 4
+    if(width > GK_KERNEL_INFO->max_screen_width)
+    {
+        width = GK_KERNEL_INFO->max_screen_width;
+    }
+    if(height > GK_KERNEL_INFO->max_screen_height)
+    {
+        height = GK_KERNEL_INFO->max_screen_height;
+    }
+    width = (width + 3) & ~3;
+    height = (height + 3) & ~3;
+#else
     if(width > 320)
     {
         width = 640;
@@ -228,6 +240,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
         width = 160;
         height = 120;
     }
+#endif
 
     if(bpp > 24)
     {

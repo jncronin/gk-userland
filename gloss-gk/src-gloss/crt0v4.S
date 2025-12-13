@@ -9,12 +9,14 @@
 .global _start
 .type _start,%function
 _start:
+    // get [ argc, argv ], put in x24/25
+    bl __gk_init_args
     mov x24, x0
     mov x25, x1
 
-    //bl prvHeapInit
-
+    // get envp, put in environs and x26
     bl __gk_init_env
+    mov x26, x0
 
     ldr x0, =__libc_fini_array
     bl atexit
@@ -23,6 +25,7 @@ _start:
 
     mov x0, x24
     mov x1, x25
+    mov x2, x26
 
     bl main
 

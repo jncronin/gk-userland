@@ -214,6 +214,15 @@ static int GKV4_AddModes(_THIS)
                 unsigned int pf = pformats[pf_idx];
                 unsigned int rr = refresh_rates[rr_idx];
 
+                if(w > GK_KERNEL_INFO->max_screen_width)
+                {
+                    continue;
+                }
+                if(h > GK_KERNEL_INFO->max_screen_height)
+                {
+                    continue;
+                }
+
                 mode.w = w;
                 mode.h = h;
                 mode.refresh_rate = rr;

@@ -65,6 +65,61 @@ uint32_t gkpf_to_pformat(unsigned int gkpf)
             return SDL_PIXELFORMAT_ARGB1555;
         case GK_PIXELFORMAT_L8:
             return SDL_PIXELFORMAT_INDEX8;
+
+#if __GAMEKID__ == 4
+        case GK_PIXELFORMAT_ABGR8888:
+            return SDL_PIXELFORMAT_XBGR8888;
+        case GK_PIXELFORMAT_RGBA8888:
+            return SDL_PIXELFORMAT_RGBX8888;
+        case GK_PIXELFORMAT_BGRA8888:
+            return SDL_PIXELFORMAT_BGRX8888;
+        case GK_PIXELFORMAT_BGR565:
+            return SDL_PIXELFORMAT_BGR565;
+        case GK_PIXELFORMAT_A4L4:
+            return SDL_PIXELFORMAT_INDEX4LSB;
+#endif
+
+        default:
+            return 0;
+    }
+}
+
+unsigned int pformat_to_gkpf(uint32_t sdlpf)
+{
+    switch(sdlpf)
+    {
+        case SDL_PIXELFORMAT_ARGB8888:
+        case SDL_PIXELFORMAT_XRGB8888:
+            return GK_PIXELFORMAT_ARGB8888;
+        case SDL_PIXELFORMAT_RGB24:
+            return GK_PIXELFORMAT_RGB888;
+        case SDL_PIXELFORMAT_RGB565:
+            return GK_PIXELFORMAT_RGB565;
+        case SDL_PIXELFORMAT_ARGB4444:
+        case SDL_PIXELFORMAT_XRGB4444:
+            return GK_PIXELFORMAT_ARGB4444;
+        case SDL_PIXELFORMAT_ARGB1555:
+        case SDL_PIXELFORMAT_XRGB1555:
+            return GK_PIXELFORMAT_ARGB1555;
+        case SDL_PIXELFORMAT_INDEX8:
+            return GK_PIXELFORMAT_L8;
+
+#if __GAMEKID__ == 4
+        case SDL_PIXELFORMAT_ABGR8888:
+        case SDL_PIXELFORMAT_XBGR8888:
+            return GK_PIXELFORMAT_ABGR8888;
+        case SDL_PIXELFORMAT_RGBA8888:
+        case SDL_PIXELFORMAT_RGBX8888:
+            return GK_PIXELFORMAT_RGBA8888;
+        case SDL_PIXELFORMAT_BGRA8888:
+        case SDL_PIXELFORMAT_BGRX8888:
+            return GK_PIXELFORMAT_BGRA8888;
+        case SDL_PIXELFORMAT_BGR565:
+            return GK_PIXELFORMAT_BGR565;
+        case SDL_PIXELFORMAT_INDEX4LSB:
+            return GK_PIXELFORMAT_A4L4;
+#endif
+
         default:
             return 0;
     }
@@ -113,11 +168,75 @@ VideoBootStrap GK_bootstrap = {
     "gk", "gk video driver", GK_CreateDevice
 };
 
+static int GKV4_AddModes(_THIS)
+{
+    static const unsigned int refresh_rates[] = { 60, 50, 48, 40, 30, 25, 24 };
+    static const unsigned int pformats[] =
+    {
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_PIXELFORMAT_RGB24,
+        SDL_PIXELFORMAT_RGB565,
+        SDL_PIXELFORMAT_ARGB4444,
+        SDL_PIXELFORMAT_ARGB1555,
+        SDL_PIXELFORMAT_INDEX8,
+        SDL_PIXELFORMAT_ABGR8888,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_PIXELFORMAT_BGRA8888,
+        SDL_PIXELFORMAT_BGR565,
+        SDL_PIXELFORMAT_INDEX4LSB
+    };
+    struct wh
+    {
+        unsigned int w;
+        unsigned int h;
+    };
+    static const struct wh whs[] =
+    {
+        { .w = 1024, .h = 768 },
+        { .w = 720, .h = 576 },
+        { .w = 800, .h = 480 },
+        { .w = 640, .h = 480 },
+        { .w = 400, .h = 240 },
+        { .w = 320, .h = 240 },
+        { .w = 200, .h = 120 },
+        { .w = 160, .h = 120 }
+    };
+
+    for(unsigned int wh_idx = 0; wh_idx < sizeof(whs) / sizeof(whs[0]); wh_idx++)
+    {
+        for(unsigned int pf_idx = 0; pf_idx < sizeof(pformats) / sizeof(pformats[0]); pf_idx++)
+        {
+            for(unsigned int rr_idx = 0; rr_idx < sizeof(refresh_rates) / sizeof(refresh_rates[0]); rr_idx++)
+            {
+                SDL_DisplayMode mode;
+                unsigned int w = whs[wh_idx].w;
+                unsigned int h = whs[wh_idx].h;
+                unsigned int pf = pformats[pf_idx];
+                unsigned int rr = refresh_rates[rr_idx];
+
+                mode.w = w;
+                mode.h = h;
+                mode.refresh_rate = rr;
+                mode.format = pf;
+                mode.driverdata = SDL_malloc(sizeof(GK_ModeData));
+                if(!mode.driverdata)
+                {
+                    return -1;
+                }
+                ((GK_ModeData *)mode.driverdata)->gkpf = pformat_to_gkpf(pf);
+            }
+        }
+    }
+    return 0;
+}
+
 int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
     unsigned int gkpf;
+#if __GAMEKID__ != 4
     static const unsigned int refresh_rates[] = { 60, 50, 48, 40, 30, 25, 24 };
+#endif
 
     /* Get current mode */
     GK_GPUGetScreenModeEx((size_t *)&mode.w, (size_t *)&mode.h, &gkpf, &mode.refresh_rate);
@@ -133,6 +252,9 @@ int GK_VideoInit(_THIS)
         return -1;
     }
 
+#if __GAMEKID__ == 4
+    GKV4_AddModes(_this);
+#else
     /* Allow 640x480, 320x240, 160x120 at 32-/24-/16-/8-bpp */
     for(int rr_idx = 0; rr_idx < (sizeof(refresh_rates) / sizeof(refresh_rates[0])); rr_idx++)
     {
@@ -207,6 +329,7 @@ int GK_VideoInit(_THIS)
             SDL_AddDisplayMode(&_this->displays[0], &mode);
         }
     }
+#endif
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);

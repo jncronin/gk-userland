@@ -85,6 +85,8 @@ subroutines are required for linking multi-threaded applications.
 
 #include <sys/lock.h>
 
+#if __GAMEKID__ != 4
+
 struct __lock {
   char unused;
 };
@@ -149,5 +151,7 @@ void
 __retarget_lock_release_recursive (_LOCK_T lock)
 {
 }
+
+#endif
 
 #endif /* !defined(__SINGLE_THREAD__) */

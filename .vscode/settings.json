@@ -57,7 +57,9 @@
         "setjmp.h": "c",
         "threads.h": "c",
         "stacktrace": "c",
-        "gk.h": "c"
+        "gk.h": "c",
+        "newlib.h": "c",
+        "reent.h": "c"
     },
     "cmake.sourceDirectory": "/home/jncronin/src/gk-userland/gloss-gk"
 }

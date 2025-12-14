@@ -19,13 +19,27 @@ int pthread_attr_destroy(pthread_attr_t *attr)
     return 0;
 }
 
+#if __GAMEKID__ == 4
+static void thread_wrapper(void *(*start_routine)(void *),
+    void *arg)
+{
+    auto ret = start_routine(arg);
+    deferred_call(__syscall_pthread_exit, &ret);
+    while(true);
+}
+#endif
+
 int pthread_create(pthread_t *thread,
     const pthread_attr_t *attr,
     void *(*start_routine)(void *),
     void *arg)
 {
     __syscall_pthread_create_params p
+#if __GAMEKID__ == 4
+    { thread, attr, (void *(*)(void *))thread_wrapper, (void *)start_routine, arg };
+#else
     { thread, attr, start_routine, arg };
+#endif
     return deferred_call(__syscall_pthread_create, &p);
 }
 

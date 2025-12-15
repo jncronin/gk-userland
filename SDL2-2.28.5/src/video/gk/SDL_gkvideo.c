@@ -348,11 +348,22 @@ int GK_VideoInit(_THIS)
 
 static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
-    int supported = 1;
-    unsigned int pf = ((GK_ModeData *)mode->driverdata)->gkpf;
+    unsigned int pf;int supported = 1;
     if(!mode)
     {
         return -1;
+    }
+    if(mode->driverdata)
+    {
+        pf = ((GK_ModeData *)mode->driverdata)->gkpf;
+    }
+    else
+    {
+#if __GAMEKID__ == 4
+        pf = pformat_to_gkpf(mode->format);
+#else
+        return -1;
+#endif
     }
 
 
@@ -365,7 +376,11 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
         case 4:
         case 5:
             break;
+        
         default:
+#if __GAMEKID__ == 4
+            if(pf >= GK_PIXELFORMAT_MAX)
+#endif
             supported = 0;
             break;
     }
@@ -384,6 +399,12 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
     }
     else
     {
+#if __GAMEKID__ == 4
+        if((mode->w >= GK_KERNEL_INFO->max_screen_width) ||
+            (mode->w & 0x3) ||
+            (mode->h >= GK_KERNEL_INFO->max_screen_height) ||
+            (mode->h & 0x3))
+#endif
         supported = 0;
     }
 

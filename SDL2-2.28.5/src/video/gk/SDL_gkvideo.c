@@ -174,6 +174,7 @@ static int GKV4_AddModes(_THIS)
     static const unsigned int pformats[] =
     {
         SDL_PIXELFORMAT_ARGB8888,
+        SDL_PIXELFORMAT_RGB888,
         SDL_PIXELFORMAT_RGB24,
         SDL_PIXELFORMAT_RGB565,
         SDL_PIXELFORMAT_ARGB4444,
@@ -233,6 +234,7 @@ static int GKV4_AddModes(_THIS)
                     return -1;
                 }
                 ((GK_ModeData *)mode.driverdata)->gkpf = pformat_to_gkpf(pf);
+                SDL_AddDisplayMode(&_this->displays[0], &mode);
             }
         }
     }
@@ -379,7 +381,7 @@ static int GK_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *
         
         default:
 #if __GAMEKID__ == 4
-            if(pf >= GK_PIXELFORMAT_MAX)
+            if(pf > GK_PIXELFORMAT_MAX)
 #endif
             supported = 0;
             break;

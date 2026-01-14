@@ -396,6 +396,16 @@ int load_games()
     ADD_DEFINE(GK_PIXELFORMAT_RGB888);
     ADD_DEFINE(GK_PIXELFORMAT_ARGB4444);
     ADD_DEFINE(GK_PIXELFORMAT_ARGB1555);
+#if __GAMEKID__ >= 4
+    ADD_DEFINE(GK_PIXELFORMAT_A4L4);
+    ADD_DEFINE(GK_PIXELFORMAT_A8L8);
+    ADD_DEFINE(GK_PIXELFORMAT_ABGR8888);
+    ADD_DEFINE(GK_PIXELFORMAT_BGR565);
+    ADD_DEFINE(GK_PIXELFORMAT_BGRA8888);
+    ADD_DEFINE(GK_PIXELFORMAT_L8);
+    ADD_DEFINE(GK_PIXELFORMAT_RGBA8888);
+    ADD_DEFINE(GK_PIXELFORMAT_XRGB8888);
+#endif
 
     ADD_DEFINE(GK_KEYA);
     ADD_DEFINE(GK_KEYB);
@@ -536,6 +546,17 @@ int load_games()
     // set ::games member
     sq_pushstring(v, "games", -1);
     sq_newarray(v, 0);
+    sq_newslot(v, -3, false);
+
+    // provide the GK version
+    sq_pushstring(v, "gk", -1);
+    // __GAMEKID__ is not defined to an actual value for v1
+#if __GAMEKID__ > 1
+    const int gkver = __GAMEKID__;
+#else
+    const int gkver = 1;
+#endif
+    sq_pushinteger(v, gkver);
     sq_newslot(v, -3, false);
 
     sq_pop(v, 1);

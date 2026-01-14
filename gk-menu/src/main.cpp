@@ -40,7 +40,7 @@ const lv_image_dsc_t bbg {
 
 int main(int argc, char *argv[])
 {
-    fprintf(stderr, "gkmenu 2025-12-05 16:07 startup\n");
+    fprintf(stderr, "gkmenu 2026-01014 20:46 startup\n");
     
     lv_init();
 
@@ -56,6 +56,9 @@ int main(int argc, char *argv[])
 
     auto h_scale = 640 / lv_display_get_horizontal_resolution(display);
     auto v_scale = 480 / lv_display_get_vertical_resolution(display);
+
+    if(h_scale == 0) h_scale = 1;
+    if(v_scale == 0) v_scale = 1;
 
     if(v_scale == 1)
     {

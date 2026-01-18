@@ -126,7 +126,7 @@ static SDL_bool GK_JoystickGetGamepadMapping(int device_index, SDL_GamepadMappin
         .guide = { EMappingKind_None, 255 },
         .start = { EMappingKind_None, 255 },
         .leftstick = { EMappingKind_None, 255 },    // push left stick
-        .rightshoulder = { EMappingKind_None, 255 },
+        .rightstick = { EMappingKind_None, 255 },
         .leftshoulder = { EMappingKind_None, 255 },
         .rightshoulder = { EMappingKind_None, 255 },
         .dpup = { EMappingKind_None, 255 },

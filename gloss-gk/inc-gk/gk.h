@@ -69,6 +69,10 @@ uint64_t GK_GetCurUs();
 int GK_GetJoystickAxes(int *x, int *y);
 int GK_GetTiltAxes(int *x, int *y);
 
+#if __GAMEKID__ >= 4
+int GK_GetJoystickBAxes(int *x, int *y);
+#endif
+
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)
 
 #ifdef __cplusplus

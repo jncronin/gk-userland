@@ -1,4 +1,5 @@
 #include "_gk_memaddrs.h"
+#include <cstdint>
 
 #if __GAMEKID__ >= 4
 extern "C" int GK_GetJoystickAxes(int *x, int *y)

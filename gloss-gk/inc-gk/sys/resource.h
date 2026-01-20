@@ -28,11 +28,19 @@ struct rusage {
         struct timeval ru_stime;        /* system time used */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int  getpriority(int, id_t);
 int  getrlimit(int, struct rlimit *);
 int  getrusage(int, struct rusage *);
 int  setpriority(int, id_t, int);
 int  setrlimit(int, const struct rlimit *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #define RLIMIT_CORE     0
 #define RLIMIT_CPU      1

@@ -2,8 +2,9 @@
 #include <errno.h>
 #include <sys/resource.h>
 #include <errno.h>
+#include "_gk_memaddrs.h"
 
-long sysconf(int name)
+extern "C" long sysconf(int name)
 {
     switch(name)
     {
@@ -11,7 +12,19 @@ long sysconf(int name)
             return 4096;
 
         case _SC_PAGESIZE:
+#if __GAMEKID__ >= 4
+            return GK_KERNEL_INFO->page_size;
+#else
             return 4096;
+#endif
+
+        case _SC_NPROCESSORS_ONLN:
+        case _SC_NPROCESSORS_CONF:
+#if __GAMEKID__ >= 4
+            return GK_KERNEL_INFO->ncores;
+#else
+            return 1;
+#endif
 
         case _SC_OPEN_MAX:
             return 16;
@@ -22,7 +35,7 @@ long sysconf(int name)
     }
 }
 
-int getrlimit(int resource, struct rlimit *rlim)
+extern "C" int getrlimit(int resource, struct rlimit *rlim)
 {
     switch(resource)
     {
@@ -35,7 +48,7 @@ int getrlimit(int resource, struct rlimit *rlim)
     }
 }
 
-int getrusage(int who, struct rusage *usage)
+extern "C" int getrusage(int who, struct rusage *usage)
 {
     errno = ENOTSUP;
     return -1;

@@ -170,6 +170,7 @@ VideoBootStrap GK_bootstrap = {
 
 static int GKV4_AddModes(_THIS)
 {
+    size_t cur_w, cur_h;
     static const unsigned int refresh_rates[] = { 60, 50, 48, 40, 30, 25, 24 };
     static const unsigned int pformats[] =
     {
@@ -193,6 +194,7 @@ static int GKV4_AddModes(_THIS)
     };
     static const struct wh whs[] =
     {
+        { .w = 0 , .h = 0 },        // add current mode at the top of the list
         { .w = 1024, .h = 768 },
         { .w = 720, .h = 576 },
         { .w = 800, .h = 480 },
@@ -202,6 +204,7 @@ static int GKV4_AddModes(_THIS)
         { .w = 200, .h = 120 },
         { .w = 160, .h = 120 }
     };
+    GK_GPUGetScreenModeEx(&cur_w, &cur_h, NULL, NULL);
 
     for(unsigned int wh_idx = 0; wh_idx < sizeof(whs) / sizeof(whs[0]); wh_idx++)
     {
@@ -214,6 +217,15 @@ static int GKV4_AddModes(_THIS)
                 unsigned int h = whs[wh_idx].h;
                 unsigned int pf = pformats[pf_idx];
                 unsigned int rr = refresh_rates[rr_idx];
+
+                if(w == 0)
+                {
+                    w = cur_w;
+                }
+                if(h == 0)
+                {
+                    h = cur_h;
+                }
 
                 if(w > GK_KERNEL_INFO->max_screen_width)
                 {

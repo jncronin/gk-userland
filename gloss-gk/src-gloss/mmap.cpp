@@ -5,6 +5,31 @@
 #include <string.h>
 #include <unistd.h>
 
+#if __GAMEKID__ >= 4
+extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+{
+    void *addrret = addr;
+    __syscall_mmapv4_params p {
+        len,
+        &addrret,
+        (flags & MAP_SYNC) ? 1 : 0,
+        (prot & PROT_READ) ? 1 : 0,
+        (prot & PROT_WRITE) ? 1 : 0,
+        (prot & PROT_EXEC) ? 1 : 0,
+        (flags & MAP_ANON) ? -1 : fd,
+        (flags & MAP_FIXED) ? 1 : 0
+    };
+
+    auto ret = deferred_call(__syscall_mmapv4, &p);
+    if(ret != 0)
+    {
+        return MAP_FAILED;
+    }
+
+    return addrret;
+}
+
+#else
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 {
     if(flags & MAP_FIXED)
@@ -55,6 +80,7 @@ extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t
 
     return addrret;
 }
+#endif
 
 extern "C" int munmap(void *addr, size_t len)
 {

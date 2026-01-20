@@ -91,7 +91,7 @@ int GK_GPUBlitScreen(void *cmdlist, const void *src, size_t w, size_t h, size_t 
     msg->dw = 0;
     msg->dh = 0;
     msg->dp = 0;
-    msg->src_addr_color = (uint32_t)(uintptr_t)src;
+    msg->src_addr_color = (decltype(msg->dest_addr))(uintptr_t)src;
     msg->sx = 0;
     msg->sy = 0;
     msg->w = w;
@@ -133,7 +133,7 @@ int GK_GPUBlitScreenNoBlendEx(void *cmdlist, const void *src, size_t x, size_t y
     msg->dw = w;
     msg->dh = h;
     msg->dp = 0;
-    msg->src_addr_color = (uint32_t)(uintptr_t)src;
+    msg->src_addr_color = (decltype(msg->dest_addr))(uintptr_t)src;
     msg->sx = x;
     msg->sy = y;
     msg->w = w;
@@ -173,7 +173,7 @@ int GK_GPUBlitScreenNoBlend(void *cmdlist, const void *src, size_t w, size_t h, 
     msg->dw = 0;
     msg->dh = 0;
     msg->dp = 0;
-    msg->src_addr_color = (uint32_t)(uintptr_t)src;
+    msg->src_addr_color = (decltype(msg->dest_addr))(uintptr_t)src;
     msg->sx = 0;
     msg->sy = 0;
     msg->w = w;
@@ -280,14 +280,14 @@ int GK_GPUCleanCache(void *cmdlist, const void *src, size_t w, size_t h, size_t 
     auto msg = &msgs[hdr->__ncmds++];
 
     msg->type = CleanCache;
-    msg->dest_addr = (uint32_t)(uintptr_t)src;
+    msg->dest_addr = (decltype(msg->dest_addr))(uintptr_t)src;
     msg->dest_pf = spf;
     msg->dx = 0;
     msg->dy = 0;
     msg->dw = w;
     msg->dh = h;
     msg->dp = stride;
-    msg->src_addr_color = (uint32_t)(uintptr_t)src;
+    msg->src_addr_color = (decltype(msg->dest_addr))(uintptr_t)src;
     msg->sx = 0;
     msg->sy = 0;
     msg->w = w;

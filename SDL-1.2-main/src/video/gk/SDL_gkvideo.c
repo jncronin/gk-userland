@@ -13,6 +13,12 @@
 #include <unistd.h>
 #include <string.h>
 
+#if __GAMEKID__ >= 4
+#define gk_ptr_type uint64_t
+#else
+#define gk_ptr_type uint32_t
+#endif
+
 struct GKSurfaceData
 {
     int in_cache;
@@ -324,7 +330,7 @@ static int GK_LockHWSurface(_THIS, SDL_Surface *surface)
 
         // may have been written to by DMA - need to wait and invalidate
         gmsgs[0].type = InvalidateCache;
-        gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
+        gmsgs[0].dest_addr = (gk_ptr_type)(uintptr_t)surface->pixels;
         gmsgs[0].dx = 0;
         gmsgs[0].dy = 0;
         gmsgs[0].dw = surface->w;
@@ -351,7 +357,7 @@ static void GK_UnlockHWSurface(_THIS, SDL_Surface *surface)
 
         // may have been written to by DMA - need to wait and invalidate
         gmsgs[0].type = CleanCache;
-        gmsgs[0].dest_addr = (uint32_t)(uintptr_t)surface->pixels;
+        gmsgs[0].dest_addr = (gk_ptr_type)(uintptr_t)surface->pixels;
         gmsgs[0].dx = 0;
         gmsgs[0].dy = 0;
         gmsgs[0].dw = surface->w;
@@ -453,7 +459,7 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
     if(!(src->flags & SDL_HWSURFACE))
     {
         gmsgs[i].type = CleanCache;
-        gmsgs[i].dest_addr = (uint32_t)(uintptr_t)src->pixels;
+        gmsgs[i].dest_addr = (gk_ptr_type)(uintptr_t)src->pixels;
         gmsgs[i].dx = srcrect->x;
         gmsgs[i].dy = srcrect->y;
         gmsgs[i].dw = srcrect->w;
@@ -465,7 +471,7 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
     }
 
     gmsgs[i].type = BlitImage;
-    gmsgs[i].dest_addr = (uint32_t)(uintptr_t)dst->pixels;
+    gmsgs[i].dest_addr = (gk_ptr_type)(uintptr_t)dst->pixels;
     gmsgs[i].dest_pf = dpf;
     gmsgs[i].dx = dstrect->x;
     gmsgs[i].dy = dstrect->y;
@@ -474,7 +480,7 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
     gmsgs[i].dp = dst->pitch;
     gmsgs[i].w = srcrect->w;
     gmsgs[i].h = srcrect->h;
-    gmsgs[i].src_addr_color = (uint32_t)(uintptr_t)src->pixels;
+    gmsgs[i].src_addr_color = (gk_ptr_type)(uintptr_t)src->pixels;
     gmsgs[i].src_pf = spf;
     gmsgs[i].sx = srcrect->x;
     gmsgs[i].sy = srcrect->y;
@@ -511,7 +517,7 @@ int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)
     struct gpu_message gmsg;
     uint32_t dpf = pformat_to_gkpf(dst->format);
 
-    gmsg.dest_addr = (uint32_t)(uintptr_t)dst->pixels;
+    gmsg.dest_addr = (gk_ptr_type)(uintptr_t)dst->pixels;
     gmsg.dx = rect->x;
     gmsg.dy = rect->y;
     gmsg.dw = rect->w;

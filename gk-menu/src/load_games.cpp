@@ -301,6 +301,48 @@ static int parse_game()
     read_bool("screen_ignore_vsync", &g.screen_ignore_vsync);
     read_bool("screen_overwritten_each_frame", &g.screen_overwritten_each_frame);
 
+#if __GAMEKID__ >= 4
+    bool tlim = false;
+    bool tlij = false;
+    bool jim = false;
+    bool jij = false;
+    read_bool("tilt_is_mouse", &tlim);
+    read_bool("tilt_is_joystick", &tlij);
+    read_bool("joystick_is_mouse", &jim);
+    read_bool("joystick_is_joystick", &jij);
+
+    if(tlim)
+    {
+        g.keymap.tilt_stick = GK_STICK_MOUSE;
+    }
+    else if(tlij)
+    {
+        g.keymap.tilt_stick = GK_STICK_JOY2;
+    }
+
+    if(jim)
+    {
+        g.keymap.left_stick = GK_STICK_MOUSE;
+    }
+    else if(jij)
+    {
+        g.keymap.left_stick = GK_STICK_JOY0;
+    }
+
+    int ls, rs, ts;
+    if(read_int("left_stick", &ls))
+    {
+        g.keymap.left_stick = (char)ls;
+    }
+    if(read_int("right_stick", &rs))
+    {
+        g.keymap.right_stick = (char)rs;
+    }
+    if(read_int("tilt_stick", &ts))
+    {
+        g.keymap.tilt_stick = (char)ts;
+    }
+#else
     bool gik = g.keymap.gamepad_is_keyboard != 0;
     read_bool("gamepad_is_keyboard", &gik);
     g.keymap.gamepad_is_keyboard = gik ? 1 : 0;
@@ -328,6 +370,7 @@ static int parse_game()
     bool jim = g.keymap.joystick_is_mouse != 0;
     read_bool("joystick_is_mouse", &jij);
     g.keymap.joystick_is_mouse = jij ? 1 : 0;
+#endif
 
     bool tim = g.keymap.touch_is_mouse != 0;
     read_bool("touch_is_mouse", &tim);
@@ -405,6 +448,12 @@ int load_games()
     ADD_DEFINE(GK_PIXELFORMAT_L8);
     ADD_DEFINE(GK_PIXELFORMAT_RGBA8888);
     ADD_DEFINE(GK_PIXELFORMAT_XRGB8888);
+
+    ADD_DEFINE(GK_STICK_DIGITAL);
+    ADD_DEFINE(GK_STICK_JOY0);
+    ADD_DEFINE(GK_STICK_JOY1);
+    ADD_DEFINE(GK_STICK_JOY2);
+    ADD_DEFINE(GK_STICK_MOUSE);
 #endif
 
     ADD_DEFINE(GK_KEYA);
@@ -428,6 +477,16 @@ int load_games()
     ADD_DEFINE(GK_KEYJOYDIGIDOWN);
     ADD_DEFINE(GK_KEYLB);
     ADD_DEFINE(GK_KEYRB);
+
+#if __GAMEKID__ >= 4
+    ADD_DEFINE(GK_KEYLT);
+    ADD_DEFINE(GK_KEYRT);
+    ADD_DEFINE(GK_KEYJOYB);
+    ADD_DEFINE(GK_KEYJOYBDIGILEFT);
+    ADD_DEFINE(GK_KEYJOYBDIGIRIGHT);
+    ADD_DEFINE(GK_KEYJOYBDIGIUP);
+    ADD_DEFINE(GK_KEYJOYBDIGIDOWN);
+#endif
 
     ADD_DEFINE(GK_SCANCODE_0);
     ADD_DEFINE(GK_SCANCODE_1);

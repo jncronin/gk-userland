@@ -84,11 +84,19 @@ void Game::Load()
 Game::Game()
 {
     /* keymap defaults */
+#if __GAMEKID__ >= 4
+    keymap.left_stick = GK_STICK_DIGITAL;
+    keymap.right_stick = GK_STICK_DIGITAL;
+    keymap.tilt_stick = GK_STICK_DIGITAL;
+    keymap.touch_is_mouse = 0;
+#else
     keymap.gamepad_is_joystick = 0;
     keymap.gamepad_is_keyboard = 1;
     keymap.gamepad_is_mouse = 0;
+#endif
 
     /* default to mednafen NES */
+    memset(keymap.gamepad_to_scancode, 0, sizeof(keymap.gamepad_to_scancode));
     keymap.gamepad_to_scancode[GK_KEYLEFT] = GK_SCANCODE_A;
     keymap.gamepad_to_scancode[GK_KEYRIGHT] = GK_SCANCODE_D;
     keymap.gamepad_to_scancode[GK_KEYUP] = GK_SCANCODE_W;

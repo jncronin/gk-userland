@@ -6,6 +6,8 @@
 #include "deferred.h"
 #include "cmpxchg.h"
 
+void _pthread_call_dtors();
+
 int pthread_attr_init(pthread_attr_t *attr)
 {
     memset(attr, 0, sizeof(pthread_attr_t));
@@ -24,7 +26,7 @@ static void thread_wrapper(void *(*start_routine)(void *),
     void *arg)
 {
     auto ret = start_routine(arg);
-    deferred_call(__syscall_pthread_exit, &ret);
+    pthread_exit(ret);
     while(true);
 }
 #endif
@@ -553,6 +555,7 @@ extern "C" int pthread_cond_broadcast(pthread_cond_t *cond)
 
 void pthread_exit(void *retval)
 {
+    _pthread_call_dtors();
     deferred_call(__syscall_pthread_exit, &retval);
     while(true);
 }

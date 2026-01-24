@@ -111,7 +111,11 @@ void flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
         if(!gmsg)
             return;
         gmsg->type = FlipBuffers;
+#if __GAMEKID__ >= 4
+        gmsg->dest_addr = (uint64_t)(uintptr_t)&dd->next_buffer;
+#else
         gmsg->dest_addr = (uint32_t)(uintptr_t)&dd->next_buffer;
+#endif
         gmsg->src_addr_color = 0;
     }
 

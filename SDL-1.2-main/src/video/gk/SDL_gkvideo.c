@@ -125,6 +125,10 @@ static SDL_VideoDevice *GK_CreateDevice(int devindex)
     device->GL_SwapBuffers = GK_GL_SwapWindow;
     device->gl_data = NULL;
 
+#if __GAMEKID__ >= 4
+    device->handles_any_size = 1;
+#endif
+
     return device;
 }
 
@@ -201,11 +205,18 @@ int GK_VideoInit(_THIS, SDL_PixelFormat *vformat)
     return 0;
 }
 
+#if __GAMEKID__ >= 4
+SDL_Rect mode800x480 = { 0, 0, 800, 480 };
+#endif
 SDL_Rect mode640x480 = { 0, 0, 640, 480 };
 SDL_Rect mode320x240 = { 0, 0, 320, 240 };
 SDL_Rect mode160x120 = { 0, 0, 160, 120 };
 
-SDL_Rect *modes[] = { &mode640x480, &mode320x240, &mode160x120, NULL };
+SDL_Rect *modes[] = { 
+#if __GAMEKID__ >= 4
+    &mode800x480,
+#endif
+    &mode640x480, &mode320x240, &mode160x120, NULL };
 
 SDL_Rect **GK_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
 {

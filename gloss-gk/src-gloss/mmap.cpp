@@ -2,12 +2,23 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include "deferred.h"
+#include "_gk_memaddrs.h"
 #include <string.h>
 #include <unistd.h>
 
 #if __GAMEKID__ >= 4
 extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 {
+    if(offset < 0)
+    {
+        errno = EINVAL;
+        return MAP_FAILED;
+    }
+    if(offset & (GK_KERNEL_INFO->page_size - 1))
+    {
+        errno = EINVAL;
+        return MAP_FAILED;
+    }
     void *addrret = addr;
     __syscall_mmapv4_params p {
         len,
@@ -17,7 +28,8 @@ extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t
         (prot & PROT_WRITE) ? 1 : 0,
         (prot & PROT_EXEC) ? 1 : 0,
         (flags & MAP_ANON) ? -1 : fd,
-        (flags & MAP_FIXED) ? 1 : 0
+        (flags & MAP_FIXED) ? 1 : 0,
+        (size_t)offset
     };
 
     auto ret = deferred_call(__syscall_mmapv4, &p);

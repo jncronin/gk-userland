@@ -18,7 +18,7 @@ file(GLOB SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/video/*.c
 #    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio/disk/*.c
 #    ${CMAKE_CURRENT_SOURCE_DIR}/src/video/dummy/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/joystick/dummy/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/joystick/gk/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cdrom/dummy/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/thread/pthread/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/unix/*.c

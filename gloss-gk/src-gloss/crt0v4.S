@@ -9,6 +9,9 @@
 .global _start
 .type _start,%function
 _start:
+    // initialise recursive locks in newlib
+    bl __gk_newlib_init_locks
+    
     // get [ argc, argv ], put in x24/25
     bl __gk_init_args
     mov x24, x0

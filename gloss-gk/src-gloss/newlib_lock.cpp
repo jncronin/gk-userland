@@ -86,4 +86,32 @@ __retarget_lock_release_recursive (_LOCK_T lock)
     pthread_mutex_unlock(&lock->m);
 }
 
+void
+__gk_newlib_init_locks()
+{
+    auto p__lock___sfp_recursive_mutex = &__lock___sfp_recursive_mutex;
+    __retarget_lock_init_recursive(&p__lock___sfp_recursive_mutex);
+
+    auto p__lock___atexit_recursive_mutex = &__lock___atexit_recursive_mutex;
+    __retarget_lock_init_recursive(&p__lock___atexit_recursive_mutex);
+
+    auto p__lock___malloc_recursive_mutex = &__lock___malloc_recursive_mutex;
+    __retarget_lock_init_recursive(&p__lock___malloc_recursive_mutex);
+
+    auto p__lock___env_recursive_mutex = &__lock___env_recursive_mutex;
+    __retarget_lock_init_recursive(&p__lock___env_recursive_mutex);
+
+    auto p__lock___at_quick_exit_mutex = &__lock___at_quick_exit_mutex;
+    __retarget_lock_init(&p__lock___at_quick_exit_mutex);
+
+    auto p__lock___tz_mutex = &__lock___tz_mutex;
+    __retarget_lock_init(&p__lock___tz_mutex);
+
+    auto p__lock___dd_hash_mutex = &__lock___dd_hash_mutex;
+    __retarget_lock_init(&p__lock___dd_hash_mutex);
+
+    auto p__lock___arc4random_mutex = &__lock___arc4random_mutex;
+    __retarget_lock_init(&p__lock___arc4random_mutex);
+}
+
 }

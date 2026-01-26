@@ -153,4 +153,7 @@ make -C build-v4/fluidsynth -j16 install
 cmake $CMAKE_OPTS iir1-1.9.3/ -B build-v4/iir1
 make -C build-v4/iir1/ -j16 install
 
+cmake $CMAKE_OPTS -S munt-libmt32emu_2_7_1/ -B build-v4/libmt32emu -Dmunt_WITH_MT32EMU_SMF2WAV=OFF -Dmunt_WITH_MT32EMU_QT=OFF
+make -C build-v4/libmt32emu/ -j16 install
+
 echo "Successfully built gk libraries in $SYSROOT"

@@ -1,6 +1,10 @@
 #ifndef POLL_H
 #define POLL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct pollfd
 {
     int fd;
@@ -22,5 +26,9 @@ typedef unsigned int nfds_t;
 #define POLLNVAL        128
 
 int poll(struct pollfd[], nfds_t, int);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

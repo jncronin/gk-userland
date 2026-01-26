@@ -106,7 +106,7 @@ scandir(const char *dirname,
 			return(-1);
 		p->d_ino = d->d_ino;
 		p->d_reclen = d->d_reclen;
-        strcpy(d->d_name, p->d_name);
+        strcpy(p->d_name, d->d_name);
 		/*
 		 * Check to make sure the array has space left and
 		 * realloc the maximum size.

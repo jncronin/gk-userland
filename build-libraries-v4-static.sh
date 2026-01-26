@@ -162,4 +162,10 @@ cd build-v4/speexdsp/
 make -j16 install
 cd ../..
 
+cmake $CMAKE_OPTS -S opus-main/ -B build-v4/opus
+make -j16 -C build-v4/opus install
+
+cmake $CMAKE_OPTS -S opusfile-main/ -B build-v4/opusfile -DOP_DISABLE_HTTP=ON -DOP_DISABLE_EXAMPLES=ON -DOP_DISABLE_DOCS=ON
+make -j16 -C build-v4/opusfile install
+
 echo "Successfully built gk libraries in $SYSROOT"

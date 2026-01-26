@@ -6,6 +6,7 @@
 
 #include "../SDL_sysjoystick.h"
 #include "SDL_events.h"
+#include "_gk_memaddrs.h"
 
 static int GK_JoystickInit(void)
 {
@@ -53,8 +54,13 @@ static SDL_JoystickID GK_JoystickGetDeviceInstanceID(int device_index)
 
 static int GK_JoystickOpen(SDL_Joystick *joystick, int device_index)
 {
+#if __GAMEKID__ >= 4
+    joystick->nbuttons = GK_KERNEL_INFO->joystick_nbuttons;
+    joystick->naxes = GK_KERNEL_INFO->joystick_naxes;
+#else
     joystick->nbuttons = 0;
     joystick->naxes = 4;
+#endif
     joystick->nhats = 0;
     joystick->instance_id = device_index;
 
@@ -97,6 +103,44 @@ static int GK_JoystickSetSensorsEnabled(SDL_Joystick *joystick, SDL_bool enabled
 
 static void GK_JoystickUpdate(SDL_Joystick *joystick)
 {
+#if __GAMEKID__ >= 4
+    static int16_t old_axes[8] = { 0 };
+    static unsigned int oldbuttons = 0;
+    const int16_t delta = 50;
+    uint64_t buttons;
+    unsigned int naxes = (joystick->naxes < 8) ? joystick->naxes : 8;
+    unsigned int nbuttons = (joystick->nbuttons < 64) ? joystick->nbuttons : 64;
+
+    for(unsigned int axis = 0; axis < naxes; axis++)
+    {
+        int16_t *valp = GK_KERNEL_INFO->joystick_axes[axis];
+        int16_t curval = valp ? *valp : 0;
+        int16_t old_min = (old_axes[axis] > (-32768 + delta)) ? (old_axes[axis] - delta) : -32768;
+        int16_t old_max = (old_axes[axis] < (32767 - delta)) ? (old_axes[axis] + delta) : 32767;
+
+        if((curval < old_min) || (curval > old_max))
+        {
+            SDL_PrivateJoystickAxis(joystick, axis, curval);
+            old_axes[axis] = curval;
+        }
+    }
+
+    buttons = GK_KERNEL_INFO->joystick_buttons;
+    for(unsigned int button = 0; button < nbuttons; button++)
+    {
+        uint64_t mask = (1ULL << button);
+
+        if((buttons & mask) && !(oldbuttons & mask))
+        {
+            SDL_PrivateJoystickButton(joystick, button, SDL_PRESSED);
+        }
+        else if(!(buttons & mask) && (oldbuttons & mask))
+        {
+            SDL_PrivateJoystickButton(joystick, button, SDL_RELEASED);
+        }
+    }
+    oldbuttons = buttons;
+#else
     int jx, jy, tx, ty;
     GK_GetJoystickAxes(&jx, &jy);
     GK_GetTiltAxes(&tx, &ty);
@@ -105,6 +149,7 @@ static void GK_JoystickUpdate(SDL_Joystick *joystick)
     SDL_PrivateJoystickAxis(joystick, 1, jy);
     SDL_PrivateJoystickAxis(joystick, 2, tx);
     SDL_PrivateJoystickAxis(joystick, 3, ty);
+#endif
 }
 
 static void GK_JoystickClose(SDL_Joystick *joystick)

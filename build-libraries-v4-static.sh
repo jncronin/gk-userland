@@ -168,4 +168,7 @@ make -j16 -C build-v4/opus install
 cmake $CMAKE_OPTS -S opusfile-main/ -B build-v4/opusfile -DOP_DISABLE_HTTP=ON -DOP_DISABLE_EXAMPLES=ON -DOP_DISABLE_DOCS=ON
 make -j16 -C build-v4/opusfile install
 
+cmake $CMAKE_OPTS -S zlib-ng-2.3.2/ -B build-v4/zlib-ng -DINSTALL_UTILS=OFF -DWITH_GTEST=OFF -DWITH_BENCHMARKS=OFF -DBUILD_TESTING=OFF
+make -j16 -C build-v4/zlib-ng install
+
 echo "Successfully built gk libraries in $SYSROOT"

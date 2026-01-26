@@ -156,4 +156,10 @@ make -C build-v4/iir1/ -j16 install
 cmake $CMAKE_OPTS -S munt-libmt32emu_2_7_1/ -B build-v4/libmt32emu -Dmunt_WITH_MT32EMU_SMF2WAV=OFF -Dmunt_WITH_MT32EMU_QT=OFF
 make -C build-v4/libmt32emu/ -j16 install
 
+mkdir -p build-v4/speexdsp
+cd build-v4/speexdsp/
+./../speexdsp-1.2.1/configure --host=aarch64-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
+make -j16 install
+cd ../..
+
 echo "Successfully built gk libraries in $SYSROOT"

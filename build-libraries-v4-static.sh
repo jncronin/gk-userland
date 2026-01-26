@@ -150,4 +150,7 @@ cd ../..
 cmake $CMAKE_OPTS -S fluidsynth-2.4.2 -B build-v4/fluidsynth -Denable-network=OFF
 make -C build-v4/fluidsynth -j16 install
 
+cmake $CMAKE_OPTS iir1-1.9.3/ -B build-v4/iir1
+make -C build-v4/iir1/ -j16 install
+
 echo "Successfully built gk libraries in $SYSROOT"

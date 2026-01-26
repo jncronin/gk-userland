@@ -1,6 +1,7 @@
 #include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_GK
+#if __GAMEKID__ < 4
 
 #include "../SDL_sysrender.h"
 #include "SDL_hints.h"
@@ -558,4 +559,5 @@ SDL_RenderDriver GK_RenderDriver = {
     }
 };
 
+#endif
 #endif

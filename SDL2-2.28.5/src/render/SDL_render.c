@@ -127,8 +127,8 @@ static const SDL_RenderDriver *render_drivers[] = {
 #if SDL_VIDEO_RENDER_GK
 #if __GAMEKID__ != 4
     &GKNema_RenderDriver,
-#endif
     &GK_RenderDriver,
+#endif
 #endif
 #if SDL_VIDEO_RENDER_SW
     &SW_RenderDriver

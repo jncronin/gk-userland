@@ -20619,6 +20619,11 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
       cygwin*)
         ac_has_nanosleep=yes
         ;;
+      gkos*)
+	ac_has_nanosleep=yes
+	ac_has_clock_monotonic=yes
+	ac_has_clock_realtime=yes
+	;;
       mingw*)
         ac_has_win32_sleep=yes
         ac_has_sched_yield=yes

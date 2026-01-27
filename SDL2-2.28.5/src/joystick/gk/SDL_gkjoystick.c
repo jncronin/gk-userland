@@ -107,21 +107,30 @@ static void GK_JoystickUpdate(SDL_Joystick *joystick)
     static int16_t old_axes[8] = { 0 };
     static unsigned int oldbuttons = 0;
     const int16_t delta = 50;
+    const int delta_sq = (int)delta * (int)delta;
     uint64_t buttons;
     unsigned int naxes = (joystick->naxes < 8) ? joystick->naxes : 8;
     unsigned int nbuttons = (joystick->nbuttons < 64) ? joystick->nbuttons : 64;
 
-    for(unsigned int axis = 0; axis < naxes; axis++)
+    /* Only report if the stick moves by more than delta in a 2D direction */
+    for(unsigned int axis_pair = 0; axis_pair < naxes / 2; axis_pair++)
     {
-        int16_t *valp = GK_KERNEL_INFO->joystick_axes[axis];
-        int16_t curval = valp ? *valp : 0;
-        int16_t old_min = (old_axes[axis] > (-32768 + delta)) ? (old_axes[axis] - delta) : -32768;
-        int16_t old_max = (old_axes[axis] < (32767 - delta)) ? (old_axes[axis] + delta) : 32767;
+        int16_t *valp_x = GK_KERNEL_INFO->joystick_axes[axis_pair * 2];
+        int16_t curval_x = valp_x ? *valp_x : 0;
+        int16_t *valp_y = GK_KERNEL_INFO->joystick_axes[axis_pair * 2 + 1];
+        int16_t curval_y = valp_y ? *valp_y : 0;
 
-        if((curval < old_min) || (curval > old_max))
+        int x_diff = (int)curval_x - (int)old_axes[axis_pair * 2];
+        int y_diff = (int)curval_y - (int)old_axes[axis_pair * 2 + 1];
+
+        int diff_sq = x_diff * x_diff + y_diff * y_diff;
+
+        if(diff_sq >= delta_sq)
         {
-            SDL_PrivateJoystickAxis(joystick, axis, curval);
-            old_axes[axis] = curval;
+            SDL_PrivateJoystickAxis(joystick, axis_pair * 2, curval_x);
+            SDL_PrivateJoystickAxis(joystick, axis_pair * 2 + 1, curval_y);
+            old_axes[axis_pair * 2] = curval_x;
+            old_axes[axis_pair * 2 + 1] = curval_y;
         }
     }
 

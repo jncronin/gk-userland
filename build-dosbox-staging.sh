@@ -1,0 +1,4 @@
+
+
+cmake $CMAKE_OPTS -S ../dosbox-staging/ -B . -DOPT_TESTS=OFF -DOPT_OPENGL=OFF -DOPT_MANYMOUSE=OFF -DOPT_XINPUT=OFF
+

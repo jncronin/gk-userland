@@ -71,6 +71,10 @@ int GK_GetTiltAxes(int *x, int *y);
 
 #if __GAMEKID__ >= 4
 int GK_GetJoystickBAxes(int *x, int *y);
+
+int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, bool is_raw);
+int GK_SetJoystickCalibration(unsigned int axis_pair,
+    int left, int right, int top, int bottom, int middle_x, int middle_y);
 #endif
 
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)

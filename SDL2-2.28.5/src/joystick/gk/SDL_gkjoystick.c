@@ -104,6 +104,7 @@ static int GK_JoystickSetSensorsEnabled(SDL_Joystick *joystick, SDL_bool enabled
 static void GK_JoystickUpdate(SDL_Joystick *joystick)
 {
 #if __GAMEKID__ >= 4
+    static unsigned long last_ticks = 0;
     static int16_t old_axes[8] = { 0 };
     static unsigned int oldbuttons = 0;
     const int16_t delta = 50;
@@ -111,6 +112,12 @@ static void GK_JoystickUpdate(SDL_Joystick *joystick)
     uint64_t buttons;
     unsigned int naxes = (joystick->naxes < 8) ? joystick->naxes : 8;
     unsigned int nbuttons = (joystick->nbuttons < 64) ? joystick->nbuttons : 64;
+    unsigned long now = GK_GetCurUs();
+
+    if(now < (last_ticks + 5000UL))
+    {
+        return;
+    }
 
     /* Only report if the stick moves by more than delta in a 2D direction */
     for(unsigned int axis_pair = 0; axis_pair < naxes / 2; axis_pair++)
@@ -131,6 +138,7 @@ static void GK_JoystickUpdate(SDL_Joystick *joystick)
             SDL_PrivateJoystickAxis(joystick, axis_pair * 2 + 1, curval_y);
             old_axes[axis_pair * 2] = curval_x;
             old_axes[axis_pair * 2 + 1] = curval_y;
+            last_ticks = now;
         }
     }
 
@@ -142,10 +150,12 @@ static void GK_JoystickUpdate(SDL_Joystick *joystick)
         if((buttons & mask) && !(oldbuttons & mask))
         {
             SDL_PrivateJoystickButton(joystick, button, SDL_PRESSED);
+            last_ticks = now;
         }
         else if(!(buttons & mask) && (oldbuttons & mask))
         {
             SDL_PrivateJoystickButton(joystick, button, SDL_RELEASED);
+            last_ticks = now;
         }
     }
     oldbuttons = buttons;

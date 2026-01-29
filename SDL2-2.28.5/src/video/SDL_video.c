@@ -1055,6 +1055,14 @@ static int SDL_SetDisplayModeForDisplay(SDL_VideoDisplay *display, const SDL_Dis
         }
 
         /* Get a good video mode, the closest one possible */
+#if __GAMEKID__ >= 4
+        if (mode->driverdata && mode->w <= 800 && mode->h <= 480)
+        {
+            // just use this one
+            display_mode = *mode;
+        }
+        else
+#endif
         if (!SDL_GetClosestDisplayModeForDisplay(display, &display_mode, &display_mode)) {
             return SDL_SetError("No video mode large enough for %dx%d", display_mode.w, display_mode.h);
         }

@@ -175,16 +175,16 @@ static int GKV4_AddModes(_THIS)
     static const unsigned int pformats[] =
     {
         SDL_PIXELFORMAT_ARGB8888,
-        SDL_PIXELFORMAT_RGB888,
-        SDL_PIXELFORMAT_RGB24,
-        SDL_PIXELFORMAT_RGB565,
-        SDL_PIXELFORMAT_ARGB4444,
-        SDL_PIXELFORMAT_ARGB1555,
-        SDL_PIXELFORMAT_INDEX8,
         SDL_PIXELFORMAT_ABGR8888,
         SDL_PIXELFORMAT_RGBA8888,
         SDL_PIXELFORMAT_BGRA8888,
+        SDL_PIXELFORMAT_RGB888,
+        SDL_PIXELFORMAT_RGB24,
+//        SDL_PIXELFORMAT_ARGB4444,
+//        SDL_PIXELFORMAT_ARGB1555,
         SDL_PIXELFORMAT_BGR565,
+        SDL_PIXELFORMAT_RGB565,
+        SDL_PIXELFORMAT_INDEX8,
         SDL_PIXELFORMAT_INDEX4LSB
     };
     struct wh
@@ -196,11 +196,14 @@ static int GKV4_AddModes(_THIS)
     {
         { .w = 0 , .h = 0 },        // add current mode at the top of the list
         { .w = 1024, .h = 768 },
-        { .w = 720, .h = 576 },
         { .w = 800, .h = 480 },
+        { .w = 720, .h = 576 },
+        { .w = 720, .h = 480 },
         { .w = 640, .h = 480 },
+        { .w = 640, .h = 400 },
         { .w = 400, .h = 240 },
         { .w = 320, .h = 240 },
+        { .w = 320, .h = 200 },
         { .w = 200, .h = 120 },
         { .w = 160, .h = 120 }
     };

@@ -25,7 +25,7 @@ extern "C" int GK_GetTiltAxes(int *x, int *y)
     return 0;
 }
 
-extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, bool is_raw)
+extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int is_raw)
 {
     if(axis_pair >= 3 || (is_raw && axis_pair >= 2))
     {

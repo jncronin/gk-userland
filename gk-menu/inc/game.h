@@ -25,7 +25,7 @@ class Game
         int screen_refresh = 60;
 
         bool screen_ignore_vsync = true;
-        bool screen_overwritten_each_frame = false;
+        int screen_update_method = GK_SCREEN_UPDATE_FULL;
 
         size_t stack_size = 64*1024;
         size_t heap_size = 32*1024*1024;

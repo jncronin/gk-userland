@@ -23,7 +23,7 @@ void Game::Load()
     pcinfo.screen_w = screen_w;
     pcinfo.screen_h = screen_h;
     pcinfo.screen_ignore_vsync = screen_ignore_vsync;
-    pcinfo.screen_overwritten_each_frame = screen_overwritten_each_frame;
+    pcinfo.screen_overwritten_each_frame = screen_update_method;
     pcinfo.pixel_format = screen_pf;
     pcinfo.screen_refresh = screen_refresh;
     pcinfo.with_focus = 1;

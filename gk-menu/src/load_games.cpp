@@ -299,7 +299,10 @@ static int parse_game()
     read_int("screen_pf", &g.screen_pf);
     read_int("screen_refresh", &g.screen_refresh);
     read_bool("screen_ignore_vsync", &g.screen_ignore_vsync);
-    read_bool("screen_overwritten_each_frame", &g.screen_overwritten_each_frame);
+    bool scr_overwritten = true;
+    read_bool("screen_overwritten_each_frame", &scr_overwritten);
+    g.screen_update_method = scr_overwritten ? GK_SCREEN_UPDATE_FULL : GK_SCREEN_UPDATE_PARTIAL_READBACK;
+    read_int("screen_update_method", &g.screen_update_method);
 
 #if __GAMEKID__ >= 4
     bool tlim = false;
@@ -455,6 +458,10 @@ int load_games()
     ADD_DEFINE(GK_STICK_JOY2);
     ADD_DEFINE(GK_STICK_MOUSE);
 #endif
+
+    ADD_DEFINE(GK_SCREEN_UPDATE_FULL);
+    ADD_DEFINE(GK_SCREEN_UPDATE_PARTIAL_NOREADBACK);
+    ADD_DEFINE(GK_SCREEN_UPDATE_PARTIAL_READBACK);
 
     ADD_DEFINE(GK_KEYA);
     ADD_DEFINE(GK_KEYB);

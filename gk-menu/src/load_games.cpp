@@ -303,6 +303,7 @@ static int parse_game()
     read_bool("screen_overwritten_each_frame", &scr_overwritten);
     g.screen_update_method = scr_overwritten ? GK_SCREEN_UPDATE_FULL : GK_SCREEN_UPDATE_PARTIAL_READBACK;
     read_int("screen_update_method", &g.screen_update_method);
+    read_int("cpu_freq", &g.cpu_freq);
 
 #if __GAMEKID__ >= 4
     bool tlim = false;

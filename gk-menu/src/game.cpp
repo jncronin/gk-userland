@@ -29,6 +29,7 @@ void Game::Load()
     pcinfo.with_focus = 1;
     pcinfo.keymap = keymap;
     pcinfo.graphics_texture_size = graphics_texture_size;
+    pcinfo.cpu_freq = cpu_freq;
     pcinfo.osd = nullptr;
     // inherit stdin/out/err, nil else
     pcinfo.acquire_fds[0] = 1;

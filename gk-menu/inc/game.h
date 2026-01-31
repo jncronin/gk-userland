@@ -31,6 +31,8 @@ class Game
         size_t heap_size = 32*1024*1024;
         size_t graphics_texture_size = 0;
 
+        int cpu_freq = 0;
+
         prockeymap_t keymap = { 0 };
 
         void Load();

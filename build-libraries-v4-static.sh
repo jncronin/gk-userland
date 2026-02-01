@@ -85,10 +85,10 @@ make -C build-v4/boost -j16 install
 
 cp -dpR glm/ $SYSROOT/usr/include
 
-cmake $CMAKE_OPTS  -S mojoAL-main/ -B build-v4/mojoAL
-make -C build-v4/mojoAL -j16 install
-cp -dp $SYSROOT/usr/lib/libmojoal.so $SYSROOT/usr/lib/libal.so
-cp -dp $SYSROOT/usr/lib/libmojoal.so $SYSROOT/usr/lib/libopenal.so
+#cmake $CMAKE_OPTS  -S mojoAL-main/ -B build-v4/mojoAL
+#make -C build-v4/mojoAL -j16 install
+#cp -dp $SYSROOT/usr/lib/libmojoal.so $SYSROOT/usr/lib/libal.so
+#cp -dp $SYSROOT/usr/lib/libmojoal.so $SYSROOT/usr/lib/libopenal.so
 
 
 cmake $CMAKE_OPTS -S libogg-1.3.5/ -B build-v4/ogg
@@ -134,8 +134,9 @@ make -C build-v4/sdl2_mixer -j16 install
 # build script doesn't like installing with static libraries
 cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build-v4/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DALSOFT_INSTALL=OFF -DLIBTYPE=STATIC
 make -C build-v4/openal -j 16 install
-cp build/openal/openal.pc $SYSROOT/usr/lib/pkgconfig
-cp build/openal/libopenal.a $SYSROOT/usr/lib
+cp build-v4/openal/openal.pc $SYSROOT/usr/lib/pkgconfig
+cp build-v4/openal/libopenal.a $SYSROOT/usr/lib
+cp -dpR openal-soft-1.24.2/include/AL $SYSROOT/usr/include
 
 cd gettext-tiny-0.3.2
 make CROSS_COMPILE=aarch64-none-gkos- CFLAGS="-g -O2" CC=aarch64-none-gkos-gcc AR=aarch64-none-gkos-ar prefix=$SYSROOT/usr install

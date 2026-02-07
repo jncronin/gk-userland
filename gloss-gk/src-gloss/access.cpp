@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <fcntl.h>
+#include <dirent.h>
 
 extern "C" int access(const char *path, int mode)
 {
@@ -16,6 +17,13 @@ extern "C" int access(const char *path, int mode)
     if(fd >= 0)
     {
         close(fd);
+        return 0;
     }
-    return (fd >= 0) ? 0 : -1;
+    auto d = opendir(path);
+    if(d)
+    {
+        closedir(d);
+        return 0;
+    }
+    return -1;
 }

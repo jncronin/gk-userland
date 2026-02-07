@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 project(gloss-gk C CXX ASM)
 
+option(PROFILE_SYSCALLS "dump profiling information about syscalls every 1000 times they are called" OFF)
+
 file(GLOB_RECURSE SOURCES_GLOSS CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/src-gloss/*.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src-gloss/*.cpp
@@ -30,6 +32,13 @@ target_include_directories(gloss-gk
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_device_h7/Include"
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_core/Include"
 	)
+
+if(PROFILE_SYSCALLS)
+	target_compile_definitions(gloss-gk
+		PRIVATE
+		GK_PROFILE_SYSCALLS=1
+	)
+endif()
 
 add_library(gk)
 

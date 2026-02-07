@@ -625,3 +625,8 @@ extern "C" int pthread_attr_getschedparam(const pthread_attr_t *attr,
     errno = ENOTSUP;
     return -1;
 }
+
+extern "C" int GK_SetGoldenThread(pthread_t tid)
+{
+    return deferred_call(__syscall_setgoldenthread, (int)tid);
+}

@@ -75,6 +75,8 @@ int GK_GetJoystickBAxes(int *x, int *y);
 int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int is_raw);
 int GK_SetJoystickCalibration(unsigned int axis_pair,
     int left, int right, int top, int bottom, int middle_x, int middle_y);
+
+int GK_SetGoldenThread(pthread_t tid);
 #endif
 
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)

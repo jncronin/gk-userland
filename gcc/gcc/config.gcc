@@ -1329,6 +1329,7 @@ arm*-*-gkos*)
 aarch64*-*-gkos*)
 	tm_file="${tm_file} elfos.h newlib-stdint.h aarch64/aarch64-elf.h aarch64/aarch64-errata.h aarch64/aarch64-elf-gkos.h aarch64/gkosv4.h"
 	tmake_file="${tmake_file} aarch64/t-aarch64"
+	extra_options="${extra_options} gkos.opt"
 	target_cpu_cname="cortexa35"
 	aarch64_multilibs="${with_multilib_list}"
 	if test "$aarch64_multilibs" = "default"; then

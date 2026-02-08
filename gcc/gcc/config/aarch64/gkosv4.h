@@ -20,3 +20,6 @@
 
 #undef LIB_SPEC
 #define LIB_SPEC "%{!shared:%{!symbolic:--start-group -lc -lgloss-gk -lgk -lm --end-group}}"
+
+#undef CPP_SPEC
+#define CPP_SPEC "%{pthread:-D_REENTRANT -D_PTHREADS}"

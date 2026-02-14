@@ -663,7 +663,7 @@ int pthread_barrier_init(pthread_barrier_t *barrier,
     {
         return EINVAL;
     }
-    __syscall_pthread_barrier_init_params p { barrier, attr, count };
+    __syscall_pthread_barrier_init_params p { (int *)barrier, (const void *)attr, count };
     int ret = deferred_call(__syscall_pthread_barrier_init, &p);
     if(ret == 0)
         return 0;

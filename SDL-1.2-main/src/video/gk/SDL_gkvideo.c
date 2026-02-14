@@ -713,11 +713,11 @@ int GK_GL_MakeCurrent(_THIS)
         {
             case GK_PIXELFORMAT_ARGB8888:
             case GK_PIXELFORMAT_XRGB8888:
-                glpf = OSMESA_ARGB;
+                glpf = OSMESA_BGRA;
                 this->gl_data->type = GL_UNSIGNED_BYTE;
                 break;
             case GK_PIXELFORMAT_RGB888:
-                glpf = OSMESA_RGB;
+                glpf = OSMESA_BGR;
                 this->gl_data->type = GL_UNSIGNED_BYTE;
                 break;
             case GK_PIXELFORMAT_RGB565:

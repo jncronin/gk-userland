@@ -23,3 +23,7 @@ extern "C" int _wait(int *status)
 	return waitpid(-1, status, 0);
 }
 
+extern "C" int wait4(pid_t pid, int *wstatus, int options, rusage *rusage)
+{
+	return waitpid(pid, wstatus, options);
+}

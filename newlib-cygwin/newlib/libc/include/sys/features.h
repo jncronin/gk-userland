@@ -424,9 +424,12 @@ extern "C" {
 #define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
 #define _POSIX_MONOTONIC_CLOCK		200112L
 #define _POSIX_READER_WRITER_LOCKS      200112L
+#define _POSIX_BARRIERS                 200112L
 
 #define _POSIX_TIMERS			1
 #define _POSIX_SEMAPHORES		1
+#define _POSIX_TIMEOUTS				1
+#define _POSIX_REALTIME_SIGNALS		1
 
 #define HAVE_STRLCPY 1
 

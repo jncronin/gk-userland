@@ -1,5 +1,6 @@
 #include "syscalls.h"
 #include <string.h>
+#include <stdlib.h>
 
 char *dirname(char *path)
 {
@@ -11,8 +12,10 @@ char *dirname(char *path)
     return path;
 }
 
-char *basename(char *path)
+char *basename(const char *_path)
 {
+    char *path = (char *)malloc(strlen(_path) + 1);
+    strcpy(path, _path);
     char *last_slash = strrchr(path, '/');
     if(!last_slash)
         return path;

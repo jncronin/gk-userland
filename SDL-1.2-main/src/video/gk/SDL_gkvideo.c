@@ -1,4 +1,11 @@
-#define SDL_PrivateGLData osmesa_context
+#include <GL/osmesa.h>
+
+struct gkglctx {
+    struct osmesa_context *ctx;
+    GLenum type;
+};
+
+#define SDL_PrivateGLData gkglctx
 #define private_hwdata GKSurfaceData
 
 #include "SDL_config.h"
@@ -9,7 +16,6 @@
 #include "../../events/SDL_events_c.h"
 #include "gk.h"
 #include <sys/mman.h>
-#include <GL/osmesa.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -686,6 +692,13 @@ int GK_GL_MakeCurrent(_THIS)
         GLenum glpf;
         GK_GPU_CommandList(cmds, 4);
 
+        this->gl_data = SDL_malloc(sizeof(struct gkglctx));
+        if(!this->gl_data)
+        {
+            SDL_SetError("couldn't allocate gkglctx");
+            return -1;
+        }
+
         // Get current pixel format of the display - SDL doesn't specify here
         GK_GPUGetScreenMode(NULL, NULL, &gkpf);
 
@@ -701,32 +714,49 @@ int GK_GL_MakeCurrent(_THIS)
             case GK_PIXELFORMAT_ARGB8888:
             case GK_PIXELFORMAT_XRGB8888:
                 glpf = OSMESA_ARGB;
+                this->gl_data->type = GL_UNSIGNED_BYTE;
                 break;
             case GK_PIXELFORMAT_RGB888:
                 glpf = OSMESA_RGB;
+                this->gl_data->type = GL_UNSIGNED_BYTE;
                 break;
             case GK_PIXELFORMAT_RGB565:
                 glpf = OSMESA_RGB_565;
+                this->gl_data->type = GL_UNSIGNED_SHORT_5_6_5;
                 break;
             default:
                 SDL_SetError("Invalid pixel format");
                 return -1;
         }
-        this->gl_data = OSMesaCreateContext(glpf, NULL);
 
-        if(!this->gl_data)
+        {
+            const int attribs[] = {
+                OSMESA_FORMAT, glpf,
+                OSMESA_DEPTH_BITS, 32,
+                OSMESA_STENCIL_BITS, 0,
+                OSMESA_ACCUM_BITS, 0,
+                OSMESA_PROFILE, OSMESA_COMPAT_PROFILE,
+                OSMESA_CONTEXT_MAJOR_VERSION, 1,
+                OSMESA_CONTEXT_MINOR_VERSION, 1,
+                0
+            };
+            this->gl_data->ctx = OSMesaCreateContextAttribs(attribs, NULL);
+        }
+        //this->gl_data = OSMesaCreateContext(glpf, NULL);
+
+        if(!this->gl_data->ctx)
         {
             SDL_SetError("Couldn't allocate OSMesa context");
             return -1;
         }
 
         if(this->screen && this->screen->flags & SDL_NEMA)
-            OSMesaEnableNema(this->gl_data, GL_TRUE);
+            OSMesaEnableNema(this->gl_data->ctx, GL_TRUE);
 
         // Set first framebuffer
         GK_GPUGetScreenMode((size_t *)&this->screen->w, (size_t *)&this->screen->h, NULL);
-        OSMesaMakeCurrent(this->gl_data, firstfb,
-            this->screen->format->BitsPerPixel == 16 ? GL_UNSIGNED_SHORT_5_6_5 : GL_UNSIGNED_BYTE,
+        OSMesaMakeCurrent(this->gl_data->ctx, firstfb,
+            this->gl_data->type,
             this->screen->w, this->screen->h);
         OSMesaPixelStore(OSMESA_Y_UP, 0);
     }
@@ -743,14 +773,16 @@ static void GK_GL_SwapWindow(_THIS)
     void *next_fb;
     GK_GPU_CommandList(cmds, 4);
 
+    glFlush();
+
     if(this->screen && this->screen->flags & SDL_NEMA)
-        OSMesaNemaEndFrame(this->gl_data);
+        OSMesaNemaEndFrame(this->gl_data->ctx);
 
     GK_GPUFlipBuffers(&cmds, &next_fb);
     GK_GPUFlush(&cmds);
 
-    OSMesaMakeCurrent(this->gl_data, next_fb,
-        this->screen->format->BitsPerPixel == 16 ? GL_UNSIGNED_SHORT_5_6_5 : GL_UNSIGNED_BYTE,
+    OSMesaMakeCurrent(this->gl_data->ctx, next_fb,
+        this->gl_data->type,
         this->screen->w, this->screen->h);
     OSMesaPixelStore(OSMESA_Y_UP, 0);
 }

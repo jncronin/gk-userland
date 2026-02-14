@@ -14,9 +14,16 @@ struct statvfs
     fsfilcnt_t  f_ffree;
     fsfilcnt_t  f_favail;
     unsigned long f_fsid;
-    unsigned long f_flag;
+    union
+    {
+        unsigned long _f_flag;
+        unsigned long _f_flags;
+    } __ff;
     unsigned long f_namemax;
 };
+
+#define f_flag __ff._f_flag
+#define f_flags __ff._f_flags
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,5 +38,7 @@ int fstatvfs(int, struct statvfs *);
 
 #define ST_RDONLY       1
 #define ST_NOSUID       2
+
+#define MNT_LOCAL       1024
 
 #endif

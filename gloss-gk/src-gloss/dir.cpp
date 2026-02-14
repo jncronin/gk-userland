@@ -24,12 +24,6 @@ extern "C" int rmdir(const char *pathname)
     return deferred_call(__syscall_rmdir, (void *)pathname);
 }
 
-extern "C" int chmod(const char *pathname, mode_t mode)
-{
-    __syscall_mkdir_params p { pathname, mode };
-    return deferred_call(__syscall_chmod, &p);
-}
-
 extern "C" DIR *opendir(const char *name)
 {
     auto ret = deferred_call(__syscall_opendir, (void *)name);
@@ -85,4 +79,10 @@ extern "C" void rewinddir(DIR *dirp)
         return;
     }
     deferred_call(__syscall_rewinddir, (void *)(intptr_t)dirp->dd_fd);
+}
+
+extern "C" int dirfd(DIR *)
+{
+    errno = ENOTSUP;
+    return -1;
 }

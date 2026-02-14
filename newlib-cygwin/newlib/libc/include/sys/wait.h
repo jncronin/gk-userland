@@ -29,6 +29,15 @@ extern "C" {
 pid_t wait (int *);
 pid_t waitpid (pid_t, int *, int);
 
+#if __GAMEKID__
+struct rusage;
+
+pid_t wait3(int * wstatus, int options,
+            struct rusage * rusage);
+pid_t wait4(pid_t pid, int * wstatus, int options,
+            struct rusage * rusage);
+#endif
+
 #ifdef _LIBC
 pid_t _wait (int *);
 #endif

@@ -16,3 +16,13 @@ extern "C" int sigaction(int signum,
     errno = EINVAL;
     return -1;
 }
+
+extern "C" int sigaltstack(const stack_t *ss, stack_t *oldss)
+{
+    return 0;
+}
+
+extern "C" unsigned int alarm(unsigned int seconds)
+{
+    return 0;
+}

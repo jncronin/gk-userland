@@ -88,3 +88,17 @@ extern "C" hostent *gethostbyname(const char *name)
 {
     return nullptr;
 }
+
+extern "C" void freeaddrinfo(addrinfo *ai)
+{
+    // not yet implemented
+}
+
+extern "C" int getaddrinfo(const char * nodename,
+           const char * servname,
+           const struct addrinfo *hints,
+           struct addrinfo ** res)
+{
+    // not yet implemented
+    return EAI_NONAME;
+}

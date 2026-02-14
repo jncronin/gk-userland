@@ -25,7 +25,7 @@ cp -dpR gloss-gk/inc-gk/* $SYSROOT/usr/include
 # build binutils
 mkdir -p build-v4/binutils
 cd build-v4/binutils
-../../binutils-gdb/configure --target=aarch64-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --disable-werror --disable-gdb
+../../binutils-gdb/configure --target=aarch64-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --disable-werror --disable-gdb --disable-sim --disable-readline --disable-libdecnumber
 make -j16 all
 make -j16 install
 cd ../..
@@ -76,8 +76,8 @@ cp -dpR $TOOLSDIR/aarch64-none-gkos/include/* $SYSROOT/usr/include
 cp -dpR $TOOLSDIR/aarch64-none-gkos/lib/* $SYSROOT/usr/lib
 
 # now make a shared version of libgloss
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkosv4.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr -S gloss-gk -B build-v4/gloss-gk-shared
-make -C build-v4/gloss-gk-shared -j16 install
+#cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-gkosv4.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr -S gloss-gk -B build-v4/gloss-gk-shared
+#make -C build-v4/gloss-gk-shared -j16 install
 
 # report success
 echo "Successfully built gkos toolchain in $TOOLSDIR"

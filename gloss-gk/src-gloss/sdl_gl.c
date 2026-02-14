@@ -36,3 +36,8 @@ __attribute__((weak)) void OSMesaEnableNema()
 {
     GK_GL_NotLinked();
 }
+
+__attribute__((weak)) void glFlush()
+{
+    GK_GL_NotLinked();
+}

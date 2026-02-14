@@ -36,6 +36,14 @@ int    msync(void *, size_t, int);
 int    munlock(const void *, size_t);
 int    munlockall(void);
 
+int madvise(void * addr, size_t size, int advice);
+
+#define MADV_NORMAL     0
+#define MADV_RANDOM     1
+#define MADV_SEQUENTIAL 2
+#define MADV_WILLNEED   3
+#define MADV_DONTNEED   4
+
 #ifdef __cplusplus
 }
 #endif

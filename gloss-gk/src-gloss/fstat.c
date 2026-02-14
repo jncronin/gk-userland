@@ -1,5 +1,7 @@
 #include <syscalls.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
 
 int _fstat(int file, struct stat *st)
 {
@@ -25,4 +27,22 @@ int _fstat(int file, struct stat *st)
 		return wssp.ival1;
 	}
 	return file;
+}
+
+int fstatat(int dirfd, const char *pathname, struct stat *buf, int flags)
+{
+	// TODO
+	return stat(pathname, buf);
+}
+
+int fstatvfs(int fd, struct statvfs *buf)
+{
+	if(fd < 0)
+	{
+		errno = EINVAL;
+		return -1;
+	}
+
+	buf->f_flag |= MNT_LOCAL;
+	return 0;
 }

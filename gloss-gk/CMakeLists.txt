@@ -119,5 +119,19 @@ target_include_directories(pthread
 )
 #set_target_properties(pthread PROPERTIES PUBLIC_HEADER "inc-pthread/pthread.h;inc-pthread/sched.h")
 
-install(TARGETS gloss-gk pthread gk)
+add_library(dl)
+
+target_sources(dl
+	PRIVATE
+	src-dl/dummy.c
+)
+
+add_library(rt)
+
+target_sources(rt
+	PRIVATE
+	src-rt/dummy.c
+)
+
+install(TARGETS gloss-gk pthread gk dl rt)
 

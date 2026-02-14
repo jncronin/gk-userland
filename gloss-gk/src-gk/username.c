@@ -123,3 +123,61 @@ void endpwent(void)
 {
 
 }
+
+int getpwuid_r(uid_t uid, struct passwd *pwd,
+            char *buf, size_t buflen, struct passwd **result)
+{
+    if(!pwd)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    struct passwd *ret = getpwuid(uid);
+    if(ret == NULL)
+    {
+        return -1;
+    }
+
+    size_t strreq = strlen(ret->pw_name) + 1 + 
+        strlen(ret->pw_passwd) + 1 +
+        strlen(ret->pw_gecos) + 1 +
+        strlen(ret->pw_dir) + 1 +
+        strlen(ret->pw_shell) + 1;
+
+    if(strreq > buflen)
+    {
+        errno = ERANGE;
+        return -1;
+    }
+
+    pwd->pw_name = buf;
+    strcpy(buf, ret->pw_name);
+    buf += strlen(ret->pw_name + 1);
+
+    pwd->pw_passwd = buf;
+    strcpy(buf, ret->pw_passwd);
+    buf += strlen(ret->pw_passwd + 1);
+
+    pwd->pw_uid = ret->pw_uid;
+    pwd->pw_gid = ret->pw_gid;
+
+    pwd->pw_gecos = buf;
+    strcpy(buf, ret->pw_gecos);
+    buf += strlen(ret->pw_gecos + 1);
+
+    pwd->pw_dir = buf;
+    strcpy(buf, ret->pw_dir);
+    buf += strlen(ret->pw_dir + 1);
+
+    pwd->pw_shell = buf;
+    strcpy(buf, ret->pw_shell);
+    buf += strlen(ret->pw_shell + 1);
+
+    if(result)
+    {
+        *result = pwd;
+    }
+
+    return 0;
+}

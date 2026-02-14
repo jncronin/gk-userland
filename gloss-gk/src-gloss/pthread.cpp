@@ -384,6 +384,20 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
     return errno;
 }
 
+int pthread_mutex_timedlock(pthread_mutex_t *mutex, const timespec *abstime)
+{
+    if(!mutex)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    __syscall_trywait_params p { .sync = mutex, .clock_id = CLOCK_REALTIME, .until = abstime };
+    int ret = deferred_call_with_retry(__syscall_pthread_mutex_trylock, &p);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
     if(!mutex)
@@ -629,4 +643,81 @@ extern "C" int pthread_attr_getschedparam(const pthread_attr_t *attr,
 extern "C" int GK_SetGoldenThread(pthread_t tid)
 {
     return deferred_call(__syscall_setgoldenthread, (int)tid);
+}
+
+int pthread_barrier_init(pthread_barrier_t *barrier,
+    const pthread_barrierattr_t *attr, unsigned count)
+{
+    if(!count)
+    {
+        return EINVAL;
+    }
+    
+    pthread_barrierattr_t defattr;
+    if(!attr)
+    {
+        pthread_barrierattr_init(&defattr);
+        attr = &defattr;
+    }
+    if(!attr->is_initialized)
+    {
+        return EINVAL;
+    }
+    __syscall_pthread_barrier_init_params p { barrier, attr, count };
+    int ret = deferred_call(__syscall_pthread_barrier_init, &p);
+    if(ret == 0)
+        return 0;
+    return errno;
+
+    return -1;
+}
+
+int pthread_barrier_destroy(pthread_barrier_t *barrier)
+{
+    int ret = deferred_call(__syscall_pthread_barrier_destroy, barrier);
+    if(ret == 0)
+        return 0;
+    return errno;
+}
+
+int pthread_barrier_wait(pthread_barrier_t *barrier)
+{
+    if(!barrier)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    int ret = deferred_call_with_retry(__syscall_pthread_barrier_wait, barrier);
+    if(ret == 0)
+        return 0;
+    if(ret == 1)
+        return PTHREAD_BARRIER_SERIAL_THREAD;
+    return errno;
+}
+
+extern "C" int pthread_getcpuclockid(pthread_t thread, clockid_t *clockid)
+{
+    return ENOENT;
+}
+
+extern "C" int pthread_barrierattr_init(pthread_barrierattr_t *attr)
+{
+    if(!attr)
+    {
+        return EINVAL;
+    }
+
+    attr->is_initialized = 1;
+    return 0;
+}
+
+extern "C" int pthread_barrierattr_destroy(pthread_barrierattr_t *attr)
+{
+    if(!attr)
+    {
+        return EINVAL;
+    }
+
+    attr->is_initialized = 0;
+    return 0;
 }

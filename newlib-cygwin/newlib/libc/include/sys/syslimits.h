@@ -58,4 +58,8 @@
 #define	LINE_MAX		 2048	/* max bytes in an input line */
 #define	RE_DUP_MAX		  255	/* max RE's in interval notation */
 
+#ifndef _POSIX_ARG_MAX
+#define _POSIX_ARG_MAX ARG_MAX
+#endif
+
 #endif

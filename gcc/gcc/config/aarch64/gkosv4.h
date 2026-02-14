@@ -10,6 +10,10 @@
     builtin_define ("unix");        \
     builtin_define ("UNIX");        \
     builtin_define ("_REENT_THREAD_LOCAL"); \
+    builtin_define ("_GNU_SOURCE"); \
+    builtin_define ("_POSIX_SOURCE"); \
+    builtin_define ("_DEFAULT_SOURCE"); \
+    builtin_define ("_HAVE_LONG_DOUBLE"); \
   } while(0);
 
 #undef CC1_SPEC

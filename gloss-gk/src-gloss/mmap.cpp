@@ -94,6 +94,11 @@ extern "C" void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t
 }
 #endif
 
+extern "C" int madvise(void *addr, size_t size, int advice)
+{
+    return 0;
+}
+
 extern "C" int munmap(void *addr, size_t len)
 {
     __syscall_memdealloc_params p { len, addr };

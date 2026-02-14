@@ -53,3 +53,13 @@ extern "C" int getrusage(int who, struct rusage *usage)
     errno = ENOTSUP;
     return -1;
 }
+
+extern "C" int getpagesize()
+{
+    return (int)sysconf(_SC_PAGE_SIZE);
+}
+
+extern "C" int setrlimit(int resource, const rlimit *new_limit)
+{
+    return 0;
+}

@@ -680,6 +680,9 @@ int GK_GL_LoadLibrary(_THIS, const char *path)
 
 void *GK_GL_GetProcAddress(_THIS, const char *name)
 {
+#if __GAMEKID__ >= 4
+    return (void *)OSMesaGetProcAddress(name);
+#endif
     return NULL;
 }
 

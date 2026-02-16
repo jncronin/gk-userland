@@ -32,6 +32,7 @@ static int GK_GL_SwapWindow(_THIS, SDL_Window *window);
 static void GK_GL_DeleteContext(_THIS, SDL_GLContext context);
 static int GK_GL_LoadLibrary(_THIS, const char *path);
 static void *GK_GL_GetProcAddress(_THIS, const char *name);
+static void GK_GL_DefaultProfileConfig(_THIS, int *mask, int *major, int *minor);
 
 void OSMesaNemaEndFrame(OSMesaContext ctx);
 void OSMesaEnableNema(OSMesaContext ctx, GLboolean enable);
@@ -160,6 +161,7 @@ static SDL_VideoDevice *GK_CreateDevice(void)
     device->GL_GetSwapInterval = GK_GL_GetSwapInterval;
     device->GL_SwapWindow = GK_GL_SwapWindow;
     device->GL_DeleteContext = GK_GL_DeleteContext;
+    device->GL_DefaultProfileConfig = GK_GL_DefaultProfileConfig;
 
     return device;
 }
@@ -628,11 +630,11 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
     {
         case GK_PIXELFORMAT_ARGB8888:
         case GK_PIXELFORMAT_XRGB8888:
-            glpf = OSMESA_ARGB;
+            glpf = OSMESA_BGRA;
             gk_window->gl_dformat = GL_UNSIGNED_BYTE;
             break;
         case GK_PIXELFORMAT_RGB888:
-            glpf = OSMESA_RGB;
+            glpf = OSMESA_BGR;
             gk_window->gl_dformat = GL_UNSIGNED_BYTE;
             break;
         case GK_PIXELFORMAT_RGB565:
@@ -640,9 +642,65 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
             gk_window->gl_dformat = GL_UNSIGNED_SHORT_5_6_5;
             break;
         default:
+            SDL_SetError("unsupported glpf: %u\n", gkpf);
             return NULL;
     }
+
+#if __GAMEKID__ >= 4
+    {
+        int attribs[] =
+        {
+            OSMESA_FORMAT, glpf,
+            OSMESA_DEPTH_BITS, 16,
+            OSMESA_STENCIL_BITS, 0,
+            OSMESA_ACCUM_BITS, 0,
+            OSMESA_PROFILE, OSMESA_COMPAT_PROFILE,
+            OSMESA_CONTEXT_MAJOR_VERSION, 2,
+            OSMESA_CONTEXT_MINOR_VERSION, 0,
+            0
+        };
+
+        if(_this->gl_config.depth_size)
+            attribs[3] = _this->gl_config.depth_size;
+        if(_this->gl_config.stencil_size)
+            attribs[5] = _this->gl_config.stencil_size;
+        if(_this->gl_config.accum_red_size)
+            attribs[7] = _this->gl_config.accum_red_size;
+        if(_this->gl_config.major_version)
+            attribs[11] = _this->gl_config.major_version;
+        if(_this->gl_config.minor_version)
+            attribs[13] = _this->gl_config.minor_version;
+        switch(_this->gl_config.profile_mask)
+        {
+            case SDL_GL_CONTEXT_PROFILE_COMPATIBILITY:
+                attribs[9] = OSMESA_COMPAT_PROFILE;
+                break;
+            case SDL_GL_CONTEXT_PROFILE_CORE:
+                attribs[9] = OSMESA_CORE_PROFILE;
+                break;
+            default:
+                if(((attribs[11] == 3) && (attribs[13] >= 2)) ||
+                    (attribs[11] > 3))
+                    attribs[9] = OSMESA_CORE_PROFILE;
+                break;
+        }
+
+        for(unsigned int i = 0U; attribs[i] != 0; i += 2)
+        {
+            fprintf(stderr, "gl_attribs: %d: %d\n", attribs[i], attribs[i + 1]);
+        }
+
+        gk_window->gl_ctx = OSMesaCreateContextAttribs(attribs, NULL);
+    }
+#else
     gk_window->gl_ctx = OSMesaCreateContext(glpf, NULL);
+#endif
+
+    if(!gk_window->gl_ctx)
+    {
+        SDL_SetError("Couldn't allocate OSMesa context");
+        return NULL;
+    }
 
     if(window->flags & SDL_WINDOW_NEMA)
         OSMesaEnableNema(gk_window->gl_ctx, GL_TRUE);
@@ -673,6 +731,8 @@ int GK_GL_SwapWindow(_THIS, SDL_Window *window)
     GK_Window *gk_window = window->driverdata;
     GK_GPU_CommandList(cmds, 4);
 
+    glFlush();
+
     if(window->flags & SDL_WINDOW_NEMA)
         OSMesaNemaEndFrame(gk_window->gl_ctx);
 
@@ -700,7 +760,24 @@ int GK_GL_LoadLibrary(_THIS, const char *path)
 
 void *GK_GL_GetProcAddress(_THIS, const char *name)
 {
+#if __GAMEKID__ >= 4
+    return (void *)OSMesaGetProcAddress(name);
+#else
     return NULL;
+#endif
+}
+
+void GK_GL_DefaultProfileConfig(_THIS, int *mask, int *major, int *minor)
+{
+#if __GAMEKID__ >= 4
+    *mask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+    *major = 3;
+    *minor = 1;
+#else
+    *mask = 0;
+    *major = 1;
+    *minor = 1;
+#endif
 }
 
 #endif

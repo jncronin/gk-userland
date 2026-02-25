@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 
 void game_click(lv_event_t *e)
 {
-    auto gidx = (int)(intptr_t)e->user_data;
+    auto gidx = (int)(intptr_t)lv_event_get_user_data(e);
     auto &g = games[gidx];
     Mix_HaltMusic();
 
@@ -348,6 +348,6 @@ void game_click(lv_event_t *e)
 
 void btn_focus(lv_event_t *e)
 {
-    auto col = (uint32_t)(uintptr_t)e->user_data;
+    auto col = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
     GK_SetLED(1, col);
 }

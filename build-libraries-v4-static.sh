@@ -120,8 +120,8 @@ mkdir -p $SYSROOT/usr/lib/pkgconfig
 cp tcl.pc $SYSROOT/usr/lib/pkgconfig
 cd ../..
 
-cmake $CMAKE_OPTS -S lvgl-9.1.0/ -B build-v4/lvgl9
-make -C build-v4/lvgl9 -j 16 install
+make $CMAKE_OPTS -S lvgl-9.5.0/ -B build-v4/lvgl95 -DCONFIG_LV_BUILD_DEMOS=OFF -DCONFIG_LV_BUILD_EXAMPLES=OFF
+make -C build-v4/lvgl95 -j 16 install
 
 cp toolchain-gkosv4.cmake mpg123-1.32.7/ports
 cp toolchain-gkosv4-static.cmake mpg123-1.32.7/ports

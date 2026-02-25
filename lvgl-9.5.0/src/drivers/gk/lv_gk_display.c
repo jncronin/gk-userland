@@ -119,13 +119,14 @@ void flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
         gmsg->src_addr_color = 0;
     }
 
-    /* Add area, if any */
+    /* Add area, if any. v4 does in-kernel front/backbuffer sync so not necessary  */
+#if __GAMEKID__ < 4
     if(area)
     {
         struct gpu_message *cgmsg = get_next_msg(dd);
         if(!cgmsg)
             return;
-        cgmsg->type = BlitImage;
+        cgmsg->type = BlitImageNoBlend;
         cgmsg->dest_addr = 0;
         cgmsg->dest_pf = 0;
         cgmsg->dp = 0;
@@ -147,7 +148,7 @@ void flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
         struct gpu_message *cgmsg = get_next_msg(dd);
         if(!cgmsg)
             return;
-        cgmsg->type = BlitImage;
+        cgmsg->type = BlitImageNoBlend;
         cgmsg->dest_addr = 0;
         cgmsg->dest_pf = 0;
         cgmsg->dp = 0;
@@ -163,6 +164,7 @@ void flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
         cgmsg->w = dd->w;
         cgmsg->h = dd->h;
     }
+#endif
 
     /* If last update in the frame, add a signal thread and return */
     if(lv_display_flush_is_last(disp))

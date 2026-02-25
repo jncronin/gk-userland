@@ -290,6 +290,7 @@ int main(int argc, char *argv[])
 
     lv_obj_delete(load_text);
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_scroll_dir(list, LV_DIR_VER);
     lv_obj_set_style_pad_left(list, 16/h_scale, 0);
     lv_obj_set_style_pad_right(list, 16/h_scale, 0);
     lv_obj_set_style_pad_top(list, 16/v_scale, 0);

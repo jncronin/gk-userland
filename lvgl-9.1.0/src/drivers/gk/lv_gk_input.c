@@ -140,7 +140,7 @@ void gk_update_state()
                     d.point.y = ev.mouse_data.y;
                 }
                 if(d.point.x < 0) d.point.x = 0;
-                if(d.point.x >= 640) d.point.x = 639;
+                if(d.point.x >= 800) d.point.x = 799;
                 if(d.point.y < 0) d.point.y = 0;
                 if(d.point.y >= 480) d.point.y = 479;
 

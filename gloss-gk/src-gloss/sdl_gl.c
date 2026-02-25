@@ -7,6 +7,16 @@ static void GK_GL_NotLinked()
     exit(-1);
 }
 
+__attribute__((weak)) void OSMesaGetProcAddress()
+{
+    GK_GL_NotLinked();
+}
+
+__attribute__((weak)) void OSMesaCreateContextAttribs()
+{
+    GK_GL_NotLinked();
+}
+
 __attribute__((weak)) void OSMesaCreateContext()
 {
     GK_GL_NotLinked();

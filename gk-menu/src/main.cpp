@@ -247,6 +247,7 @@ int main(int argc, char *argv[])
         lv_obj_set_size(lbtn_text, LV_PCT(100), LV_SIZE_CONTENT);
         lv_label_set_text(lbtn_text, g.name.c_str());
         lv_obj_add_style(lbtn_text, &style_text, 0);
+        lv_obj_add_flag(lbtn_text, LV_OBJ_FLAG_EVENT_BUBBLE);
 
         auto lbtn_row2_cont = lv_obj_create(lbtn);
         lv_obj_set_flex_flow(lbtn_row2_cont, LV_FLEX_FLOW_ROW);
@@ -257,6 +258,7 @@ int main(int argc, char *argv[])
         lv_obj_set_style_pad_column(lbtn_row2_cont, 0, 0);
         lv_obj_set_style_pad_all(lbtn_row2_cont, 0, 0);
         lv_obj_add_style(lbtn_row2_cont, &style_cont, 0);
+        lv_obj_add_flag(lbtn_row2_cont, LV_OBJ_FLAG_EVENT_BUBBLE);
 
         auto lbtn_extra_text = lv_label_create(lbtn_row2_cont);
         lv_obj_set_style_text_font(lbtn_extra_text, fnt_small, 0);
@@ -264,6 +266,7 @@ int main(int argc, char *argv[])
         lv_obj_set_flex_grow(lbtn_extra_text, 1);
         lv_label_set_text(lbtn_extra_text, g.desc.c_str());
         lv_obj_add_style(lbtn_extra_text, &style_text, 0);
+        lv_obj_add_flag(lbtn_extra_text, LV_OBJ_FLAG_EVENT_BUBBLE);
 
         if(!g.img.empty())
         {
@@ -274,6 +277,7 @@ int main(int argc, char *argv[])
                 lv_obj_set_size(limg, img->header.w/h_scale, img->header.h/v_scale);
                 lv_img_set_src(limg, img);
                 lv_img_set_zoom(limg, 256/h_scale);
+                lv_obj_add_flag(limg, LV_OBJ_FLAG_EVENT_BUBBLE);
             }
         }
 

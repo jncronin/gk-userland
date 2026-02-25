@@ -585,7 +585,9 @@ void GK_PumpEvents(_THIS)
                     ev.mouse_data.x, ev.mouse_data.y);
                 break;
             case MouseUp:
+#if __GAMEKID__ < 4
                 if(ev.mouse_data.is_rel)
+#endif
                 {
                     SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
                         ev.mouse_data.x, ev.mouse_data.y);
@@ -594,7 +596,9 @@ void GK_PumpEvents(_THIS)
                     ev.mouse_data.buttons == 1 ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT);
                 break;
             case MouseDown:
+#if __GAMEKID__ < 4
                 if(ev.mouse_data.is_rel)
+#endif
                 {
                     SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
                         ev.mouse_data.x, ev.mouse_data.y);

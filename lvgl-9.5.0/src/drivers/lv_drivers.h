@@ -20,6 +20,9 @@ extern "C" {
 
 #include "x11/lv_x11.h"
 
+#include "gk/lv_gk_display.h"
+#include "gk/lv_gk_input.h"
+
 #include "display/drm/lv_linux_drm.h"
 #include "display/fb/lv_linux_fbdev.h"
 

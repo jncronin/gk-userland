@@ -79,6 +79,7 @@ lv_indev_t *lv_gk_mouse_create()
 
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(indev, gk_mouse_read_cb);
+    lv_indev_set_scroll_limit(indev, 32);
 
     return indev;
 }
@@ -96,7 +97,10 @@ void gk_mouse_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
     gk_update_state();
 
     gk_rb_pop(&d_mouse, &cur_mouse);
-    lv_memcpy(data, &cur_mouse, sizeof(lv_indev_data_t));
+    data->state = cur_mouse.state;
+    data->point.x = cur_mouse.point.x;
+    data->point.y = cur_mouse.point.y;
+    data->continue_reading = cur_mouse.continue_reading;
 }
 
 void gk_update_state()

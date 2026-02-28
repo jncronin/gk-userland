@@ -4,6 +4,10 @@
 #include "../../lv_init.h"
 
 #include <gk.h>
+#include <_gk_memaddrs.h>
+#include <syscalls.h>
+#include <sys/mman.h>
+#include <errno.h>
 
 struct gk_display_data
 {
@@ -221,4 +225,141 @@ uint32_t get_ticks()
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (uint32_t)((ts.tv_nsec / 1000000ULL) + (ts.tv_sec * 1000ULL));
+}
+
+struct gk_overlaydisplay_data
+{
+    void *bufs[3];
+    int next_buffer;
+    size_t w;
+    size_t h;
+    size_t stride;
+};
+
+static void overlayrelease_disp_cb(lv_event_t *e)
+{
+    lv_display_t *disp = (lv_display_t *)lv_event_get_user_data(e);
+    struct gk_overlaydisplay_data *dd = lv_display_get_driver_data(disp);
+    if(dd)
+    {
+        if(dd->bufs[0])
+            munmap(dd->bufs[0], 4*1024*1024);
+        if(dd->bufs[1])
+            munmap(dd->bufs[1], 4*1024*1024);
+        if(dd->bufs[2])
+            munmap(dd->bufs[2], 4*1024*1024);
+        lv_free(dd);
+    }
+    lv_display_set_driver_data(disp, NULL);
+}
+
+static unsigned int gk_overlay_alpha = 255U;
+
+void lv_gk_overlaydisplay_set_alpha(unsigned int alpha)
+{
+    if(alpha > 255) alpha = 255;
+    gk_overlay_alpha = alpha;
+}
+
+static void overlayflush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
+{
+    struct gk_overlaydisplay_data *dd = lv_display_get_driver_data(disp);
+
+    if(lv_display_flush_is_last(disp))
+    {
+        struct __syscall_flipscreenex_params p;
+        p.layer = 1;
+        p.alpha = gk_overlay_alpha;
+        __syscall(__syscall_flipscreenex, &dd->next_buffer, &p, &errno);
+        if(dd->next_buffer < 0)
+        {
+            return;
+        }
+
+        lv_display_set_buffers(disp, dd->bufs[dd->next_buffer], NULL, dd->h * dd->stride, LV_DISPLAY_RENDER_MODE_DIRECT);
+    }
+
+    lv_display_flush_ready(disp);
+}
+
+lv_display_t *lv_gk_overlaydisplay_create()
+{
+    size_t w, h, stride;
+    unsigned int gkpf;
+    GK_GPUGetScreenMode(&w, &h, &gkpf);
+
+    struct gk_overlaydisplay_data *dd = lv_malloc_zeroed(sizeof(struct gk_overlaydisplay_data));
+    if(dd == NULL) return NULL;
+
+    dd->bufs[0] = mmap(NULL, 4*1024*1024, PROT_WRITE, MAP_SYNC, GK_MMAP_FD_OVERLAY_FB1, 0);
+    dd->bufs[1] = mmap(NULL, 4*1024*1024, PROT_WRITE, MAP_SYNC, GK_MMAP_FD_OVERLAY_FB2, 0);
+    dd->bufs[2] = mmap(NULL, 4*1024*1024, PROT_WRITE, MAP_SYNC, GK_MMAP_FD_OVERLAY_FB3, 0);
+
+    if(dd->bufs[0] == MAP_FAILED || dd->bufs[1] == MAP_FAILED || dd->bufs[2] == MAP_FAILED)
+    {
+        lv_free(dd);
+        return NULL;
+    }
+
+    lv_display_t *disp = lv_display_create(w, h);
+    if(disp == NULL)
+    {
+        lv_free(dd);
+        return NULL;
+    }
+
+    switch(gkpf)
+    {
+        case GK_PIXELFORMAT_ARGB8888:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_ARGB8888);
+            stride = w * 4;
+            break;
+
+        case GK_PIXELFORMAT_RGB888:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
+            stride = w * 3;
+            break;
+
+        case GK_PIXELFORMAT_RGB565:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565);
+            stride = w * 2;
+            break;
+
+        case GK_PIXELFORMAT_L8:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_I8);
+            stride = w;
+            break;
+
+        default:
+            lv_display_delete(disp);
+            return NULL;
+    }
+
+    lv_display_set_resolution(disp, w, h);
+    
+    {
+        /* Get first framebuffer */
+        struct __syscall_flipscreenex_params p;
+        p.layer = 1;
+        p.alpha = 0;
+        __syscall(__syscall_flipscreenex, &dd->next_buffer, &p, &errno);
+        if(dd->next_buffer < 0)
+        {
+            return NULL;
+        }
+
+        lv_display_set_buffers(disp, dd->bufs[dd->next_buffer], NULL, h * stride, LV_DISPLAY_RENDER_MODE_DIRECT);
+    }
+
+    dd->w = w;
+    dd->h = h;
+    dd->stride = stride;
+
+    lv_display_set_flush_cb(disp, overlayflush_cb);
+    lv_display_add_event_cb(disp, overlayrelease_disp_cb, LV_EVENT_DELETE, disp);
+    lv_display_set_driver_data(disp, dd);
+
+    lv_tick_set_cb(get_ticks);
+    
+    return disp;
 }

@@ -10,6 +10,9 @@
 #include <cstdio>
 #include <unistd.h>
 #include <fstream>
+#include <gk.h>
+#include <syscalls.h>
+#include <sys/mman.h>
 
 std::vector<Game> games;
 
@@ -46,6 +49,9 @@ int main(int argc, char *argv[])
 
     auto display = lv_gk_display_create();
     lv_display_set_default(display);
+
+    auto overlay = lv_gk_overlaydisplay_create();
+    lv_gk_overlaydisplay_set_alpha(128);
 
     // show black background with loading text
     list = lv_img_create(lv_screen_active());    
@@ -318,6 +324,15 @@ int main(int argc, char *argv[])
         lv_obj_scroll_to_view_recursive(focus_btn, LV_ANIM_OFF);
         lv_group_focus_obj(focus_btn);
     }
+
+    /* Add supervisor style display */
+    auto oscr = lv_disp_get_scr_act(overlay);
+    auto olab = lv_label_create(oscr);
+    lv_obj_set_style_text_font(olab, fnt_big, 0);
+    lv_obj_set_height(olab, LV_SIZE_CONTENT);
+    lv_obj_set_flex_grow(olab, 1);
+    lv_label_set_text(olab, "TEST OVERLAY");
+
 
     while(1)
     {

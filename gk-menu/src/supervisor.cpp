@@ -19,11 +19,11 @@ void init_supervisor()
 
     /* Add supervisor style display */
     oscr = lv_disp_get_scr_act(overlay);
-    lv_obj_set_style_opa(oscr, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_bg_opa(oscr, LV_OPA_TRANSP, 0);
 
     osbar = lv_obj_create(oscr);
-    lv_obj_set_style_opa(oscr, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_opa(oscr, 192, 0);
+    lv_obj_set_style_opa(osbar, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_opa(osbar, 128, 0);
     lv_obj_set_pos(osbar, 0, 0);
     lv_obj_set_size(osbar, lv_obj_get_width(oscr), 32);
     lv_obj_set_style_bg_color(osbar, lv_color_make(0xaa, 00, 00), 0);

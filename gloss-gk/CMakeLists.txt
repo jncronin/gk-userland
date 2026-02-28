@@ -85,6 +85,7 @@ file(GLOB HEADERS_GK_USERLAND CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_event.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_scancodes.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/_gk_memaddrs.h
+	${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface/syscalls.h
 )
 
 install(FILES 

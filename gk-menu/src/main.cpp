@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
     list = lv_img_create(lv_screen_active());    
     lv_obj_set_size(list, lv_display_get_horizontal_resolution(display), lv_display_get_vertical_resolution(display));
     lv_img_set_src(list, &bbg);
+    lv_image_set_scale_x(list, lv_display_get_horizontal_resolution(display) * 256 / bbg.header.w);
+    lv_image_set_scale_y(list, lv_display_get_vertical_resolution(display) * 256 / bbg.header.h);
     //lv_obj_add_style(list, &style_bg, 0);
     //lv_obj_set_style_radius(list, 0, 0);
 
@@ -143,11 +145,16 @@ int main(int argc, char *argv[])
         fprintf(stderr, "gkmenu: Mix_OpenAudio failed\n");
     }
 
+#if __GAMEKID__ >= 4
+    auto bg_img = get_img("gkmenu-background_v4.png");
+#else
     auto bg_img = get_img("gkmenu-background.png");
+#endif
     if(bg_img)
     {
         lv_img_set_src(list, bg_img);
-        lv_img_set_zoom(list, 256 / h_scale);
+        lv_image_set_scale_x(list, lv_display_get_horizontal_resolution(display) * 256 / bg_img->header.w);
+        lv_image_set_scale_y(list, lv_display_get_vertical_resolution(display) * 256 / bg_img->header.h);
         lv_obj_invalidate(lv_scr_act());
         lv_timer_handler();
     }

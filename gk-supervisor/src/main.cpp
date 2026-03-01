@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     init_styles();
 
     overlay = lv_gk_overlaydisplay_create();
-    lv_gk_overlaydisplay_set_alpha(255);
+    lv_gk_overlaydisplay_set_alpha(192);
     lv_display_set_default(overlay);
     lv_gk_register_caption_change_callback(cc_cb);
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     /* Add supervisor style display */
     oscr = lv_disp_get_scr_act(overlay);
-    lv_obj_set_style_bg_opa(oscr, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_bg_color(oscr, lv_color_make(0x80, 0x80, 0), 0);
 
     osbar = lv_obj_create(oscr);
     lv_obj_set_pos(osbar, 0, 0);

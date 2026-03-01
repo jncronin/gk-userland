@@ -12,8 +12,11 @@ static lv_display_t *overlay;
 static lv_obj_t *oscr, *osbar, *omain;
 
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu;
+static lv_obj_t *main_title;
 
 pid_t gkmenu_pid;
+
+static int cc_cb();
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +27,7 @@ int main(int argc, char *argv[])
     overlay = lv_gk_overlaydisplay_create();
     lv_gk_overlaydisplay_set_alpha(255);
     lv_display_set_default(overlay);
+    lv_gk_register_caption_change_callback(cc_cb);
 
     auto kbd = lv_gk_kbd_create();
 
@@ -84,6 +88,27 @@ int main(int argc, char *argv[])
     lv_obj_set_pos(sbar_cpu, 500, 4);
     lv_obj_set_style_text_color(sbar_cpu, lv_color_white(), 0);
     lv_obj_set_style_text_opa(sbar_cpu, LV_OPA_COVER, 0);
+
+    /* Main part */
+    omain = lv_obj_create(oscr);
+    lv_obj_set_style_opa(omain, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_opa(omain, 128, 0);
+    lv_obj_set_pos(omain, 0, 240);
+    lv_obj_set_size(omain, lv_obj_get_width(oscr), lv_obj_get_height(oscr) - 240);
+    lv_obj_set_style_bg_color(omain, lv_color_make(0xaa, 00, 00), 0);
+    lv_obj_set_style_pad_all(omain, 0, 0);
+    lv_obj_set_style_radius(omain, 0, 0);
+    lv_obj_set_style_margin_all(omain, 0, 0);
+    lv_obj_set_style_border_width(omain, 0, 0);
+
+    main_title = lv_label_create(omain);
+    lv_obj_set_style_text_font(main_title, &lv_font_montserrat_24, 0);
+    lv_obj_set_pos(main_title, 4, 4);
+    lv_obj_set_width(main_title, lv_obj_get_width(oscr) - 8);
+    lv_obj_set_style_text_color(main_title, lv_color_white(), 0);
+    lv_obj_set_style_text_opa(main_title, LV_OPA_COVER, 0);
+    lv_obj_set_style_text_align(main_title, LV_TEXT_ALIGN_CENTER, 0);
+    lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
 
     // Spawn gkmenu
     proccreate_t pcinfo;
@@ -161,4 +186,34 @@ void supervisor_tick()
 
         last_supervisor_update = lv_tick_get();
     }
+}
+
+int cc_cb()
+{
+    auto fpid = GK_GetFocusProcess();
+    if(fpid < 0)
+        return -1;
+
+    size_t w, h;
+    unsigned int pf;
+    int refresh;
+
+    if(GK_GPUGetScreenModeForProcess(fpid, &w, &h, &pf, &refresh) != 0)
+        return -1;
+    
+    char pname[256];
+    if(GK_GetProcessName(fpid, pname, sizeof(pname) - 1) != 0)
+        return -1;
+
+    pname[sizeof(pname) - 1] = 0;
+    
+    char titlebuf[512];
+    snprintf(titlebuf, sizeof(titlebuf) - 1, "%s (%llux%llux%u@%d)", pname,
+        w, h, pf, refresh);
+    titlebuf[sizeof(titlebuf) - 1] = 0;
+
+    lv_label_set_text(main_title, titlebuf);
+    lv_obj_invalidate(main_title);
+
+    return 0;
 }

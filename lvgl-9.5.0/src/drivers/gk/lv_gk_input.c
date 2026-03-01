@@ -26,6 +26,8 @@ static unsigned int ptr_plus_one(unsigned int ptr);
 
 static struct gk_rb d_mouse, d_kbd;
 
+static int (*cc_cb)() = NULL;
+
 /* cache the previously returned value */
 static lv_indev_data_t cur_mouse, cur_kbd;
 
@@ -41,6 +43,11 @@ void lv_gk_register_inputs()
 
     lv_indev_set_group(lv_gk_mouse_create(), grp);
     lv_indev_set_group(lv_gk_kbd_create(), grp);
+}
+
+void lv_gk_register_caption_change_callback(int (*cb)())
+{
+    cc_cb = cb;
 }
 
 lv_indev_t *lv_gk_kbd_create()
@@ -154,6 +161,10 @@ void gk_update_state()
 
             case RefreshScreen:
                 lv_obj_invalidate(lv_screen_active());
+                break;
+
+            case CaptionChange:
+                if(cc_cb) cc_cb();
                 break;
 
             default:

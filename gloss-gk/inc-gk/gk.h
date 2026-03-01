@@ -48,6 +48,9 @@ int GK_GPUGetScreenModeEx(size_t *w, size_t *h, unsigned int *pf, int *refresh);
 int GK_WindowSetTitle(const char *title);
 int GK_CacheFlush(void *addr, size_t len, int is_exec);
 int GK_CreateProcess(const char *fname, const struct proccreate_t *pcinfo, pid_t *pid);
+pid_t GK_GetFocusProcess();
+int GK_GPUGetScreenModeForProcess(pid_t pid, size_t *w, size_t *h, unsigned int *pf, int *refresh);
+int GK_GetProcessName(pid_t pid, char *name, size_t len);
 
 int GK_AudioSetMode(int nchan, int nbits, int freq, size_t buf_size_bytes);
 int GK_AudioSetModeEx(int nchan, int nbits, int freq, size_t buf_size_bytes, size_t nbufs);

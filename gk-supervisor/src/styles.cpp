@@ -24,6 +24,7 @@ void init_styles()
     lv_style_set_border_opa(&style_transp, LV_OPA_TRANSP);
     lv_style_set_radius(&style_transp, 0);
     lv_style_set_margin_all(&style_transp, 0);
+    lv_style_set_pad_all(&style_transp, 0);
 
     /* Button styles */
     lv_style_init(&style_button);

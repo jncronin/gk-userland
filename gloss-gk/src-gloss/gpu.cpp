@@ -326,3 +326,8 @@ int GK_WindowSetTitle(const char *title)
     }
     return deferred_call(__syscall_setwindowtitle, (void *)title);
 }
+
+extern "C" int GK_GPUSetBrightness(unsigned int bright)
+{
+    return deferred_call(__syscall_setbrightness, (void *)(uintptr_t)bright);
+}

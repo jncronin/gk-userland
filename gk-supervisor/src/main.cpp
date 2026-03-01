@@ -16,6 +16,7 @@ static lv_obj_t *oscr, *osbar, *omain;
 
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu, *sbar_icons;
 static lv_obj_t *main_title;
+static lv_obj_t *bright_ctrl;
 
 static lv_obj_t *def_overlay_kill;
 
@@ -23,6 +24,7 @@ pid_t gkmenu_pid;
 
 static int cc_cb();
 static void kill_click(lv_event_t *e);
+static void bright_change(lv_event_t *e);
 
 int main(int argc, char *argv[])
 {
@@ -120,6 +122,38 @@ int main(int argc, char *argv[])
     lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, (240 - 32)/2 - 40);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+
+    // Options on page 2
+    lv_obj_set_layout(main_tv2, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(main_tv2, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_style_pad_row(main_tv2, 16, 0);
+    lv_obj_set_style_pad_all(main_tv2, 16, 0);
+
+    auto p2_l1 = lv_obj_create(main_tv2);
+    lv_obj_add_style(p2_l1, &style_transp, 0);
+    lv_obj_set_layout(p2_l1, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(p2_l1, LV_FLEX_FLOW_ROW);
+    lv_obj_set_width(p2_l1, LV_PCT(100));
+    lv_obj_set_flex_align(p2_l1, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+    lv_obj_set_height(p2_l1, 64);
+
+    auto bright_text = gk_label_create(p2_l1, "Brightness", &lv_font_montserrat_20);
+    lv_obj_set_width(bright_text, 150);
+    bright_ctrl = lv_slider_create(p2_l1);
+    lv_obj_set_width(bright_ctrl, 500);
+    lv_obj_set_height(bright_ctrl, 32);
+    lv_obj_set_style_margin_all(bright_ctrl, 16, 0);
+    lv_slider_set_range(bright_ctrl, 0, 100);
+    lv_slider_set_value(bright_ctrl, GK_KERNEL_INFO->brightness, LV_ANIM_OFF);
+    lv_obj_add_event_cb(bright_ctrl, bright_change, LV_EVENT_VALUE_CHANGED, nullptr);
+
+    auto p2_l2 = lv_obj_create(main_tv2);
+    lv_obj_add_style(p2_l2, &style_transp, 0);
+    lv_obj_set_layout(p2_l2, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(p2_l2, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_height(p2_l2, 64);
+    auto btn_wifi = gk_btn_create(p2_l2, "Wifi");
+    auto btn_rawsd = gk_btn_create(p2_l2, "RawSD");
 
 
 
@@ -290,6 +324,12 @@ void kill_click(lv_event_t *)
             kill(fpid, SIGKILL);
         }
     }
+}
+
+void bright_change(lv_event_t *)
+{
+    auto new_bright = lv_slider_get_value(bright_ctrl);
+    GK_GPUSetBrightness(new_bright);
 }
 
 template<typename T> static T clamp(T v, T minval, T maxval)

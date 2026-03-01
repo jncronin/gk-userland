@@ -74,6 +74,11 @@ lv_display_t *lv_gk_display_create()
             stride = w;
             break;
 
+        case GK_PIXELFORMAT_RGB565A8:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565A8);
+            stride = w * 3;
+            break;
+
         default:
             lv_display_delete(disp);
             return NULL;
@@ -328,6 +333,11 @@ lv_display_t *lv_gk_overlaydisplay_create()
         case GK_PIXELFORMAT_L8:
             lv_display_set_color_format(disp, LV_COLOR_FORMAT_I8);
             stride = w;
+            break;
+
+        case GK_PIXELFORMAT_RGB565A8:
+            lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565A8);
+            stride = w * 3;
             break;
 
         default:

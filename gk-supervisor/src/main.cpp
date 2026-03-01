@@ -146,6 +146,9 @@ int main(int argc, char *argv[])
     lv_slider_set_range(bright_ctrl, 0, 100);
     lv_slider_set_value(bright_ctrl, GK_KERNEL_INFO->brightness, LV_ANIM_OFF);
     lv_obj_add_event_cb(bright_ctrl, bright_change, LV_EVENT_VALUE_CHANGED, nullptr);
+    lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
+    lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
+    lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
 
     auto p2_l2 = lv_obj_create(main_tv2);
     lv_obj_add_style(p2_l2, &style_transp, 0);

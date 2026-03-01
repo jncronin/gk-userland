@@ -2,6 +2,7 @@
 #include "styles.h"
 
 lv_style_t style_cont, style_text, style_button, style_transp;
+lv_style_t style_slider_main, style_slider_knob, style_slider_indicator;
 
 void init_styles()
 {
@@ -46,4 +47,20 @@ void init_styles()
     lv_style_set_text_color(&style_text, lv_color_white());
     lv_style_set_text_opa(&style_text, LV_OPA_COVER);
 
+    /* Slider styles.  Main is the background, indicator is the bit to the left of the knob,
+     knob is the knob */
+    lv_style_init(&style_slider_main);
+    lv_style_set_radius(&style_slider_main, 2);
+
+    lv_style_init(&style_slider_indicator);
+    lv_style_set_radius(&style_slider_indicator, 2);
+    lv_style_set_bg_color(&style_slider_indicator, lv_color_make(0xcc, 0, 0));
+
+    lv_style_init(&style_slider_knob);
+    lv_style_set_radius(&style_slider_knob, 2);
+    lv_style_set_bg_color(&style_slider_knob, lv_color_make(0xff, 0, 0));
+    lv_style_set_pad_left(&style_slider_knob, -8);
+    lv_style_set_pad_right(&style_slider_knob, -8);
+    lv_style_set_pad_top(&style_slider_knob, 8);
+    lv_style_set_pad_bottom(&style_slider_knob, 8);
 }

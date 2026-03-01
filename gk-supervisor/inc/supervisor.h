@@ -4,4 +4,6 @@
 void init_supervisor();
 void supervisor_tick();
 
+void update_kernel_state(bool show);
+
 #endif

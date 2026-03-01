@@ -67,6 +67,8 @@ int GK_SetLED(int led_id, uint32_t color);
 
 int GK_SetSupervisorVisible(int visible, int screen);
 
+int GK_SetSupervisorVisibleEx(int visible, const struct gk_supervisor_visible_region *regions, size_t nregions);
+
 uint64_t GK_GetCurUs();
 
 int GK_GetJoystickAxes(int *x, int *y);

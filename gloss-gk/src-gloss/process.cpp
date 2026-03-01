@@ -27,3 +27,12 @@ int GK_GetProcessName(pid_t pid, char *name, size_t len)
     p.len = len;
     return deferred_call(__syscall_getprocessname, &p);
 }
+
+int GK_SetSupervisorVisibleEx(int visible, const struct gk_supervisor_visible_region *regs, size_t nregs)
+{
+    struct __syscall_setsupervisorvisibleex_params p;
+    p.visible = visible;
+    p.regs = regs;
+    p.nregs = nregs;
+    return deferred_call(__syscall_setsupervisorvisibleex, &p);
+}

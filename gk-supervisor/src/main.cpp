@@ -5,6 +5,7 @@
 #include <cstring>
 #include <ctime>
 #include <unistd.h>
+#include <vector>
 #include "supervisor.h"
 
 static uint32_t last_supervisor_update = 0;
@@ -14,9 +15,12 @@ static lv_obj_t *oscr, *osbar, *omain;
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu;
 static lv_obj_t *main_title;
 
+static lv_obj_t *def_overlay_kill;
+
 pid_t gkmenu_pid;
 
 static int cc_cb();
+static void kill_click(lv_event_t *e);
 
 int main(int argc, char *argv[])
 {
@@ -67,25 +71,25 @@ int main(int argc, char *argv[])
 
     sbar_temp = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_temp, &lv_font_montserrat_20, 0);
-    lv_obj_set_pos(sbar_temp, 296, 4);
+    lv_obj_set_pos(sbar_temp, 308, 4);
     lv_obj_set_style_text_color(sbar_temp, lv_color_white(), 0);
     lv_obj_set_style_text_opa(sbar_temp, LV_OPA_COVER, 0);
 
     sbar_v = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_v, &lv_font_montserrat_20, 0);
-    lv_obj_set_pos(sbar_v, 364, 4);
+    lv_obj_set_pos(sbar_v, 376, 4);
     lv_obj_set_style_text_color(sbar_v, lv_color_white(), 0);
     lv_obj_set_style_text_opa(sbar_v, LV_OPA_COVER, 0);
 
     sbar_w = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_w, &lv_font_montserrat_20, 0);
-    lv_obj_set_pos(sbar_w, 432, 4);
+    lv_obj_set_pos(sbar_w, 444, 4);
     lv_obj_set_style_text_color(sbar_w, lv_color_white(), 0);
     lv_obj_set_style_text_opa(sbar_w, LV_OPA_COVER, 0);
 
     sbar_cpu = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_cpu, &lv_font_montserrat_20, 0);
-    lv_obj_set_pos(sbar_cpu, 500, 4);
+    lv_obj_set_pos(sbar_cpu, 512, 4);
     lv_obj_set_style_text_color(sbar_cpu, lv_color_white(), 0);
     lv_obj_set_style_text_opa(sbar_cpu, LV_OPA_COVER, 0);
 
@@ -109,6 +113,26 @@ int main(int argc, char *argv[])
     lv_obj_set_style_text_opa(main_title, LV_OPA_COVER, 0);
     lv_obj_set_style_text_align(main_title, LV_TEXT_ALIGN_CENTER, 0);
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
+
+    def_overlay_kill = lv_btn_create(omain);
+    lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, 240/2 - 40);
+    lv_obj_set_size(def_overlay_kill, 120, 80);
+    lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+
+    auto def_overlay_kill_text = lv_label_create(def_overlay_kill);
+    lv_obj_set_size(def_overlay_kill_text, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_text_font(def_overlay_kill_text, &lv_font_montserrat_24, 0);
+    lv_obj_set_style_text_color(def_overlay_kill_text, lv_color_white(), 0);
+    lv_obj_set_style_text_opa(def_overlay_kill_text, LV_OPA_COVER, 0);
+    lv_obj_set_style_text_align(def_overlay_kill_text, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_add_flag(def_overlay_kill_text, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_label_set_text(def_overlay_kill_text, "Quit");
+
+
+    lv_obj_update_layout(lv_scr_act());
+
+    // show supervisor at startup for testing
+    update_kernel_state(true);
 
     // Spawn gkmenu
     proccreate_t pcinfo;
@@ -161,6 +185,8 @@ void supervisor_tick()
 {
     if(last_supervisor_update == 0 || lv_tick_get() >= (last_supervisor_update + 1000))
     {
+        update_kernel_state(true);
+        
         timespec tp;
         clock_gettime(CLOCK_REALTIME, &tp);
         auto t = localtime(&tp.tv_sec);
@@ -216,4 +242,63 @@ int cc_cb()
     lv_obj_invalidate(main_title);
 
     return 0;
+}
+
+void kill_click(lv_event_t *)
+{
+    auto fpid = GK_GetFocusProcess();
+    char fproc_name[256];
+    if(GK_GetProcessName(fpid, fproc_name, sizeof(fproc_name) - 1) == 0)
+    {
+        fproc_name[sizeof(fproc_name) - 1] = 0;
+        if(strcmp("gkmenu", fproc_name))
+        {
+            // not gkmenu - proceed to kill
+            kill(fpid, SIGKILL);
+        }
+    }
+}
+
+template<typename T> static T clamp(T v, T minval, T maxval)
+{
+    if(v < minval) return minval;
+    if(v > maxval) return maxval;
+    return v;
+}
+
+static void update_ks_obj(std::vector<gk_supervisor_visible_region> &visreg, lv_obj_t *obj)
+{
+    if(lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN))
+        return;
+    lv_area_t coords;
+    lv_obj_get_coords(obj, &coords);
+    coords.x1 = clamp(coords.x1, 0, 800);
+    coords.x2 = clamp(coords.x2, 0, 800);
+    coords.y1 = clamp(coords.y1, 0, 480);
+    coords.y2 = clamp(coords.y2, 0, 480);
+
+    gk_supervisor_visible_region vr;
+    vr.x = coords.x1;
+    vr.y = coords.y1;
+    vr.w = coords.x2 - coords.x1;
+    vr.h = coords.y2 - coords.y1;
+
+    visreg.push_back(vr);    
+}
+
+void update_kernel_state(bool show)
+{
+    if(!show)
+    {
+        GK_SetSupervisorVisibleEx(0, nullptr, 0);
+    }
+    else
+    {
+        std::vector<gk_supervisor_visible_region> visreg;
+
+        update_ks_obj(visreg, omain);
+        update_ks_obj(visreg, osbar);
+
+        GK_SetSupervisorVisibleEx(1, visreg.data(), visreg.size());
+    }
 }

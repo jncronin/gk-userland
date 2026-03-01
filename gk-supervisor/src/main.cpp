@@ -8,6 +8,7 @@
 #include <vector>
 #include "supervisor.h"
 #include "styles.h"
+#include "widget.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -98,22 +99,10 @@ int main(int argc, char *argv[])
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
     lv_obj_add_style(main_title, &style_text, 0);
 
-    def_overlay_kill = lv_btn_create(omain);
+    def_overlay_kill = gk_btn_create(omain, "Quit");
     lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, 240/2 - 40);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
-    lv_obj_add_style(def_overlay_kill, &style_button, 0);
-    lv_obj_set_style_text_font(def_overlay_kill, &lv_font_montserrat_24, 0);
-
-    auto def_overlay_kill_text = lv_label_create(def_overlay_kill);
-    //lv_obj_set_size(def_overlay_kill_text, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_text_font(def_overlay_kill_text, &lv_font_montserrat_24, 0);
-    lv_obj_set_style_text_align(def_overlay_kill_text, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_add_flag(def_overlay_kill_text, LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_set_align(def_overlay_kill_text, LV_ALIGN_CENTER);
-    lv_obj_add_style(def_overlay_kill_text, &style_text, 0);
-    lv_label_set_text(def_overlay_kill_text, "Quit");
-
 
     lv_obj_update_layout(lv_scr_act());
 

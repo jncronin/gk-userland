@@ -14,7 +14,7 @@ static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
 static lv_obj_t *oscr, *osbar, *omain;
 
-static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu;
+static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu, *sbar_icons;
 static lv_obj_t *main_title;
 
 static lv_obj_t *def_overlay_kill;
@@ -85,6 +85,13 @@ int main(int argc, char *argv[])
     lv_obj_set_pos(sbar_cpu, 512, 4);
     lv_obj_add_style(sbar_cpu, &style_text, 0);
 
+    sbar_icons = lv_label_create(osbar);
+    lv_obj_set_style_text_font(sbar_icons, &lv_font_montserrat_20, 0);
+    lv_obj_set_pos(sbar_icons, 612, 4);
+    lv_obj_set_width(sbar_icons, 800-4-612);
+    lv_obj_set_style_text_align(sbar_icons, LV_TEXT_ALIGN_RIGHT, 0);
+    lv_obj_add_style(sbar_icons, &style_text, 0);
+
     /* Main part */
     omain = lv_obj_create(oscr);
     lv_obj_set_pos(omain, 0, 240);
@@ -99,10 +106,22 @@ int main(int argc, char *argv[])
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
     lv_obj_add_style(main_title, &style_text, 0);
 
-    def_overlay_kill = gk_btn_create(omain, "Quit");
-    lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, 240/2 - 40);
+    auto main_tv = lv_tabview_create(omain);
+    lv_obj_add_style(main_tv, &style_transp, 0);
+    lv_obj_set_pos(main_tv, 0, 32);
+    lv_obj_set_size(main_tv, 800, 240-32);
+    lv_obj_add_flag(lv_tabview_get_tab_btns(main_tv), LV_OBJ_FLAG_HIDDEN);
+    auto main_tv1 = lv_tabview_add_tab(main_tv, "");
+    lv_obj_add_style(main_tv1, &style_transp, 0);
+    auto main_tv2 = lv_tabview_add_tab(main_tv, "");
+    lv_obj_add_style(main_tv2, &style_transp, 0);
+
+    def_overlay_kill = gk_btn_create(main_tv1, "Quit");
+    lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, (240 - 32)/2 - 40);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+
+
 
     lv_obj_update_layout(lv_scr_act());
 
@@ -184,6 +203,45 @@ void supervisor_tick()
 
         snprintf(buf, 63, "CPU %.2f", GK_KERNEL_INFO->cpu_usage);
         lv_label_set_text(sbar_cpu, buf);
+
+        const char *blank = "";
+        const char *bt_sym, *wifi_sym, *charge_sym, *usb_sym, *bat_sym;
+
+        switch(GK_KERNEL_INFO->bt_state)
+        {
+            case 1:
+            case 2:
+                bt_sym = LV_SYMBOL_BLUETOOTH;
+                break;
+            default:
+                bt_sym = blank;
+                break;
+        }
+        switch(GK_KERNEL_INFO->wifi_state)
+        {
+            case 1:
+            case 2:
+                wifi_sym = LV_SYMBOL_WIFI;
+                break;
+            default:
+                wifi_sym = blank;
+                break;
+        }
+        usb_sym = GK_KERNEL_INFO->wifi_state ? LV_SYMBOL_USB : blank;
+        charge_sym = GK_KERNEL_INFO->pwr_vbus ? LV_SYMBOL_CHARGE : blank;
+        if(GK_KERNEL_INFO->soc >= 75)
+            bat_sym = LV_SYMBOL_BATTERY_FULL;
+        else if(GK_KERNEL_INFO->soc >= 50)
+            bat_sym = LV_SYMBOL_BATTERY_3;
+        else if(GK_KERNEL_INFO->soc >= 25)
+            bat_sym = LV_SYMBOL_BATTERY_2;
+        else if(GK_KERNEL_INFO->soc >= 5)
+            bat_sym = LV_SYMBOL_BATTERY_1;
+        else
+            bat_sym = LV_SYMBOL_BATTERY_EMPTY;
+        
+        snprintf(buf, 63, "%s%s%s%s%s", bt_sym, wifi_sym, usb_sym, charge_sym, bat_sym);
+        lv_label_set_text(sbar_icons, buf);
 
         last_supervisor_update = lv_tick_get();
     }

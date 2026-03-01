@@ -8,6 +8,7 @@
 #include <syscalls.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <stdio.h>
 
 struct gk_display_data
 {
@@ -32,6 +33,8 @@ lv_display_t *lv_gk_display_create()
     size_t w, h, stride;
     unsigned int gkpf;
     GK_GPUGetScreenMode(&w, &h, &gkpf);
+
+    fprintf(stderr, "lvgl: screen %llu x %llu x %u\n", w, h, gkpf);
 
     struct gk_display_data *dd = lv_malloc_zeroed(sizeof(struct gk_display_data));
     if(dd == NULL) return NULL;

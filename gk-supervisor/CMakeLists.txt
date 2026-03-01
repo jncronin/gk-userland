@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
-project(gkmenu C CXX)
+project(gksupervisor C CXX)
 
-add_executable(gkmenu)
+add_executable(gksupervisor)
 
 find_package(PkgConfig REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -13,31 +13,31 @@ find_package(Freetype REQUIRED)
 pkg_check_modules(LVGL REQUIRED lvgl)
 pkg_check_modules(PNG REQUIRED libpng)
 
-set_property(TARGET gkmenu PROPERTY CXX_STANDARD 20)
+set_property(TARGET gksupervisor PROPERTY CXX_STANDARD 20)
 
-file(GLOB_RECURSE GKMENU_SOURCES CONFIGURE_DEPENDS
+file(GLOB_RECURSE GKSUPERVISOR_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
-target_sources(gkmenu
+target_sources(gksupervisor
     PRIVATE
-        ${GKMENU_SOURCES}
+        ${GKSUPERVISOR_SOURCES}
 )
 
-target_compile_definitions(gkmenu
+target_compile_definitions(gksupervisor
     PRIVATE
-        LV_COLOR_DEPTH=16
+        LV_COLOR_DEPTH=32
 )
 
-target_include_directories(gkmenu
+target_include_directories(gksupervisor
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
         ${LVGL_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS}
 )
 
-target_link_libraries(gkmenu
+target_link_libraries(gksupervisor
     PRIVATE
         SDL2::SDL2-static
         SDL2_mixer::SDL2_mixer-static
@@ -50,5 +50,5 @@ target_link_libraries(gkmenu
         z
 )
 
-install(TARGETS gkmenu)
+install(TARGETS gksupervisor)
 include(CPack)

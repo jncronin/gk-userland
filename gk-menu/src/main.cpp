@@ -51,10 +51,6 @@ int main(int argc, char *argv[])
     auto display = lv_gk_display_create();
     lv_display_set_default(display);
 
-#if __GAMEKID__ >= 4
-    init_supervisor();
-#endif
-
     // show black background with loading text
     list = lv_img_create(lv_screen_active());    
     lv_obj_set_size(list, lv_display_get_horizontal_resolution(display), lv_display_get_vertical_resolution(display));
@@ -340,10 +336,6 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-#if __GAMEKID__ >= 4
-        supervisor_tick();
-#endif
-
         if(nrefresh)
         {
             lv_obj_invalidate(lv_scr_act());

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <vector>
 #include "supervisor.h"
+#include "styles.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
     
     lv_init();
 
+    init_styles();
+
     overlay = lv_gk_overlaydisplay_create();
     lv_gk_overlaydisplay_set_alpha(255);
     lv_display_set_default(overlay);
@@ -47,85 +50,68 @@ int main(int argc, char *argv[])
     lv_obj_set_style_bg_opa(oscr, LV_OPA_TRANSP, 0);
 
     osbar = lv_obj_create(oscr);
-    lv_obj_set_style_opa(osbar, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_opa(osbar, 128, 0);
     lv_obj_set_pos(osbar, 0, 0);
     lv_obj_set_size(osbar, lv_obj_get_width(oscr), 32);
-    lv_obj_set_style_bg_color(osbar, lv_color_make(0xaa, 00, 00), 0);
-    lv_obj_set_style_pad_all(osbar, 0, 0);
-    lv_obj_set_style_radius(osbar, 0, 0);
-    lv_obj_set_style_margin_all(osbar, 0, 0);
-    lv_obj_set_style_border_width(osbar, 0, 0);
+    lv_obj_add_style(osbar, &style_cont, 0);
 
     sbar_date = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_date, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_date, 4, 4);
-    lv_obj_set_style_text_color(sbar_date, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_date, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_date, &style_text, 0);
 
     sbar_fps = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_fps, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_fps, 212, 4);
-    lv_obj_set_style_text_color(sbar_fps, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_fps, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_fps, &style_text, 0);
 
     sbar_temp = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_temp, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_temp, 308, 4);
-    lv_obj_set_style_text_color(sbar_temp, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_temp, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_temp, &style_text, 0);
 
     sbar_v = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_v, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_v, 376, 4);
-    lv_obj_set_style_text_color(sbar_v, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_v, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_v, &style_text, 0);
 
     sbar_w = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_w, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_w, 444, 4);
-    lv_obj_set_style_text_color(sbar_w, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_w, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_w, &style_text, 0);
 
     sbar_cpu = lv_label_create(osbar);
     lv_obj_set_style_text_font(sbar_cpu, &lv_font_montserrat_20, 0);
     lv_obj_set_pos(sbar_cpu, 512, 4);
-    lv_obj_set_style_text_color(sbar_cpu, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(sbar_cpu, LV_OPA_COVER, 0);
+    lv_obj_add_style(sbar_cpu, &style_text, 0);
 
     /* Main part */
     omain = lv_obj_create(oscr);
-    lv_obj_set_style_opa(omain, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_opa(omain, 128, 0);
     lv_obj_set_pos(omain, 0, 240);
     lv_obj_set_size(omain, lv_obj_get_width(oscr), lv_obj_get_height(oscr) - 240);
-    lv_obj_set_style_bg_color(omain, lv_color_make(0xaa, 00, 00), 0);
-    lv_obj_set_style_pad_all(omain, 0, 0);
-    lv_obj_set_style_radius(omain, 0, 0);
-    lv_obj_set_style_margin_all(omain, 0, 0);
-    lv_obj_set_style_border_width(omain, 0, 0);
+    lv_obj_add_style(omain, &style_cont, 0);
 
     main_title = lv_label_create(omain);
     lv_obj_set_style_text_font(main_title, &lv_font_montserrat_24, 0);
     lv_obj_set_pos(main_title, 4, 4);
     lv_obj_set_width(main_title, lv_obj_get_width(oscr) - 8);
-    lv_obj_set_style_text_color(main_title, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(main_title, LV_OPA_COVER, 0);
     lv_obj_set_style_text_align(main_title, LV_TEXT_ALIGN_CENTER, 0);
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
+    lv_obj_add_style(main_title, &style_text, 0);
 
     def_overlay_kill = lv_btn_create(omain);
     lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, 240/2 - 40);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+    lv_obj_add_style(def_overlay_kill, &style_button, 0);
+    lv_obj_set_style_text_font(def_overlay_kill, &lv_font_montserrat_24, 0);
 
     auto def_overlay_kill_text = lv_label_create(def_overlay_kill);
-    lv_obj_set_size(def_overlay_kill_text, LV_PCT(100), LV_PCT(100));
+    //lv_obj_set_size(def_overlay_kill_text, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_set_style_text_font(def_overlay_kill_text, &lv_font_montserrat_24, 0);
-    lv_obj_set_style_text_color(def_overlay_kill_text, lv_color_white(), 0);
-    lv_obj_set_style_text_opa(def_overlay_kill_text, LV_OPA_COVER, 0);
     lv_obj_set_style_text_align(def_overlay_kill_text, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_add_flag(def_overlay_kill_text, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_align(def_overlay_kill_text, LV_ALIGN_CENTER);
+    lv_obj_add_style(def_overlay_kill_text, &style_text, 0);
     lv_label_set_text(def_overlay_kill_text, "Quit");
 
 
@@ -186,7 +172,7 @@ void supervisor_tick()
     if(last_supervisor_update == 0 || lv_tick_get() >= (last_supervisor_update + 1000))
     {
         update_kernel_state(true);
-        
+
         timespec tp;
         clock_gettime(CLOCK_REALTIME, &tp);
         auto t = localtime(&tp.tv_sec);

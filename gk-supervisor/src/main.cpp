@@ -221,9 +221,6 @@ int main(int argc, char *argv[])
     lv_obj_add_flag(ovol, LV_OBJ_FLAG_HIDDEN);
     lv_obj_update_layout(lv_scr_act());
 
-    // then show it
-    show_supervisor();
-
     // Spawn gkmenu
     proccreate_t pcinfo;
 

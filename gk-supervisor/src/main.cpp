@@ -27,6 +27,9 @@ static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
 static void wifi_change(lv_event_t *e);
 static void rawsd_change(lv_event_t *e);
+static void main_gesture(lv_event_t *e);
+static void close_supervisor();
+static void show_supervisor();
 
 int main(int argc, char *argv[])
 {
@@ -101,6 +104,7 @@ int main(int argc, char *argv[])
     lv_obj_set_pos(omain, 0, 240);
     lv_obj_set_size(omain, lv_obj_get_width(oscr), lv_obj_get_height(oscr) - 240);
     lv_obj_add_style(omain, &style_cont, 0);
+    lv_obj_add_event_cb(oscr, main_gesture, LV_EVENT_GESTURE, nullptr);
 
     main_title = lv_label_create(omain);
     lv_obj_set_style_text_font(main_title, &lv_font_montserrat_24, 0);
@@ -179,8 +183,15 @@ int main(int argc, char *argv[])
 
     lv_obj_update_layout(lv_scr_act());
 
-    // show supervisor at startup for testing
-    update_kernel_state(true);
+    // hide supervisor at startup for testing
+    lv_obj_set_y(omain, 480);
+    lv_obj_set_y(osbar, 0 - lv_obj_get_height(osbar));
+    lv_obj_add_flag(omain, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(osbar, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_update_layout(lv_scr_act());
+
+    // then show it
+    show_supervisor();
 
     // Spawn gkmenu
     proccreate_t pcinfo;
@@ -374,6 +385,15 @@ void wifi_change(lv_event_t *)
     }
 }
 
+void main_gesture(lv_event_t *e)
+{
+    auto gesture = lv_indev_get_gesture_dir(lv_indev_get_act());
+    if(gesture == LV_DIR_BOTTOM)
+    {
+        close_supervisor();
+    }
+}
+
 void rawsd_change(lv_event_t *)
 {
     auto checked = (lv_obj_get_state(btn_rawsd) & LV_STATE_CHECKED) != 0;
@@ -426,4 +446,68 @@ void update_kernel_state(bool show)
 
         GK_SetSupervisorVisibleEx(1, visreg.data(), visreg.size());
     }
+}
+
+static void supervisor_anim_cb(void *enc_arriving, int32_t v)
+{
+    bool arriving = enc_arriving != nullptr;
+    static bool last_arriving = false;
+
+    // v here is based upon the y coordinate of omain, i.e. from 240 to 480
+    lv_obj_set_y(omain, v);
+
+    // map [240, 480] to [0, -height(osbar)]
+    lv_obj_set_y(osbar, -lv_obj_get_height(osbar) * (v - 240) / 240);
+
+    if(arriving && !last_arriving)
+    {
+        // set visible
+        lv_obj_clear_flag(omain, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(osbar, LV_OBJ_FLAG_HIDDEN);
+        last_arriving = arriving;
+    }
+    else if(!arriving && arriving)
+    {
+        last_arriving = arriving;
+    }
+
+    if(arriving && v == 240)
+    {
+        // last frame
+        update_kernel_state(true);
+    }
+    if(!arriving && v == 480)
+    {
+        // last frame
+        lv_obj_add_flag(omain, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(osbar, LV_OBJ_FLAG_HIDDEN);
+        update_kernel_state(false);
+    }
+}
+
+// shutdown the main parts of supervisor (status bar and main screen overlay)
+void close_supervisor()
+{
+    lv_anim_t anim;
+    lv_anim_init(&anim);
+
+    lv_anim_set_values(&anim, lv_obj_get_y(omain), 480);
+    lv_anim_set_time(&anim, 1000);
+    lv_anim_set_exec_cb(&anim, supervisor_anim_cb);
+    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
+    lv_anim_set_var(&anim, (void*)0);       // leaving
+    lv_anim_start(&anim);
+}
+
+void show_supervisor()
+{
+    lv_anim_t anim;
+    lv_anim_init(&anim);
+
+    lv_anim_set_values(&anim, lv_obj_get_y(omain), 240);
+    lv_anim_set_time(&anim, 1000);
+    lv_anim_set_exec_cb(&anim, supervisor_anim_cb);
+    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
+    lv_anim_set_var(&anim, (void*)(intptr_t)1);       // arriving
+    lv_anim_start(&anim);
 }

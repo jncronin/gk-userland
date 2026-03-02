@@ -47,3 +47,8 @@ int GK_AudioSetFreq(int freq)
 {
     return deferred_call(__syscall_audiosetfreq, (void*)(intptr_t)freq);
 }
+
+int GK_AudioSetVolume(int volume)
+{
+    return deferred_call(__syscall_audiosetvolume, (void*)(intptr_t)volume);
+}

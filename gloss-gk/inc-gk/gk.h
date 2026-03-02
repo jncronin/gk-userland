@@ -63,6 +63,7 @@ int GK_AudioWaitFree();
 int GK_AudioSetFreq(int freq);
 int GK_AudioGetBufferPos(size_t *nbufs, size_t *curbuf, size_t *buflen, size_t *bufpos,
     int *nchan, int *nbits, int *freq);
+int GK_AudioSetVolume(int vol);
 
 int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_b, void **ones, void **zeros);
 

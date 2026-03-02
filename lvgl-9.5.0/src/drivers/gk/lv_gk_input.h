@@ -8,5 +8,6 @@ lv_indev_t * lv_gk_kbd_create(void);
 void lv_gk_register_inputs();
 
 void lv_gk_register_caption_change_callback(int (*cb)());
+void lv_gk_register_rawkey_callback(int (*cb)(unsigned short key, int pressed));
 
 #endif

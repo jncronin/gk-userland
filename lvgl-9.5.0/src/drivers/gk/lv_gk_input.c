@@ -27,6 +27,7 @@ static unsigned int ptr_plus_one(unsigned int ptr);
 static struct gk_rb d_mouse, d_kbd;
 
 static int (*cc_cb)() = NULL;
+static int (*rk_cb)(unsigned short, int) = NULL;
 
 /* cache the previously returned value */
 static lv_indev_data_t cur_mouse, cur_kbd;
@@ -48,6 +49,11 @@ void lv_gk_register_inputs()
 void lv_gk_register_caption_change_callback(int (*cb)())
 {
     cc_cb = cb;
+}
+
+void lv_gk_register_rawkey_callback(int (*cb)(unsigned short key, int pressed))
+{
+    rk_cb = cb;
 }
 
 lv_indev_t *lv_gk_kbd_create()
@@ -121,12 +127,16 @@ void gk_update_state()
         switch(ev.type)
         {
             case KeyDown:
+                if(rk_cb && rk_cb(ev.key, 1))
+                    break;
                 d.key = gk_key_to_lv(ev.key);
                 d.state = LV_INDEV_STATE_PRESSED;
                 if(d.key)
                     gk_rb_push(&d_kbd, &d);
                 break;
             case KeyUp:
+                if(rk_cb && rk_cb(ev.key, 0))
+                    break;
                 d.key = gk_key_to_lv(ev.key);
                 d.state = LV_INDEV_STATE_RELEASED;
                 if(d.key)

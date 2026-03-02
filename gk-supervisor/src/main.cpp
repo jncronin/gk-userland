@@ -157,6 +157,7 @@ int main(int argc, char *argv[])
     lv_obj_set_layout(p2_l2, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(p2_l2, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_height(p2_l2, 64);
+    lv_obj_set_width(p2_l2, LV_PCT(100));
     btn_wifi = gk_btn_create(p2_l2, "Wifi");
     lv_obj_add_flag(btn_wifi, LV_OBJ_FLAG_CHECKABLE);
     lv_obj_add_event_cb(btn_wifi, wifi_change, LV_EVENT_VALUE_CHANGED, nullptr);

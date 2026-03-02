@@ -35,7 +35,7 @@ void init_styles()
     lv_style_set_border_width(&style_button, 4);
     lv_style_set_border_opa(&style_button, LV_OPA_COVER);
     lv_style_set_border_color(&style_button, lv_color_white());
-    lv_style_set_pad_all(&style_button, 4);
+    lv_style_set_pad_all(&style_button, 8);
     lv_style_set_radius(&style_button, 2);
     lv_style_set_margin_all(&style_button, 0);
     lv_style_set_text_color(&style_button, lv_color_white());

@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
     pcinfo.acquire_fds[1] = 2;
     pcinfo.acquire_fds[2] = 3;
     pcinfo.processdata = "gkmenu.osd";
-    pcinfo.nprocessdata = sizeof("gkmenu.osd");
+    pcinfo.nprocessdata = sizeof("gkmenu.osd") - 1; // don't null terminate because we know the length
 
     pcinfo.keymap.gamepad_to_scancode[GK_KEYA] = GK_SCANCODE_RETURN;
     pcinfo.keymap.gamepad_to_scancode[GK_KEYB] = GK_SCANCODE_ESCAPE;

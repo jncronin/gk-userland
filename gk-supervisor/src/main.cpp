@@ -369,9 +369,9 @@ int cc_cb()
     char osdname[512];
     auto nosd = GK_GetProcessData(fpid, osdname, sizeof(osdname) - 1);
     osdname[sizeof(osdname) - 1] = 0;
-    if(nosd)
+    if(nosd > 0)
     {
-        fprintf(stderr, "supervisor: custom_osd: %s\n", osdname);
+        fprintf(stderr, "supervisor: custom_osd (%d): %s\n", nosd, osdname);
     }
 
     return 0;

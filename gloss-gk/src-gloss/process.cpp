@@ -36,3 +36,21 @@ int GK_SetSupervisorVisibleEx(int visible, const struct gk_supervisor_visible_re
     p.nregs = nregs;
     return deferred_call(__syscall_setsupervisorvisibleex, &p);
 }
+
+int GK_GetProcessData(pid_t pid, char *d, size_t len)
+{
+    struct __syscall_getprocessdata_params p;
+    p.pid = pid;
+    p.buf = d;
+    p.len = len;
+    return deferred_call(__syscall_getprocessdata, &p);
+}
+
+int GK_SetProcessData(pid_t pid, const char *d, size_t len)
+{
+    struct __syscall_setprocessdata_params p;
+    p.pid = pid;
+    p.buf = d;
+    p.len = len;
+    return deferred_call(__syscall_setprocessdata, &p);
+}

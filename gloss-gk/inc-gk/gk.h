@@ -65,6 +65,9 @@ int GK_AudioGetBufferPos(size_t *nbufs, size_t *curbuf, size_t *buflen, size_t *
     int *nchan, int *nbits, int *freq);
 int GK_AudioSetVolume(int vol);
 
+int GK_GetProcessData(pid_t pid, char *buf, size_t n);
+int GK_SetProcessData(pid_t pid, const char *buf, size_t n);
+
 int GK_NemaEnable(void **rb, pthread_mutex_t *eof_mutex, void **cl_a, void **cl_b, void **ones, void **zeros);
 
 int GK_SetLED(int led_id, uint32_t color);

@@ -272,8 +272,6 @@ void supervisor_tick()
 {
     if(last_supervisor_update == 0 || lv_tick_get() >= (last_supervisor_update + 1000))
     {
-        update_kernel_state(true);
-
         timespec tp;
         clock_gettime(CLOCK_REALTIME, &tp);
         auto t = localtime(&tp.tv_sec);

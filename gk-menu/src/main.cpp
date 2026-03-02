@@ -13,7 +13,6 @@
 #include <gk.h>
 #include <syscalls.h>
 #include <sys/mman.h>
-#include "supervisor.h"
 
 std::vector<Game> games;
 

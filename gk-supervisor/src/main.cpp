@@ -16,7 +16,7 @@ static lv_obj_t *oscr, *osbar, *omain;
 
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu, *sbar_icons;
 static lv_obj_t *main_title;
-static lv_obj_t *bright_ctrl;
+static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd;
 
 static lv_obj_t *def_overlay_kill;
 
@@ -25,6 +25,8 @@ pid_t gkmenu_pid;
 static int cc_cb();
 static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
+static void wifi_change(lv_event_t *e);
+static void rawsd_change(lv_event_t *e);
 
 int main(int argc, char *argv[])
 {
@@ -155,9 +157,15 @@ int main(int argc, char *argv[])
     lv_obj_set_layout(p2_l2, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(p2_l2, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_height(p2_l2, 64);
-    auto btn_wifi = gk_btn_create(p2_l2, "Wifi");
-    auto btn_rawsd = gk_btn_create(p2_l2, "RawSD");
+    btn_wifi = gk_btn_create(p2_l2, "Wifi");
+    lv_obj_add_flag(btn_wifi, LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_add_event_cb(btn_wifi, wifi_change, LV_EVENT_VALUE_CHANGED, nullptr);
+    if(GK_KERNEL_INFO->wifi_state > 0)
+        lv_obj_add_state(btn_wifi, LV_STATE_CHECKED);
 
+    btn_rawsd = gk_btn_create(p2_l2, "RawSD");
+    lv_obj_add_flag(btn_rawsd, LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_add_event_cb(btn_rawsd, rawsd_change, LV_EVENT_VALUE_CHANGED, nullptr);
 
 
     lv_obj_update_layout(lv_scr_act());
@@ -333,6 +341,38 @@ void bright_change(lv_event_t *)
 {
     auto new_bright = lv_slider_get_value(bright_ctrl);
     GK_GPUSetBrightness(new_bright);
+}
+
+void wifi_change(lv_event_t *)
+{
+    auto checked = (lv_obj_get_state(btn_wifi) & LV_STATE_CHECKED) != 0;
+    fprintf(stderr, "wifi: %s\n", checked ? "enabled" : "disabled");
+    if(GK_WifiEnable(checked ? 1 : 0) == -1)
+    {
+        // handle failure - set to whatever is reported
+        auto reported_val = GK_KERNEL_INFO->wifi_state != 0;
+        if(checked != reported_val)
+        {
+            if(reported_val)
+            {
+                lv_obj_add_state(btn_wifi, LV_STATE_CHECKED);
+            }
+            else
+            {
+                lv_obj_clear_state(btn_wifi, LV_STATE_CHECKED);
+            }
+        }
+    }
+}
+
+void rawsd_change(lv_event_t *)
+{
+    auto checked = (lv_obj_get_state(btn_rawsd) & LV_STATE_CHECKED) != 0;
+    fprintf(stderr, "rawsd: %s\n", checked ? "enabled" : "disabled");
+    if(GK_RawSDEnable(checked ? 1 : 0) == -1)
+    {
+        fprintf(stderr, "rawsd: setting failed - TODO implement this\n");
+    }
 }
 
 template<typename T> static T clamp(T v, T minval, T maxval)

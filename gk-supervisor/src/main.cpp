@@ -9,6 +9,7 @@
 #include "supervisor.h"
 #include "styles.h"
 #include "widget.h"
+#include "osd.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -19,7 +20,7 @@ static lv_obj_t *main_title;
 static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd;
 static lv_obj_t *vol_ctrl;
 
-static lv_obj_t *def_overlay_kill;
+static lv_obj_t *main_tv1;
 
 static lv_timer_t *vol_timer;
 
@@ -129,17 +130,15 @@ int main(int argc, char *argv[])
     lv_obj_set_pos(main_tv, 0, 32);
     lv_obj_set_size(main_tv, 800, 240-32);
     lv_obj_add_flag(lv_tabview_get_tab_btns(main_tv), LV_OBJ_FLAG_HIDDEN);
-    auto main_tv1 = lv_tabview_add_tab(main_tv, "");
+    main_tv1 = lv_tabview_add_tab(main_tv, "");
     lv_obj_add_style(main_tv1, &style_transp, 0);
     auto main_tv2 = lv_tabview_add_tab(main_tv, "");
     lv_obj_add_style(main_tv2, &style_transp, 0);
     auto main_tv3 = lv_tabview_add_tab(main_tv, "");
     lv_obj_add_style(main_tv3, &style_transp, 0);
 
-    def_overlay_kill = gk_btn_create(main_tv1, "Quit");
-    lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, (240 - 32)/2 - 40);
-    lv_obj_set_size(def_overlay_kill, 120, 80);
-    lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+    // Custom OSD on page 1
+    osd_load_custom(main_tv1, "gkmenu.osd");
 
     // Options on page 2
     lv_obj_set_layout(main_tv2, LV_LAYOUT_FLEX);
@@ -240,6 +239,8 @@ int main(int argc, char *argv[])
     pcinfo.acquire_fds[0] = 1;
     pcinfo.acquire_fds[1] = 2;
     pcinfo.acquire_fds[2] = 3;
+    pcinfo.processdata = "gkmenu.osd";
+    pcinfo.nprocessdata = sizeof("gkmenu.osd");
 
     pcinfo.keymap.gamepad_to_scancode[GK_KEYA] = GK_SCANCODE_RETURN;
     pcinfo.keymap.gamepad_to_scancode[GK_KEYB] = GK_SCANCODE_ESCAPE;
@@ -372,24 +373,15 @@ int cc_cb()
     if(nosd > 0)
     {
         fprintf(stderr, "supervisor: custom_osd (%d): %s\n", nosd, osdname);
+        std::string cosdname(osdname, nosd);
+        osd_load_custom(main_tv1, cosdname);
+    }
+    else
+    {
+        osd_load_default(main_tv1);
     }
 
     return 0;
-}
-
-void kill_click(lv_event_t *)
-{
-    auto fpid = GK_GetFocusProcess();
-    char fproc_name[256];
-    if(GK_GetProcessName(fpid, fproc_name, sizeof(fproc_name) - 1) == 0)
-    {
-        fproc_name[sizeof(fproc_name) - 1] = 0;
-        if(strcmp("gkmenu", fproc_name))
-        {
-            // not gkmenu - proceed to kill
-            kill(fpid, SIGKILL);
-        }
-    }
 }
 
 void bright_change(lv_event_t *)

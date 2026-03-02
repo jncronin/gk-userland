@@ -12,11 +12,12 @@
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
-static lv_obj_t *oscr, *osbar, *omain;
+static lv_obj_t *oscr, *osbar, *omain, *ovol;
 
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu, *sbar_icons;
 static lv_obj_t *main_title;
 static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd;
+static lv_obj_t *vol_ctrl;
 
 static lv_obj_t *def_overlay_kill;
 
@@ -60,6 +61,7 @@ int main(int argc, char *argv[])
     /* Add supervisor style display */
     oscr = lv_disp_get_scr_act(overlay);
     lv_obj_set_style_bg_color(oscr, lv_color_make(0x80, 0x80, 0), 0);
+    lv_obj_clear_flag(oscr, LV_OBJ_FLAG_SCROLLABLE);
 
     osbar = lv_obj_create(oscr);
     lv_obj_set_pos(osbar, 0, 0);
@@ -184,6 +186,21 @@ int main(int argc, char *argv[])
     lv_obj_add_style(kbd_widget, &style_transp, LV_PART_MAIN);
     lv_obj_add_style(kbd_widget, &style_button, LV_PART_ITEMS);
     lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
+
+    /* Volume on separate panel */
+    ovol = lv_obj_create(oscr);
+    lv_obj_add_style(ovol, &style_cont, 0);
+    lv_obj_set_style_pad_all(ovol, 8, 0);
+    lv_obj_set_size(ovol, 48, 112);
+    lv_obj_set_pos(ovol, 704, 80);
+
+    vol_ctrl = lv_bar_create(ovol);
+    lv_obj_set_size(vol_ctrl, LV_PCT(100), LV_PCT(100));
+    lv_bar_set_orientation(vol_ctrl, LV_BAR_ORIENTATION_VERTICAL);
+    lv_obj_add_style(vol_ctrl, &style_slider_main, LV_PART_MAIN);
+    lv_obj_add_style(vol_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
+    lv_bar_set_range(vol_ctrl, 0, 100);
+    lv_bar_set_value(vol_ctrl, GK_KERNEL_INFO->volume, LV_ANIM_OFF);
 
     lv_obj_update_layout(lv_scr_act());
 
@@ -556,6 +573,19 @@ static int gkkey_to_special(unsigned short key)
     }
 }
 
+static void handle_volchange(int amount)
+{
+    // TODO reset visibility timer
+
+    // TODO animate in
+
+    // update kernel
+    auto newvol = GK_AudioSetVolume(lv_bar_get_value(vol_ctrl) + amount);
+
+    // Update the bar
+    lv_bar_set_value(vol_ctrl, newvol, LV_ANIM_ON);
+}
+
 static int handle_newpress(unsigned short key)
 {
     fprintf(stderr, "newpress: %u\n", key);
@@ -565,6 +595,14 @@ static int handle_newpress(unsigned short key)
         case GK_SCANCODE_MENU:
             toggle_supervisor();
             break;
+
+        case GK_SCANCODE_VOLUMEUP:
+            handle_volchange(10);
+            break;
+
+        case GK_SCANCODE_VOLUMEDOWN:
+            handle_volchange(-10);
+            break;
     }
 
     return 1;
@@ -573,6 +611,18 @@ static int handle_newpress(unsigned short key)
 static int handle_ongoingpress(unsigned short key)
 {
     fprintf(stderr, "ongoingpress: %u\n", key);
+
+    switch(key)
+    {
+        case GK_SCANCODE_VOLUMEUP:
+            handle_volchange(10);
+            break;
+
+        case GK_SCANCODE_VOLUMEDOWN:
+            handle_volchange(-10);
+            break;
+    }
+
     return 1;
 }
 

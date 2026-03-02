@@ -21,6 +21,8 @@ static lv_obj_t *vol_ctrl;
 
 static lv_obj_t *def_overlay_kill;
 
+static lv_timer_t *vol_timer;
+
 pid_t gkmenu_pid;
 
 static int cc_cb();
@@ -33,7 +35,9 @@ static void close_supervisor();
 static void show_supervisor();
 static void toggle_supervisor();
 static bool supervisor_last_show_cmd = false;
+static bool volume_last_show_cmd = false;
 static int rk_cb(unsigned short, int);
+static void vol_timer_cb(lv_timer_t *t);
 
 int main(int argc, char *argv[])
 {
@@ -202,13 +206,19 @@ int main(int argc, char *argv[])
     lv_bar_set_range(vol_ctrl, 0, 100);
     lv_bar_set_value(vol_ctrl, GK_KERNEL_INFO->volume, LV_ANIM_OFF);
 
+    /* Timer that can be used to hide the volume control after a period of inactivity */
+    vol_timer = lv_timer_create(vol_timer_cb, 2000, nullptr);
+    lv_timer_set_repeat_count(vol_timer, -1);
+
     lv_obj_update_layout(lv_scr_act());
 
-    // hide supervisor at startup for testing
+    // hide supervisor at startup
     lv_obj_set_y(omain, 480);
     lv_obj_set_y(osbar, 0 - lv_obj_get_height(osbar));
+    lv_obj_set_x(ovol, 800);
     lv_obj_add_flag(omain, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(osbar, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ovol, LV_OBJ_FLAG_HIDDEN);
     lv_obj_update_layout(lv_scr_act());
 
     // then show it
@@ -506,6 +516,20 @@ static void supervisor_anim_cb(void *enc_arriving, int32_t v)
     }
 }
 
+static void volume_anim_cb(void *enc_arriving, int32_t v)
+{
+    bool arriving = enc_arriving != nullptr;
+
+    lv_obj_set_x(ovol, v);
+
+    if(!arriving && v == 800)
+    {
+        // last frame
+        lv_obj_add_flag(ovol, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(ovol, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
 // shutdown the main parts of supervisor (status bar and main screen overlay)
 void close_supervisor()
 {
@@ -556,6 +580,46 @@ void toggle_supervisor()
         show_supervisor();
 }
 
+static void show_volume()
+{
+    fprintf(stderr, "show volume\n");
+    volume_last_show_cmd = true;
+
+    // stop any running hide animation
+    lv_anim_del((void*)0, volume_anim_cb);
+    
+    lv_obj_clear_flag(ovol, LV_OBJ_FLAG_HIDDEN);
+
+    lv_anim_t anim;
+    lv_anim_init(&anim);
+
+    lv_anim_set_values(&anim, lv_obj_get_x(ovol), 704);
+    lv_anim_set_time(&anim, 250);
+    lv_anim_set_exec_cb(&anim, volume_anim_cb);
+    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
+    lv_anim_set_var(&anim, (void*)(intptr_t)1);       // arriving
+    lv_anim_start(&anim);
+}
+
+void close_volume()
+{
+    fprintf(stderr, "close volume\n");
+    volume_last_show_cmd = false;
+
+    // stop any running show animation
+    lv_anim_del((void*)(intptr_t)1, volume_anim_cb);
+
+    lv_anim_t anim;
+    lv_anim_init(&anim);
+
+    lv_anim_set_values(&anim, lv_obj_get_x(ovol), 800);
+    lv_anim_set_time(&anim, 250);
+    lv_anim_set_exec_cb(&anim, volume_anim_cb);
+    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
+    lv_anim_set_var(&anim, (void*)0);       // leaving
+    lv_anim_start(&anim);
+}
+
 static int gkkey_to_special(unsigned short key)
 {
     switch(key)
@@ -575,9 +639,14 @@ static int gkkey_to_special(unsigned short key)
 
 static void handle_volchange(int amount)
 {
-    // TODO reset visibility timer
+    // reset visibility timer
+    lv_timer_reset(vol_timer);
 
-    // TODO animate in
+    // animate in
+    if(volume_last_show_cmd == false)
+    {
+        show_volume();
+    }
 
     // update kernel
     auto newvol = GK_AudioSetVolume(lv_bar_get_value(vol_ctrl) + amount);
@@ -664,4 +733,10 @@ int rk_cb(unsigned short key, int pressed)
         return handle_release(key);
     else
         return 0;
+}
+
+void vol_timer_cb(lv_timer_t *)
+{
+    if(volume_last_show_cmd == true)
+        close_volume();
 }

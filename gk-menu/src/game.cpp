@@ -69,6 +69,14 @@ void Game::Load()
     }
     pcinfo.osd = osd_text.empty() ? nullptr : osd_text.c_str();
 
+#if __GAMEKID__ >= 4
+    if(!osd.empty())
+    {
+        pcinfo.processdata = osd.c_str();
+        pcinfo.nprocessdata = osd.size();
+    }
+#endif
+
     pid_t cpid;
     if(GK_CreateProcess(fname.c_str(), &pcinfo, &cpid) < 0)
     {

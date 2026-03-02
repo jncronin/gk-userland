@@ -365,6 +365,15 @@ int cc_cb()
     lv_label_set_text(main_title, titlebuf);
     lv_obj_invalidate(main_title);
 
+    /* Is there a custom osd? */
+    char osdname[512];
+    auto nosd = GK_GetProcessData(fpid, osdname, sizeof(osdname) - 1);
+    osdname[sizeof(osdname) - 1] = 0;
+    if(nosd)
+    {
+        fprintf(stderr, "supervisor: custom_osd: %s\n", osdname);
+    }
+
     return 0;
 }
 

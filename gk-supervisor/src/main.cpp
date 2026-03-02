@@ -30,6 +30,9 @@ static void rawsd_change(lv_event_t *e);
 static void main_gesture(lv_event_t *e);
 static void close_supervisor();
 static void show_supervisor();
+static void toggle_supervisor();
+static bool supervisor_last_show_cmd = false;
+static int rk_cb(unsigned short, int);
 
 int main(int argc, char *argv[])
 {
@@ -43,6 +46,7 @@ int main(int argc, char *argv[])
     lv_gk_overlaydisplay_set_alpha(192);
     lv_display_set_default(overlay);
     lv_gk_register_caption_change_callback(cc_cb);
+    lv_gk_register_rawkey_callback(rk_cb);
 
     auto kbd = lv_gk_kbd_create();
 
@@ -488,6 +492,12 @@ static void supervisor_anim_cb(void *enc_arriving, int32_t v)
 // shutdown the main parts of supervisor (status bar and main screen overlay)
 void close_supervisor()
 {
+    fprintf(stderr, "close supervisor\n");
+    supervisor_last_show_cmd = false;
+
+    // stop any running show animation
+    lv_anim_del((void*)(intptr_t)1, supervisor_anim_cb);
+
     lv_anim_t anim;
     lv_anim_init(&anim);
 
@@ -501,6 +511,15 @@ void close_supervisor()
 
 void show_supervisor()
 {
+    fprintf(stderr, "show supervisor\n");
+    supervisor_last_show_cmd = true;
+
+    // stop any running hide animation
+    lv_anim_del((void*)0, supervisor_anim_cb);
+    
+    lv_obj_clear_flag(omain, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(osbar, LV_OBJ_FLAG_HIDDEN);
+
     lv_anim_t anim;
     lv_anim_init(&anim);
 
@@ -510,4 +529,89 @@ void show_supervisor()
     lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
     lv_anim_set_var(&anim, (void*)(intptr_t)1);       // arriving
     lv_anim_start(&anim);
+}
+
+void toggle_supervisor()
+{
+    if(supervisor_last_show_cmd)
+        close_supervisor();
+    else
+        show_supervisor();
+}
+
+static int gkkey_to_special(unsigned short key)
+{
+    switch(key)
+    {
+        case GK_SCANCODE_POWER:
+            return 0;
+        case GK_SCANCODE_MENU:
+            return 1;
+        case GK_SCANCODE_VOLUMEUP:
+            return 2;
+        case GK_SCANCODE_VOLUMEDOWN:
+            return 3;
+        default:
+            return -1;
+    }
+}
+
+static int handle_newpress(unsigned short key)
+{
+    fprintf(stderr, "newpress: %u\n", key);
+
+    switch(key)
+    {
+        case GK_SCANCODE_MENU:
+            toggle_supervisor();
+            break;
+    }
+
+    return 1;
+}
+
+static int handle_ongoingpress(unsigned short key)
+{
+    fprintf(stderr, "ongoingpress: %u\n", key);
+    return 1;
+}
+
+static int handle_release(unsigned short key)
+{
+    fprintf(stderr, "release: %u\n", key);
+    return 1;
+}
+
+static int handle_click(unsigned short key)
+{
+    fprintf(stderr, "click: %u\n", key);
+    return 1;
+}
+
+int rk_cb(unsigned short key, int pressed)
+{
+    // we intercept menu, power, volup and voldown as they mean special things to us
+    static int special_pressed[4] = { 0 };
+
+    auto special_key = gkkey_to_special(key);
+    if(special_key == -1)
+        return 0;   // handle via default lvgl indev
+    
+    bool is_newpress = pressed && special_pressed[special_key] == 0;
+    bool is_ongoingpress = pressed && special_pressed[special_key] == 1;
+    bool is_release = (pressed == 0);
+    bool is_click = (pressed == 0) && special_pressed[special_key] == 1;
+
+    special_pressed[special_key] = pressed ? 1 : 0;
+
+    if(is_newpress)
+        return handle_newpress(key);
+    else if(is_ongoingpress)
+        return handle_ongoingpress(key);
+    else if(is_release && is_click)
+        return handle_release(key) | handle_click(key);
+    else if(is_release)
+        return handle_release(key);
+    else
+        return 0;
 }

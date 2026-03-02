@@ -6,6 +6,8 @@
 
 lv_obj_t *gk_btn_create(lv_obj_t *parent, const std::string &lab = "", const lv_font_t *font =
     &lv_font_montserrat_20);
+std::pair<lv_obj_t *, lv_obj_t *> gk_btnlab_create(lv_obj_t *parent, const std::string &lab = "", const lv_font_t *font =
+    &lv_font_montserrat_20);
 lv_obj_t *gk_label_create(lv_obj_t *parent, const std::string &lab, const lv_font_t *font =
     &lv_font_montserrat_20);
 

@@ -502,7 +502,7 @@ void close_supervisor()
     lv_anim_init(&anim);
 
     lv_anim_set_values(&anim, lv_obj_get_y(omain), 480);
-    lv_anim_set_time(&anim, 1000);
+    lv_anim_set_time(&anim, 250);
     lv_anim_set_exec_cb(&anim, supervisor_anim_cb);
     lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
     lv_anim_set_var(&anim, (void*)0);       // leaving
@@ -524,7 +524,7 @@ void show_supervisor()
     lv_anim_init(&anim);
 
     lv_anim_set_values(&anim, lv_obj_get_y(omain), 240);
-    lv_anim_set_time(&anim, 1000);
+    lv_anim_set_time(&anim, 250);
     lv_anim_set_exec_cb(&anim, supervisor_anim_cb);
     lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
     lv_anim_set_var(&anim, (void*)(intptr_t)1);       // arriving

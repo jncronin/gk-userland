@@ -119,6 +119,8 @@ int main(int argc, char *argv[])
     lv_obj_add_style(main_tv1, &style_transp, 0);
     auto main_tv2 = lv_tabview_add_tab(main_tv, "");
     lv_obj_add_style(main_tv2, &style_transp, 0);
+    auto main_tv3 = lv_tabview_add_tab(main_tv, "");
+    lv_obj_add_style(main_tv3, &style_transp, 0);
 
     def_overlay_kill = gk_btn_create(main_tv1, "Quit");
     lv_obj_set_pos(def_overlay_kill, lv_obj_get_width(oscr) / 2 - 60, (240 - 32)/2 - 40);
@@ -168,6 +170,12 @@ int main(int argc, char *argv[])
     lv_obj_add_flag(btn_rawsd, LV_OBJ_FLAG_CHECKABLE);
     lv_obj_add_event_cb(btn_rawsd, rawsd_change, LV_EVENT_VALUE_CHANGED, nullptr);
 
+    // Keyboard on p3
+    lv_obj_set_style_pad_all(main_tv3, 16, 0);
+    auto kbd_widget = lv_keyboard_create(main_tv3);
+    lv_obj_add_style(kbd_widget, &style_transp, LV_PART_MAIN);
+    lv_obj_add_style(kbd_widget, &style_button, LV_PART_ITEMS);
+    lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
 
     lv_obj_update_layout(lv_scr_act());
 

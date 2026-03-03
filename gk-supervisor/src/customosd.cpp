@@ -144,6 +144,18 @@ void cosd_click_cb(lv_event_t *e)
 {
     auto key = (unsigned short)(uintptr_t)lv_event_get_user_data(e);
     fprintf(stderr, "cosd: send key %u\n", key);
+
+    auto fpid = GK_GetFocusProcess();
+
+    Event ev_press;
+    ev_press.type = Event::event_type_t::KeyDown;
+    ev_press.key = key;
+    GK_EventSend(fpid, &ev_press);
+
+    Event ev_release;
+    ev_release.type = Event::event_type_t::KeyUp;
+    ev_release.key = key;
+    GK_EventSend(fpid, &ev_release);
 }
 
 static void cosd_clickquick_delayed_cb(lv_timer_t *t)

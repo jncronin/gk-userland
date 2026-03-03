@@ -15,7 +15,7 @@ int GK_EventPeek(Event *ev)
     return deferred_call(__syscall_peekevent, ev);
 }
 
-int GK_SendEvent(pid_t pid, Event *ev)
+int GK_EventSend(pid_t pid, Event *ev)
 {
     if(!ev)
     {

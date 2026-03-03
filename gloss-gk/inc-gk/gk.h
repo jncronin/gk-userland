@@ -43,6 +43,7 @@ int GK_GPUSetScreenMode(void *cmdlist, size_t w, size_t h, unsigned int pf);
 int GK_GPUSetScreenModeEx(void *cmdlist, size_t w, size_t h, unsigned int pf, int refresh);
 int GK_ICACHEInvalidate();
 int GK_EventPeek(struct Event *ev);
+int GK_EventSend(pid_t pid, struct Event *ev);
 int GK_GPUGetScreenMode(size_t *w, size_t *h, unsigned int *pf);
 int GK_GPUGetScreenModeEx(size_t *w, size_t *h, unsigned int *pf, int *refresh);
 int GK_GPUSetBrightness(unsigned int bright);

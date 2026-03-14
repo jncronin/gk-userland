@@ -319,7 +319,7 @@ void supervisor_tick()
                 wifi_sym = blank;
                 break;
         }
-        usb_sym = GK_KERNEL_INFO->wifi_state ? LV_SYMBOL_USB : blank;
+        usb_sym = GK_KERNEL_INFO->usb_state ? LV_SYMBOL_USB : blank;
         charge_sym = GK_KERNEL_INFO->pwr_vbus ? LV_SYMBOL_CHARGE : blank;
         if(GK_KERNEL_INFO->soc >= 75)
             bat_sym = LV_SYMBOL_BATTERY_FULL;

@@ -287,7 +287,10 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
         GK_GPUFlush(&gmsg);
     }
 
-    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_HWACCEL | SDL_PREALLOC;
+    current->flags = flags | SDL_FULLSCREEN | SDL_HWSURFACE | SDL_PREALLOC;
+#if __GAMEKID__ < 4
+    current->flags |= SDL_HWACCEL;
+#endif
     current->w = width;
     current->h = height;
     current->pitch = ((width * pf.BytesPerPixel) + 3) & ~3;
@@ -313,7 +316,10 @@ static int GK_AllocHWSurface(_THIS, SDL_Surface *surface)
         return -1;
     }
     surface->pixels = smem;
-    surface->flags |= (SDL_HWSURFACE | SDL_PREALLOC | SDL_HWACCEL);
+    surface->flags |= (SDL_HWSURFACE | SDL_PREALLOC);
+#if __GAMEKID__ < 4
+    surface->flags |= SDL_HWACCEL;
+#endif
 
     surface->hwdata = SDL_malloc(sizeof(struct GKSurfaceData));
     if(surface->hwdata == NULL)
@@ -393,7 +399,10 @@ static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
 {
     GK_GPU_CommandList(gmsg, 2);
     GK_GPUFlipBuffers(&gmsg, &surface->pixels);
+#if __GAMEKID__ < 4
+    // handle in-kernel for v4
     GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, 0, 0, surface->w, surface->h, 0, 0);
+#endif
     GK_GPUFlush(&gmsg);
     surface->flags |= SDL_PREALLOC;
 
@@ -445,7 +454,9 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 
     GK_GPU_CommandList(gmsg, 2);
     GK_GPUFlipBuffers(&gmsg, &this->screen->pixels);
+#if __GAMEKID__ < 4
     GK_GPUBlitScreenNoBlendEx(&gmsg, NULL, act_rect.x, act_rect.y, act_rect.w, act_rect.h, 0, 0);
+#endif
     GK_GPUFlush(&gmsg);
     this->screen->flags |= SDL_PREALLOC;
     if(this->screen->hwdata)
@@ -524,9 +535,13 @@ static int GK_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
 
 int GK_CheckHWBlit(_THIS, SDL_Surface *src, SDL_Surface *dst)
 {
+#if __GAMEKID__ >= 4
+    return 0;
+#else
     src->flags |= SDL_HWACCEL;
     src->map->hw_blit = GK_HWAccelBlit;
     return 1;
+#endif
 }
 
 int GK_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)

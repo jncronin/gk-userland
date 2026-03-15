@@ -9,6 +9,9 @@
 #include <gk.h>
 #include <GL/gl.h>
 #include <GL/osmesa.h>
+#include <math.h>
+#include "_gk_memaddrs.h"
+
 
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
@@ -610,6 +613,34 @@ void GK_PumpEvents(_THIS)
                 break;
         }
     }
+
+#if __GAMEKID__ >= 4
+    /* Handle joystick as mouse movements */
+    if(GK_KERNEL_INFO->mouse_axes[0] && GK_KERNEL_INFO->mouse_axes[1])
+    {
+        static uint64_t last_mouse_update = 0;
+        uint64_t now = GK_GetCurUs();
+        uint64_t deltat = now - last_mouse_update;
+        if(deltat > 125000)
+            deltat = 125000;
+        if(deltat >= 16500)
+        {
+            // only send events at 60 Hz or less
+            int16_t x = *GK_KERNEL_INFO->mouse_axes[0];
+            int16_t y = *GK_KERNEL_INFO->mouse_axes[1];
+
+            const double max_move_1s = 1024.0;
+
+            double dx = (double)x * (double)deltat / 1000000.0 * max_move_1s / 65536.0;
+            double dy = (double)y * (double)deltat / 1000000.0 * max_move_1s / 65536.0;
+
+            SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, 1,
+                (int)round(dx), (int)round(dy));
+
+            last_mouse_update = now;
+        }
+    }
+#endif
 }
 
 SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)

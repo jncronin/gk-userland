@@ -18,6 +18,7 @@ struct gkglctx {
 #include <sys/mman.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 #if __GAMEKID__ >= 4
 #define gk_ptr_type uint64_t
@@ -175,6 +176,7 @@ static void fill_pformat(SDL_PixelFormat *vformat, unsigned int gk_pf)
         case GK_PIXELFORMAT_RGB888:
             vformat->BitsPerPixel = 24;
             vformat->BytesPerPixel = 3;
+            vformat->Amask = 0;
             vformat->Rmask = 0x00ff0000U;
             vformat->Gmask = 0x0000ff00U;
             vformat->Bmask = 0x000000ffU;
@@ -182,11 +184,19 @@ static void fill_pformat(SDL_PixelFormat *vformat, unsigned int gk_pf)
         case GK_PIXELFORMAT_RGB565:
             vformat->BitsPerPixel = 16;
             vformat->BytesPerPixel = 2;
+            vformat->Amask = 0;
             vformat->Rmask = 0x0000f800;
             vformat->Gmask = 0x000007e0;
             vformat->Bmask = 0x0000001f;
             break;
+
+        default:
+            fprintf(stderr, "sdl12_gk: unsupported pixel format %u\n", gk_pf);
+            break;
     }
+
+    //fprintf(stderr, "sdl12_gk: bpp: %u, Amask: %x, Rmask: %x, Gmask: %x, Bmask: %x\n",
+    //    vformat->BitsPerPixel, vformat->Amask, vformat->Rmask, vformat->Gmask, vformat->Bmask);
 }
 
 int GK_VideoInit(_THIS, SDL_PixelFormat *vformat)
@@ -195,6 +205,7 @@ int GK_VideoInit(_THIS, SDL_PixelFormat *vformat)
     unsigned int gk_pf;
     GK_GPUGetScreenMode(&w, &h, &gk_pf);
 
+    //fprintf(stderr, "sdl12_gk: VideoInit %u x %u x %u\n", w, h, gk_pf);
     fill_pformat(vformat, gk_pf);
     this->info.hw_available = 1;
     this->info.blit_hw = 1;
@@ -277,6 +288,7 @@ SDL_Surface *GK_SetVideoMode(_THIS, SDL_Surface *current,
     {
         gk_pf = GK_PIXELFORMAT_RGB565;
     }
+    //fprintf(stderr, "sdl12_gk: SetVideoMode %u x %u x %u (%u)\n", width, height, bpp, gk_pf);
     fill_pformat(&pf, gk_pf);
 
     // Set mode
@@ -309,7 +321,11 @@ static int GK_AllocHWSurface(_THIS, SDL_Surface *surface)
 
     surface->pitch = ((surface->w * surface->format->BytesPerPixel) + 3) & ~3;
     smem = mmap(NULL, surface->h * surface->pitch, PROT_READ | PROT_WRITE,
-        MAP_PRIVATE | MAP_ANON | MAP_SYNC, 0, 0);
+        MAP_PRIVATE | MAP_ANON 
+#if __GAMEKID__ < 4
+        | MAP_SYNC
+#endif
+        , 0, 0);
     if(smem == MAP_FAILED)
     {
         surface->flags &= ~(SDL_HWSURFACE | SDL_HWACCEL);
@@ -406,10 +422,12 @@ static int GK_FlipHWSurface(_THIS, SDL_Surface *surface)
     GK_GPUFlush(&gmsg);
     surface->flags |= SDL_PREALLOC;
 
+#if __GAMEKID__ < 4
     if(surface->hwdata)
     {
         surface->hwdata->in_cache = 0;
     }
+#endif
 
     return 0;
 }
@@ -459,10 +477,13 @@ static void GK_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 #endif
     GK_GPUFlush(&gmsg);
     this->screen->flags |= SDL_PREALLOC;
+
+#if __GAMEKID__ < 4
     if(this->screen->hwdata)
     {
         this->screen->hwdata->in_cache = 0;
     }
+#endif
 }
 
 int GK_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)

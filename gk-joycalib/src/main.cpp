@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <list>
 #include <gk.h>
+#include "joystick_conf.h"
 
 struct pt { int16_t x; int16_t y; };
 
@@ -16,8 +17,13 @@ static int joyy_to_screen(int v);
 static int joyx_to_screen(double v);
 static int joyy_to_screen(double v);
 
+json conf;
+
 int main()
 {
+    conf = joystick_conf_read();
+    joystick_conf_apply_calib(conf);
+
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
     SDL_Window *w;
@@ -188,6 +194,9 @@ static void do_calib(unsigned int axis_pair, const std::list<pt> &raw_pts)
     }
 
     GK_SetJoystickCalibration(axis_pair, left, right, top, bottom, (int)centre.x, (int)centre.y);
+    joystick_conf_add_calib(conf, axis_pair,
+        { left, right, top, bottom, centre.x, centre.y });
+    joystick_conf_write(conf);
 }
 
 static int joy_to_screen(int v, unsigned int scr)

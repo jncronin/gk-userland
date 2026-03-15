@@ -17,6 +17,11 @@ target_sources(gkjoy
         ${GKJOY_SOURCES}
 )
 
+target_include_directories(gkjoy
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+
 target_link_libraries(gkjoy
     PRIVATE
         SDL2::SDL2-static

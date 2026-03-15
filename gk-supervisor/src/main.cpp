@@ -10,6 +10,7 @@
 #include "styles.h"
 #include "widget.h"
 #include "osd.h"
+#include "joystick_conf.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -43,6 +44,10 @@ static void vol_timer_cb(lv_timer_t *t);
 int main(int argc, char *argv[])
 {
     fprintf(stderr, "gksupervisor 2026-03-01 12:00 startup\n");
+
+    // load joystick calibration
+    auto joy_conf = joystick_conf_read();
+    joystick_conf_apply_calib(joy_conf);
     
     lv_init();
 

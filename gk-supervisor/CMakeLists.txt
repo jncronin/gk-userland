@@ -23,6 +23,7 @@ file(GLOB_RECURSE GKSUPERVISOR_SOURCES CONFIGURE_DEPENDS
 target_sources(gksupervisor
     PRIVATE
         ${GKSUPERVISOR_SOURCES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../gk-joycalib/src/joystick_conf.cpp
 )
 
 target_compile_definitions(gksupervisor
@@ -35,6 +36,7 @@ target_include_directories(gksupervisor
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
         ${LVGL_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../gk-joycalib/inc
 )
 
 target_link_libraries(gksupervisor

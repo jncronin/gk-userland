@@ -52,7 +52,7 @@ int main()
 
             if(ev.type == SDL_JOYBUTTONDOWN)
             {
-                if(ev.jbutton.button < 2)
+                if(ev.jbutton.button < 4)
                 {
                     do_calib(ev.jbutton.button, rawpt[ev.jbutton.button]);
                 }
@@ -67,10 +67,10 @@ int main()
             auto x = SDL_JoystickGetAxis(j, stick * 2 + 0);
             auto y = SDL_JoystickGetAxis(j, stick * 2 + 1);
 
-            jpt[stick].push_front({ .x = x, .y = y });
+            jpt[stick].push_back({ .x = x, .y = y });
             while(jpt[stick].size() >= 256)
             {
-                jpt[stick].pop_back();
+                jpt[stick].pop_front();
             }
 
             int raw_x, raw_y;
@@ -115,7 +115,7 @@ int main()
 
         for(auto stick = 0U; stick < nsticks; stick++)
         {
-            auto intens = 255;
+            auto intens = 1;
             unsigned int last_x = ~0U;
             unsigned int last_y = ~0U;
             for(const auto &p : jpt[stick])
@@ -133,8 +133,8 @@ int main()
                 last_x = scr_x;
                 last_y = scr_y;
 
-                if(intens > 0)
-                    intens--;
+                if(intens < 255)
+                    intens++;
             }
         }
 
@@ -178,6 +178,13 @@ static void do_calib(unsigned int axis_pair, const std::list<pt> &raw_pts)
             top = p.y;
         if(p.y < bottom)
             bottom = p.y;
+    }
+
+    // throttle does not auto return to centre, therefore just take average value as centre
+    if(axis_pair == 3)
+    {
+        centre.x = (int16_t)(((int)left + (int)right) / 2);
+        centre.y = (int16_t)(((int)top + (int)bottom) / 2);
     }
 
     GK_SetJoystickCalibration(axis_pair, left, right, top, bottom, (int)centre.x, (int)centre.y);

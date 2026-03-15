@@ -36,9 +36,9 @@ int main()
     SDL_Event ev;
     bool quit = false;
 
-    std::list<pt> jpt[3];
-    std::list<pt> rawpt[2];
-    auto nsticks = std::min(3U, (unsigned int)SDL_JoystickNumAxes(j));
+    std::list<pt> jpt[4];
+    std::list<pt> rawpt[4];
+    auto nsticks = std::min(4U, 4U /* TODO: update SDL (unsigned int)SDL_JoystickNumAxes(j) */);
 
     while(!quit)
     {
@@ -73,15 +73,12 @@ int main()
                 jpt[stick].pop_back();
             }
 
-            if(stick < 2)
+            int raw_x, raw_y;
+            GK_GetJoystickAxesEx(stick, &raw_x, &raw_y, true);
+            rawpt[stick].push_front({ .x = (int16_t)raw_x, .y = (int16_t)raw_y });
+            while(rawpt[stick].size() >= 256)
             {
-                int raw_x, raw_y;
-                GK_GetJoystickAxesEx(stick, &raw_x, &raw_y, true);
-                rawpt[stick].push_front({ .x = (int16_t)raw_x, .y = (int16_t)raw_y });
-                while(rawpt[stick].size() >= 256)
-                {
-                    rawpt[stick].pop_back();
-                }
+                rawpt[stick].pop_back();
             }
         }
 
@@ -124,9 +121,9 @@ int main()
             for(const auto &p : jpt[stick])
             {
                 SDL_SetRenderDrawColor(r, 
-                    (stick == 0) ? intens : 0,
+                    (stick == 0 || stick == 3) ? intens : 0,
                     (stick == 1) ? intens : 0,
-                    (stick == 2) ? intens : 0, 255);
+                    (stick == 2 || stick == 3) ? intens : 0, 255);
 
                 auto scr_x = (((int)p.x + 32768) * scr_w) / 65536;
                 auto scr_y = (((int)p.y + 32768) * scr_h) / 65536;

@@ -25,9 +25,15 @@ extern "C" int GK_GetTiltAxes(int *x, int *y)
     return 0;
 }
 
+extern "C" int GK_GetThrottle(int *t)
+{
+    if(t) *t = (int)*(volatile int *)(GK_THROTTLE_ADDRESS + 4);
+    return 0;
+}
+
 extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int is_raw)
 {
-    if(axis_pair >= 3 || (is_raw && axis_pair >= 2))
+    if(axis_pair >= 4)
     {
         return -1;
     }
@@ -56,7 +62,23 @@ extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int 
             }
             break;
         case 2:
+            if(is_raw)
+            {
+                if(x) *x = (int)*(volatile float *)GK_PITCH_ADDRESS;
+                if(y) *y = -(int)*(volatile float *)GK_ROLL_ADDRESS;
+                return 0;
+            }
             pair_start = GK_TILT_ADDRESS;
+            break;
+        case 3:
+            if(is_raw)
+            {
+                pair_start = GK_THROTTLE_RAW_ADDRESS;
+            }
+            else
+            {
+                pair_start = GK_THROTTLE_ADDRESS;
+            }
             break;
     }
 
@@ -69,7 +91,7 @@ extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int 
 extern "C" int GK_SetJoystickCalibration(unsigned int axis_pair,
     int left, int right, int top, int bottom, int middle_x, int middle_y)
 {
-    if(axis_pair >= 2)
+    if(axis_pair >= 4)
     {
         return -1;
     }

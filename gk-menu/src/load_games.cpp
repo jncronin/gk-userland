@@ -346,6 +346,10 @@ static int parse_game()
     {
         g.keymap.tilt_stick = (char)ts;
     }
+    if(read_int("throttle_stick", &ts))
+    {
+        g.keymap.throttle_stick = (char)ts;
+    }
 #else
     bool gik = g.keymap.gamepad_is_keyboard != 0;
     read_bool("gamepad_is_keyboard", &gik);
@@ -457,6 +461,7 @@ int load_games()
     ADD_DEFINE(GK_STICK_JOY0);
     ADD_DEFINE(GK_STICK_JOY1);
     ADD_DEFINE(GK_STICK_JOY2);
+    ADD_DEFINE(GK_STICK_JOY3);
     ADD_DEFINE(GK_STICK_MOUSE);
 #endif
 

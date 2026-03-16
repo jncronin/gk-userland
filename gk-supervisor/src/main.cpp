@@ -21,11 +21,13 @@ static lv_obj_t *main_title;
 static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd;
 static lv_obj_t *vol_ctrl;
 
-static lv_obj_t *main_tv1;
+static lv_obj_t *main_tv, *main_tv1;
 
 static lv_timer_t *vol_timer;
 
 pid_t gkmenu_pid;
+
+lv_group_t *grp;
 
 static int cc_cb();
 static void kill_click(lv_event_t *e);
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
 
     auto kbd = lv_gk_kbd_create();
 
-    auto grp = lv_group_create();
+    grp = lv_group_create();
     lv_indev_set_group(kbd, grp);
     lv_group_set_wrap(grp, false);
 
@@ -130,7 +132,7 @@ int main(int argc, char *argv[])
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
     lv_obj_add_style(main_title, &style_text, 0);
 
-    auto main_tv = lv_tabview_create(omain);
+    main_tv = lv_tabview_create(omain);
     lv_obj_add_style(main_tv, &style_transp, 0);
     lv_obj_set_pos(main_tv, 0, 32);
     lv_obj_set_size(main_tv, 800, 240-32);
@@ -171,6 +173,7 @@ int main(int argc, char *argv[])
     lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
     lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
     lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
+    lv_group_add_obj(grp, bright_ctrl);
 
     auto p2_l2 = lv_obj_create(main_tv2);
     lv_obj_add_style(p2_l2, &style_transp, 0);
@@ -194,6 +197,9 @@ int main(int argc, char *argv[])
     lv_obj_add_style(kbd_widget, &style_transp, LV_PART_MAIN);
     lv_obj_add_style(kbd_widget, &style_button, LV_PART_ITEMS);
     lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
+    lv_group_add_obj(grp, kbd_widget);
+    lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, 2, LV_ANIM_ON); },
+        LV_EVENT_FOCUSED, nullptr);
 
     /* Volume on separate panel */
     ovol = lv_obj_create(oscr);

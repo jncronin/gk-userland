@@ -14,6 +14,8 @@ static unsigned short str_to_key(const std::string &s);
 static void cosd_click_cb(lv_event_t *e);
 static void cosd_clickquit_cb(lv_event_t *e);
 
+extern bool focus_obj;
+
 static void kill_click(lv_event_t *)
 {
     auto fpid = GK_GetFocusProcess();
@@ -66,6 +68,10 @@ int osd_load_default(lv_obj_t *parent)
     lv_obj_center(def_overlay_kill);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
+    lv_group_add_obj(grp, def_overlay_kill);
+
+    lv_group_focus_obj(def_overlay_kill);
+    focus_obj = true;
 
     return 0;
 }
@@ -97,6 +103,13 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
         else if(sname == "button")
         {
             std::tie(cur, lab) = gk_btnlab_create(parent);
+            lv_group_add_obj(grp, cur);
+
+            if(!focus_obj)
+            {
+                lv_group_focus_obj(cur);
+                focus_obj = true;
+            }
         }
 
         if(cur)

@@ -23,6 +23,8 @@ static lv_obj_t *vol_ctrl;
 
 static lv_obj_t *main_tv, *main_tv1;
 
+static lv_obj_t *kbd_widget;
+
 static lv_timer_t *vol_timer;
 
 pid_t gkmenu_pid;
@@ -42,6 +44,10 @@ static bool supervisor_last_show_cmd = false;
 static bool volume_last_show_cmd = false;
 static int rk_cb(unsigned short, int);
 static void vol_timer_cb(lv_timer_t *t);
+
+bool focus_obj = false;
+
+void readd_static_objects_to_group();
 
 int main(int argc, char *argv[])
 {
@@ -173,7 +179,6 @@ int main(int argc, char *argv[])
     lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
     lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
     lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
-    lv_group_add_obj(grp, bright_ctrl);
 
     auto p2_l2 = lv_obj_create(main_tv2);
     lv_obj_add_style(p2_l2, &style_transp, 0);
@@ -193,13 +198,14 @@ int main(int argc, char *argv[])
 
     // Keyboard on p3
     lv_obj_set_style_pad_all(main_tv3, 16, 0);
-    auto kbd_widget = lv_keyboard_create(main_tv3);
+    kbd_widget = lv_keyboard_create(main_tv3);
     lv_obj_add_style(kbd_widget, &style_transp, LV_PART_MAIN);
     lv_obj_add_style(kbd_widget, &style_button, LV_PART_ITEMS);
     lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
-    lv_group_add_obj(grp, kbd_widget);
     lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, 2, LV_ANIM_ON); },
         LV_EVENT_FOCUSED, nullptr);
+
+    readd_static_objects_to_group();
 
     /* Volume on separate panel */
     ovol = lv_obj_create(oscr);
@@ -377,6 +383,11 @@ int cc_cb()
     lv_label_set_text(main_title, titlebuf);
     lv_obj_invalidate(main_title);
 
+    /* Custom OSD is screen 1.  Therefore need to remove all entries from the indev group, and begin
+        again at screen 1. */
+    lv_group_remove_all_objs(grp);
+    focus_obj = false;
+
     /* Is there a custom osd? */
     char osdname[512];
     auto nosd = GK_GetProcessData(fpid, osdname, sizeof(osdname) - 1);
@@ -391,6 +402,9 @@ int cc_cb()
     {
         osd_load_default(main_tv1);
     }
+
+    /* Now readd screens 2/3 widgets to indev group */
+    readd_static_objects_to_group();
 
     return 0;
 }
@@ -746,4 +760,19 @@ void vol_timer_cb(lv_timer_t *)
 {
     if(volume_last_show_cmd == true)
         close_volume();
+}
+
+void readd_static_objects_to_group()
+{
+    lv_group_add_obj(grp, bright_ctrl);
+    lv_group_add_obj(grp, btn_wifi);
+    lv_group_add_obj(grp, btn_rawsd);
+
+    lv_group_add_obj(grp, kbd_widget);
+
+    if(!focus_obj)
+    {
+        lv_group_focus_obj(bright_ctrl);
+        focus_obj = true;
+    }
 }

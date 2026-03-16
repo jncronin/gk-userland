@@ -13,7 +13,6 @@ std::pair<lv_obj_t *, lv_obj_t *> gk_btnlab_create(lv_obj_t *parent, const std::
     lv_obj_set_align(ret_text, LV_ALIGN_CENTER);
     lv_obj_add_style(ret_text, &style_text, 0);
     lv_label_set_text(ret_text, lab.c_str());
-    lv_group_add_obj(grp, ret);
 
     return std::make_pair(ret, ret_text);
 }

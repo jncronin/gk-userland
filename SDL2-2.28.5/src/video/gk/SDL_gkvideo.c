@@ -578,10 +578,34 @@ void GK_PumpEvents(_THIS)
         switch(ev.type)
         {
             case KeyDown:
-                SDL_SendKeyboardKey(SDL_PRESSED, (SDL_Scancode)ev.key);
+                if(ev.key & GK_MODIFIER_SHIFT)
+                {
+                    SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LSHIFT);
+                }
+                if(ev.key & GK_MODIFIER_ALT)
+                {
+                    SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LALT);
+                }
+                if(ev.key & GK_MODIFIER_CTRL)
+                {
+                    SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LCTRL);
+                }
+                SDL_SendKeyboardKey(SDL_PRESSED, (SDL_Scancode)(ev.key & (GK_NUM_SCANCODES - 1)));
                 break;
             case KeyUp:
-                SDL_SendKeyboardKey(SDL_RELEASED, (SDL_Scancode)ev.key);
+                SDL_SendKeyboardKey(SDL_RELEASED, (SDL_Scancode)(ev.key & (GK_NUM_SCANCODES - 1)));
+                if(ev.key & GK_MODIFIER_SHIFT)
+                {
+                    SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
+                }
+                if(ev.key & GK_MODIFIER_ALT)
+                {
+                    SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LALT);
+                }
+                if(ev.key & GK_MODIFIER_CTRL)
+                {
+                    SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LCTRL);
+                }
                 break;
             case MouseMove:
                 SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,

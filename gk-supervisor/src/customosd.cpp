@@ -35,6 +35,11 @@ int osd_load_custom(lv_obj_t *parent, const std::string &fname)
 {
     osd_clear(parent);
 
+    if(fname == "")
+    {
+        return osd_load_default(parent);
+    }
+
     if(fname == "gkmenu.osd")
     {
         // special case gkmenu

@@ -31,6 +31,8 @@ pid_t gkmenu_pid;
 
 lv_group_t *grp;
 
+static std::string cosd;
+
 static int cc_cb();
 static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
@@ -198,9 +200,9 @@ int main(int argc, char *argv[])
 
     // Keyboard on p3
     lv_obj_set_style_pad_all(main_tv3, 16, 0);
-    kbd_widget = lv_keyboard_create(main_tv3);
-    lv_obj_add_style(kbd_widget, &style_transp, LV_PART_MAIN);
-    lv_obj_add_style(kbd_widget, &style_button, LV_PART_ITEMS);
+    kbd_widget = gk_kbd_create(main_tv3);
+    lv_obj_add_style(kbd_widget, &style_kbd, LV_PART_MAIN);
+    lv_obj_add_style(kbd_widget, &style_kbd_button, LV_PART_ITEMS);
     lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
     lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, 2, LV_ANIM_ON); },
         LV_EVENT_FOCUSED, nullptr);
@@ -383,28 +385,26 @@ int cc_cb()
     lv_label_set_text(main_title, titlebuf);
     lv_obj_invalidate(main_title);
 
-    /* Custom OSD is screen 1.  Therefore need to remove all entries from the indev group, and begin
-        again at screen 1. */
-    lv_group_remove_all_objs(grp);
-    focus_obj = false;
-
-    /* Is there a custom osd? */
+    /* Is there a new custom osd? */
     char osdname[512];
     auto nosd = GK_GetProcessData(fpid, osdname, sizeof(osdname) - 1);
     osdname[sizeof(osdname) - 1] = 0;
-    if(nosd > 0)
-    {
-        fprintf(stderr, "supervisor: custom_osd (%d): %s\n", nosd, osdname);
-        std::string cosdname(osdname, nosd);
-        osd_load_custom(main_tv1, cosdname);
-    }
-    else
-    {
-        osd_load_default(main_tv1);
-    }
 
-    /* Now readd screens 2/3 widgets to indev group */
-    readd_static_objects_to_group();
+    std::string new_osd = (nosd > 0) ? std::string(osdname, nosd) : "";
+
+    if(new_osd != cosd)
+    {
+        /* Custom OSD is screen 1.  Therefore need to remove all entries from the indev group, and begin
+            again at screen 1. */
+        lv_group_remove_all_objs(grp);
+        focus_obj = false;
+
+        osd_load_custom(main_tv1, new_osd);
+        cosd = new_osd;
+
+        /* Now readd screens 2/3 widgets to indev group */
+        readd_static_objects_to_group();
+    }
 
     return 0;
 }

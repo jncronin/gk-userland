@@ -178,4 +178,8 @@ make -j16 -C build-v4/zlib-ng install
 cmake $CMAKE_OPTS -DEXAMPLE=OFF -S libmad -B build-v4/libmad-0.16.4
 make -j16 -C build-v4/libmad-0.16.4 install
 
+cmake $CMAKE_OPTS -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -S flac-1.5.0 -B build-v4/flac
+make -j16 -C build-v4/flac install
+
+
 echo "Successfully built gk libraries in $SYSROOT"

@@ -76,6 +76,7 @@ int osd_load_default(lv_obj_t *parent)
     lv_group_add_obj(grp, def_overlay_kill);
 
     lv_group_focus_obj(def_overlay_kill);
+    lv_obj_set_state(def_overlay_kill, LV_STATE_FOCUS_KEY, true);
     focus_obj = true;
 
     return 0;
@@ -113,6 +114,7 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
             if(!focus_obj)
             {
                 lv_group_focus_obj(cur);
+                lv_obj_set_state(cur, LV_STATE_FOCUS_KEY, true);
                 focus_obj = true;
             }
         }

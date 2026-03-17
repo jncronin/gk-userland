@@ -779,6 +779,7 @@ void readd_static_objects_to_group()
     if(!focus_obj)
     {
         lv_group_focus_obj(bright_ctrl);
+        lv_obj_set_state(bright_ctrl, LV_STATE_FOCUS_KEY, true);
         focus_obj = true;
     }
 }

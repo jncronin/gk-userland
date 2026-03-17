@@ -175,4 +175,7 @@ make -j16 -C build-v4/opusfile install
 cmake $CMAKE_OPTS -S zlib-ng-2.3.2/ -B build-v4/zlib-ng -DINSTALL_UTILS=OFF -DWITH_GTEST=OFF -DWITH_BENCHMARKS=OFF -DBUILD_TESTING=OFF
 make -j16 -C build-v4/zlib-ng install
 
+cmake $CMAKE_OPTS -DEXAMPLE=OFF -S libmad -B build-v4/libmad-0.16.4
+make -j16 -C build-v4/libmad-0.16.4 install
+
 echo "Successfully built gk libraries in $SYSROOT"

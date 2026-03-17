@@ -5,6 +5,7 @@ std::pair<lv_obj_t *, lv_obj_t *> gk_btnlab_create(lv_obj_t *parent, const std::
 {
     auto ret = lv_btn_create(parent);
     lv_obj_add_style(ret, &style_button, 0);
+    lv_obj_add_style(ret, &style_btn_focus, LV_STATE_FOCUS_KEY);
 
     auto ret_text = lv_label_create(ret);
     lv_obj_set_style_text_font(ret_text, font, 0);

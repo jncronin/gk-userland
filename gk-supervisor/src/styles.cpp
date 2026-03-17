@@ -4,6 +4,7 @@
 lv_style_t style_cont, style_text, style_button, style_transp;
 lv_style_t style_slider_main, style_slider_knob, style_slider_indicator;
 lv_style_t style_kbd_button, style_kbd;
+lv_style_t style_btn_focus, style_kbd_btn_focus;
 
 void init_styles()
 {
@@ -72,6 +73,16 @@ void init_styles()
     lv_style_set_shadow_width(&style_kbd_button, 0);
     lv_style_set_text_opa(&style_kbd_button, LV_OPA_COVER);
 
+    /* Button with focus */
+    lv_style_init(&style_btn_focus);
+    lv_style_set_outline_width(&style_btn_focus, 4);
+    lv_style_set_outline_color(&style_btn_focus, lv_color_make(0, 32, 192));
+    lv_style_set_outline_pad(&style_btn_focus, -4);
+    lv_style_set_outline_opa(&style_btn_focus, LV_OPA_COVER);
+
+    lv_style_init(&style_kbd_btn_focus);
+    lv_style_copy(&style_kbd_btn_focus, &style_btn_focus);
+    lv_style_set_bg_color(&style_kbd_btn_focus, lv_color_make(64, 96, 255));
 
     /* Text style */
     lv_style_init(&style_text);

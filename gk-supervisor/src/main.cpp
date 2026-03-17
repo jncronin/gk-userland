@@ -181,6 +181,10 @@ int main(int argc, char *argv[])
     lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
     lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
     lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
+    lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_MAIN | 
+        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
+    lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_INDICATOR |
+        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
 
     auto p2_l2 = lv_obj_create(main_tv2);
     lv_obj_add_style(p2_l2, &style_transp, 0);
@@ -203,6 +207,8 @@ int main(int argc, char *argv[])
     kbd_widget = gk_kbd_create(main_tv3);
     lv_obj_add_style(kbd_widget, &style_kbd, LV_PART_MAIN);
     lv_obj_add_style(kbd_widget, &style_kbd_button, LV_PART_ITEMS);
+    lv_obj_add_style(kbd_widget, &style_kbd_btn_focus, (lv_style_selector_t)LV_PART_ITEMS |
+        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
     lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
     lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, 2, LV_ANIM_ON); },
         LV_EVENT_FOCUSED, nullptr);

@@ -64,11 +64,12 @@ extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int 
         case 2:
             if(is_raw)
             {
-                if(x) *x = (int)*(volatile float *)GK_PITCH_ADDRESS;
-                if(y) *y = -(int)*(volatile float *)GK_ROLL_ADDRESS;
-                return 0;
+                pair_start = GK_TILT_RAW_ADDRESS;
             }
-            pair_start = GK_TILT_ADDRESS;
+            else
+            {
+                pair_start = GK_TILT_ADDRESS;
+            }
             break;
         case 3:
             if(is_raw)

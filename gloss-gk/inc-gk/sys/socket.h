@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 
 struct sockaddr_storage
 {
@@ -94,8 +95,6 @@ int     socketpair(int, int, int, int[2]);
 #define SO_SNDTIMEO     10
 
 #define SOMAXCONN       32
-
-#define TCP_NODELAY     100
 
 #define IPV6_V6ONLY     200
 

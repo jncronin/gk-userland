@@ -131,6 +131,9 @@ make -C build-v4/mpg123 install
 cmake $CMAKE_OPTS -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=ON -DSDL2MIXER_MIDI_TIMIDITY=ON -DSDL2MIXER_MIDI_FLUIDSYNTH=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_MP3_MINIMP3=OFF -DSDL2MIXER_MP3_MPG123=ON -DSDL2MIXER_MP3_MPG123_SHARED=OFF -DSDL2MIXER_SAMPLES=OFF SDL_mixer-release-2.8.0/ -B build-v4/sdl2_mixer
 make -C build-v4/sdl2_mixer -j16 install
 
+cmake $CMAKE_OPTS -DUNIX=ON -DSDL2NET_SAMPLES=OFF SDL2_net-2.2.0 -B build-v4/sdl2_net
+make -C build-v4/sdl2_net -j16 install
+
 # build script doesn't like installing with static libraries
 cmake $CMAKE_OPTS -S openal-soft-1.24.2 -B build-v4/openal -DALSOFT_BACKEND_SDL2=ON -DALSOFT_UTILS=OFF -DALSOFT_EXAMPLES=OFF -DALSOFT_INSTALL=OFF -DLIBTYPE=STATIC
 make -C build-v4/openal -j 16 install

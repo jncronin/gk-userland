@@ -1,7 +1,7 @@
 #ifndef SYS__ELF64_H
 #define SYS__ELF64_H
 
-#include <cstdint>
+#include <stdint.h>
 typedef uint64_t Elf64_Addr;
 typedef uint64_t Elf64_Off;
 typedef uint16_t Elf64_Half;
@@ -66,6 +66,13 @@ typedef struct
     Elf64_Xword st_size; /* Size of object (e.g., common) */
 } __attribute__((packed)) Elf64_Sym;
 
+typedef struct 
+{
+    Elf64_Word n_namesz;
+    Elf64_Word n_descsz;
+    Elf64_Word n_type;
+} __attribute__((packed)) Elf64_Nhdr;
+
 #define EM_AARCH64      0xb7
 
 #define EI_CLASS        4
@@ -75,13 +82,18 @@ typedef struct
 #define ELFDATA2LSB     1
 #define ET_EXEC         2
 
+#define PT_NULL         0
 #define PT_LOAD         1
+#define PT_DYNAMIC      2
+#define PT_INTERP       3
+#define PT_NOTE         4
+#define PT_SHLIB        5
+#define PT_PHDR         6
+#define PT_LOPROC       0x70000000
+#define PT_HIPROC       0x7fffffff
 
 #define PF_X            1
 #define PF_W            2
-
-typedef void (*epoint)();
-int elf_load(const void *baseaddr, epoint *entry = nullptr, int el = 1);
 
 #define SHT_NULL 0
 #define SHT_PROGBITS 1

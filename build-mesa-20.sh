@@ -12,7 +12,7 @@ make -j16 -C build-llvm install-llvm-libraries install-llvm-headers install-cmak
 
 # mesa
 
-meson setup -Dgallium-drivers=swrast -Dvulkan-drivers= -Dplatforms= -Dglx=disabled -Dosmesa=gallium -Dllvm=enabled -Dshared-glapi=disabled -Degl=disabled -Ddri3=disabled -Ddefault_library=static -Ddri-drivers= --cross-file cross_file.txt -Dbuildtype=release -Db_ndebug=true -Dcmake_prefix_path=~/opt/gkv4/usr/lib/cmake --prefix ~/opt/gkv4/usr builddir
+meson setup -Dgallium-drivers=swrast -Dvulkan-drivers= -Dplatforms= -Dglx=disabled -Dosmesa=gallium -Dllvm=enabled -Dshared-glapi=disabled -Degl=disabled -Ddri3=disabled -Ddefault_library=static -Ddri-drivers= --cross-file cross_file.txt -Dbuildtype=release -Db_ndebug=true -Dcmake_prefix_path=~/opt/gkv4/usr/lib/cmake -Dshader-cache=true -Dshader-cache-default=true --prefix ~/opt/gkv4/usr builddir
 
 meson compile -C builddir
 meson install -C builddir

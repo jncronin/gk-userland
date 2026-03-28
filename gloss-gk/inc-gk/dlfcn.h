@@ -23,6 +23,8 @@ typedef struct
     void *dli_sbase;
 } Dl_info_t;
 
+typedef Dl_info_t Dl_info;
+
 int dladdr(const void *addr, Dl_info_t *dlip);
 
 #ifdef __cplusplus

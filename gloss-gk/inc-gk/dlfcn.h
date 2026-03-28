@@ -15,6 +15,16 @@ char *dlerror(void);
 void *dlopen(const char *, int);
 void *dlsym(void *, const char *);
 
+typedef struct
+{
+    const char *dli_fname;
+    void *dli_fbase;
+    const char *dli_sname;
+    void *dli_sbase;
+} Dl_info_t;
+
+int dladdr(const void *addr, Dl_info_t *dlip);
+
 #ifdef __cplusplus
 }
 #endif

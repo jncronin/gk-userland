@@ -35,6 +35,9 @@ void *dlopen(const char *file, int mode)
     }
     else
     {
+#if 1
+        return __dl_main_exec;
+#else
         // just try and open
         auto oret = open(file, O_RDONLY);
         if(oret >= 0)
@@ -46,6 +49,7 @@ void *dlopen(const char *file, int mode)
         {
             return nullptr;
         }
+#endif
     }
 }
 
@@ -72,18 +76,23 @@ static _dlinfo getdl(int dl_id)
     char *fname = (char *)malloc(fname_len);
     _dlinfo ret;
 
+//    fprintf(stderr, "getdl(%d) begin\n", dl_id);
+
     while(fname && fname_len < PATH_MAX)
     {
         __syscall_getdl_params p
         {
             .dl_id = dl_id,
             .fd = &ret.fd,
-            .name = &fname,
+            .name = fname,
             .namelen = &fname_len,
             .img = (void **)&ret.eh,
             .baseaddr = &ret.baseaddr
         };
         auto sret = deferred_call(__syscall_getdl, &p);
+
+        //fprintf(stderr, "getdl(%d): sret: %d, fname_len: %u\n", dl_id, sret, fname_len);
+
         if(sret == -1)
         {
             if(fname_len == 0)
@@ -100,6 +109,7 @@ static _dlinfo getdl(int dl_id)
         {
             // success
             ret.name = fname;
+            return ret;
         }
     }
 
@@ -291,9 +301,13 @@ int dl_iterate_phdr(int (*callback)(struct dl_phdr_info *, size_t, void *), void
 
 void *dlsym(void *handle, const char *name)
 {
+    //fprintf(stderr, "dlsym(%s) begin\n", name);
     auto dl = getdl(handle);
+    //fprintf(stderr, "dlsym(%s): dl: { fd: %d, name: %s, baseaddr: %p, eh: %p }\n",
+    //    name, dl.fd, dl.name, dl.baseaddr, dl.eh);
     if(dl.eh)
     {
+        //fprintf(stderr, "dlsym(%s) have dl: %s\n", name, dl.name);
         const auto ehaddr = (uintptr_t)dl.eh;
         const auto symtab = get_symtab(dl);
         if(symtab)
@@ -305,12 +319,15 @@ void *dlsym(void *handle, const char *name)
                 symstrhdr->sh_offset);
             const auto nsyms = symtab->sh_size /
                 symtab->sh_entsize;
+            //fprintf(stderr, "dlsym(%s) have symtab: %u syms\n", name, nsyms);
             for(auto i = symtab->sh_info; i < nsyms; i++)
             {
                 const auto csym = (const ElfW(Sym) *)
                     (ehaddr + symtab->sh_offset +
                     i * symtab->sh_entsize);
                 const char *csymname = &symstrs[csym->st_name];
+
+                //fprintf(stderr, "dlsym(%s) sym %u: %s\n", name, i, csymname);
 
                 if(strcmp(name, csymname) == 0)
                 {
@@ -323,7 +340,7 @@ void *dlsym(void *handle, const char *name)
         }
         freedl(dl);
     }
-    fprintf(stderr, "dlsym: %s within %p\n", name, handle);
+    //fprintf(stderr, "dlsym: %s within %p\n", name, handle);
     return nullptr;
 }
 

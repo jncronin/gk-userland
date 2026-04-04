@@ -26,7 +26,7 @@ int _fstat(int file, struct stat *st)
 			errno = wssp.ival2;
 		return wssp.ival1;
 	}
-	return file;
+	return ret;
 }
 
 int fstatat(int dirfd, const char *pathname, struct stat *buf, int flags)

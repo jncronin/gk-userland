@@ -8,12 +8,6 @@ extern "C" {
 int ioctl(int fd, unsigned long request, ...);
 
 #include "_gk_ioctls.h"
-
-#define _IO(type,nr)    (0xff000000 | (((type) & 0xff) << 16) | ((nr) & 0xffff))
-#define _IOR(type,nr,argtype) _IO(type,nr)
-#define _IOW(type,nr,argtype) _IO(type,nr)
-#define _IOWR(type,nr,argtype) _IO(type,nr)
-#define _IOC(dir,group,nr,size) _IO(group,nr)
 	
 #ifdef __cplusplus
 }

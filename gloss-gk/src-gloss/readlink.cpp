@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include "deferred.h"
+#include "syscalls.h"
 
 extern "C" ssize_t readlink(const char *pathname, char *buf, size_t bufsize)
 {
@@ -22,8 +24,11 @@ extern "C" ssize_t readlink(const char *pathname, char *buf, size_t bufsize)
         return -1;
     }
 
-    // stub - just copy source to dest
-    strncpy(buf, pathname, bufsize);
-    buf[bufsize - 1] = 0;
-    return strlen(buf) + 1;
+    __syscall_readlink_params p
+    {
+        .pathname = pathname,
+        .buf = buf,
+        .bufsize = bufsize
+    };
+    return deferred_call(__syscall_readlink, &p);
 }

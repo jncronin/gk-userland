@@ -34,9 +34,17 @@
 #define LOG_INFO        6
 #define LOG_DEBUG       7
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void  closelog(void);
 void  openlog(const char *, int, int);
 int   setlogmask(int);
 void  syslog(int, const char *, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

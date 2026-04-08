@@ -76,6 +76,16 @@ uid_t geteuid()
     return 1;
 }
 
+uid_t getgid()
+{
+    return 1;
+}
+
+uid_t getegid()
+{
+    return 1;
+}
+
 int issetugid()
 {
     return 0;

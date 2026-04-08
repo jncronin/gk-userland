@@ -250,8 +250,8 @@ int main(int argc, char *argv[])
 
     memset(&pcinfo, 0, sizeof(proccreate_t));
     pcinfo.cwd = "/gkmenu-0.1.1-gk";
-    pcinfo.argc = 0;
-    pcinfo.argv = nullptr;
+    pcinfo.argc = argc - 1;
+    pcinfo.argv = (argc > 1) ? (const char **)&argv[1] : nullptr;
     pcinfo.screen_w = 800;
     pcinfo.screen_h = 480;
     pcinfo.screen_overwritten_each_frame = GK_SCREEN_UPDATE_PARTIAL_NOREADBACK;

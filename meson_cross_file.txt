@@ -1,0 +1,20 @@
+[binaries]
+c = 'aarch64-none-gkos-gcc'
+cpp = 'aarch64-none-gkos-g++'
+ar = 'aarch64-none-gkos-ar'
+strip = 'aarch64-none-gkos-strip'
+pkg-config = 'pkg-config'
+
+[host_machine]
+system = 'gkos'
+cpu_family = 'aarch64'
+cpu = 'aarch64'
+endian = 'little'
+
+[properties]
+sys_root = '/home/jncronin/opt/gkv4'
+pkg_config_libdir = '/home/jncronin/opt/gkv4/usr/lib/pkgconfig'
+
+[built-in options]
+default_library = 'static'
+pkg_config_path = '/home/jncronin/opt/gkv4/usr/lib/pkgconfig'

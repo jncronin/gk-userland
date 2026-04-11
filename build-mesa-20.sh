@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# build mesa with OSmesa and llvm-pipe
+
 # LLVM native tablegen
 cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_RUNTIME=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_ENABLE_BACKTRACES=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_TARGETS_TO_BUILD="AArch64" -DLLVM_ENABLE_PROJECTS="" -DLLVM_ENABLE_PIC=OFF -DLLVM_ENABLE_BINDINGS=OFF -DLLVM_BUILD_TOOLS=OFF -DLLVM_BUILD_UTILS=OFF -DLLVM_BUILD_RUNTIMES=OFF -DCMAKE_INSTALL_PREFIX=llvm-buildsys-tablegen -S llvm-project-14.0.6.src/llvm -B build-llvm-buildsys-tablegen
 
@@ -16,20 +18,5 @@ meson setup -Dgallium-drivers=swrast -Dvulkan-drivers= -Dplatforms= -Dglx=disabl
 
 meson compile -C builddir
 meson install -C builddir
-
-cp ~/opt/gkv4/usr/lib/libOSMesa.a ~/opt/gkv4/usr/lib/libGL.a
-
-# try building etnaviv driver instead of llvm
-THREADSTUBS_CFLAGS="" PTHREADSTUBS_LIBS="" PKG_CONFIG_PATH=~/opt/gkv4/usr/lib/pkgconfig ../../libdrm-2.4.89/configure --host=aarch64-none-gkos --enable-static --disable-static --disable-vmwgfx --disable-radeon --disable-amdgpu --disable-nouveau --disable-freedreno --disable-vc4 --enable-etnaviv-experimental-api --prefix=$SYSROOT/usr
-
-meson setup -Dgallium-drivers=etnaviv,kmsro -Dvulkan-drivers= -Dplatforms=x11 -Dshared-glapi=enabled -Degl=disabled -Dglx=disabled -Ddri3=disabled -Ddefault_library=static -Ddri-drivers= --cross-file cross_file.txt -Dbuildtype=release -Db_ndebug=true -Dcmake_prefix_path=~/opt/gkv4/usr/lib/cmake -Dshader-cache=enabled -Dshader-cache-default=true --prefix ~/opt/gkv4/usr builddir-etnaviv
-
-meson setup -Dgallium-drivers=etnaviv,kmsro -Dvulkan-drivers= -Dplatforms=x11 -Dshared-glapi=disabled -Degl=disabled -Dglx=dri -Ddri3=disabled -Ddefault_library=static -Ddri-drivers= --cross-file cross_file.txt -Dbuildtype=release -Db_ndebug=true -Dcmake_prefix_path=~/opt/gkv4/usr/lib/cmake -Dshader-cache=enabled -Dshader-cache-default=true --prefix ~/opt/gkv4/usr builddir-etnaviv
-
-meson setup -Dgallium-drivers=etnaviv,kmsro -Dvulkan-drivers= -Dplatforms=x11 -Dshared-glapi=disabled -Degl=enabled -Dglx-direct=true -Ddri3=disabled -Ddefault_library=static -Ddri-drivers= --cross-file cross_file.txt -Dbuildtype=release -Db_ndebug=true -Dcmake_prefix_path=~/opt/gkv4/usr/lib/cmake -Dshader-cache=enabled -Dshader-cache-default=true --prefix ~/opt/gkv4/usr builddir-etnaviv
-
-
-meson compile -C builddir-etnaviv
-meson install -C builddir-etnaviv
 
 cp ~/opt/gkv4/usr/lib/libOSMesa.a ~/opt/gkv4/usr/lib/libGL.a

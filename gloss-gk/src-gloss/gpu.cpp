@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "deferred.h"
 #include "gk.h"
+#include "syscalls.h"
 
 extern "C" ssize_t GK_GPUEnqueueMessages(const struct gpu_message *msgs, size_t nmsg)
 {
@@ -330,4 +331,22 @@ int GK_WindowSetTitle(const char *title)
 extern "C" int GK_GPUSetBrightness(unsigned int bright)
 {
     return deferred_call(__syscall_setbrightness, (void *)(uintptr_t)bright);
+}
+
+extern "C" int GK_GPUCreateRenderBufferNext(int id)
+{
+    return deferred_call(__syscall_opengl_makerenderbuffer, (void *)(intptr_t)id);
+}
+
+extern "C" int GK_GPUGetRenderBuffer()
+{
+    int i = 0;
+    return deferred_call(__syscall_opengl_getrenderbuffer, (void *)(intptr_t)i);
+}
+
+extern "C" void *GK_GPUFlipScreen()
+{
+    void *ret;
+    __syscall(__syscall_flipscreen, &ret, nullptr, &errno);
+    return ret;
 }

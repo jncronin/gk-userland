@@ -251,6 +251,8 @@ int dladdr(const void *addr, Dl_info *info)
         }
     }
 
+    fprintf(stderr, "dladdr failed for %p\n", addr);
+
     return 0;   // fail return 0
 }
 
@@ -340,7 +342,7 @@ void *dlsym(void *handle, const char *name)
         }
         freedl(dl);
     }
-    //fprintf(stderr, "dlsym: %s within %p\n", name, handle);
+    fprintf(stderr, "dlsym: %s not found within %p\n", name, handle);
     return nullptr;
 }
 

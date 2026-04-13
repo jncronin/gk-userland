@@ -15,6 +15,8 @@
 struct gkgl_ctx
 {
     unsigned int w = 0, h = 0;
+    unsigned int depth_size = 0;
+    unsigned int stencil_size = 0;
 
     EGLContext ctx = nullptr;
     EGLDisplay d = nullptr;
@@ -30,6 +32,7 @@ struct gkgl_ctx
     GLuint linear_rbs[3] = { 0, 0, 0 };
     GLuint tiled_fb = 0;
     GLuint tiled_rb = 0;
+    GLuint tiled_rb_depth_stencil = 0;
     int native_id = 0;
 
     /* These are just to ensure the required functions actually
@@ -65,7 +68,7 @@ int GKGLAttribInit(GKGLAttribs *attrs)
     attrs->asize = 8;
     attrs->depth_size = 16;
     attrs->stencil_size = 8;
-    attrs->maj_ver = 3;
+    attrs->maj_ver = 2;
     attrs->min_ver = 1;
     attrs->core_profile = 0;
 
@@ -145,7 +148,7 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
         return -1;
     }
 
-    auto &conf = configs[0];
+    auto &conf = configs[1];
     eglGetConfigAttrib(ctx->d, conf, EGL_RED_SIZE, &attrs->rsize);
     eglGetConfigAttrib(ctx->d, conf, EGL_GREEN_SIZE, &attrs->gsize);
     eglGetConfigAttrib(ctx->d, conf, EGL_BLUE_SIZE, &attrs->bsize);
@@ -154,16 +157,31 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
     eglGetConfigAttrib(ctx->d, conf, EGL_STENCIL_SIZE, &attrs->stencil_size);
     eglGetConfigAttrib(ctx->d, conf, EGL_NATIVE_VISUAL_ID, &ctx->native_id);
 
-    ctx->ctx = eglCreateContext(ctx->d, conf, EGL_NO_CONTEXT, nullptr);
-    if(ctx == nullptr)
+    EGLint ctx_attrib_list[] =
+    {
+        EGL_CONTEXT_MAJOR_VERSION, (EGLint)attrs->maj_ver,
+        EGL_CONTEXT_MINOR_VERSION, (EGLint)attrs->min_ver,
+        (attrs->maj_ver >= 3) ? EGL_CONTEXT_OPENGL_PROFILE_MASK : EGL_NONE,
+            attrs->core_profile ? EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT : EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT,
+        EGL_NONE
+    };
+
+    ctx->ctx = eglCreateContext(ctx->d, conf, EGL_NO_CONTEXT, ctx_attrib_list);
+    if(ctx == EGL_NO_CONTEXT)
     {
         fprintf(stderr, "eglCreateContext failed\n");
         GKGLDeleteContext(ctx);
         return -1;
     }
+    else
+    {
+        fprintf(stderr, "gkgl: created OpenGL context ver %u.%u\n", attrs->maj_ver, attrs->min_ver);
+    }
 
     ctx->w = attrs->width;
     ctx->h = attrs->height;
+    ctx->depth_size = attrs->depth_size;
+    ctx->stencil_size = attrs->stencil_size;
 
     //ctx->force_link1 = __driDriverGetExtensions_etnaviv;
     ctx->force_link2 = gbmint_get_backend;
@@ -185,6 +203,14 @@ int GKGLMakeCurrent(GKGLContext ctx)
         fprintf(stderr, "eglMakeCurrent failed\n");
         return -1;
     }
+    EGLint ctx_type = 0;
+    if(!eglQueryContext(ctx->d, ctx->ctx, EGL_CONTEXT_CLIENT_TYPE, &ctx_type))
+    {
+        fprintf(stderr, "gkgl: eglQueryContext failed: %d\n", eglGetError());
+        return -1;
+    }
+    fprintf(stderr, "gkgl: context type: %d\n", ctx_type);
+    fprintf(stderr, "gkgl: glVersion: %s\n", glGetString(GL_VERSION));
 
     // tiled buffer
     ctx->tiled_bo = gbm_bo_create(ctx->gbm, ctx->w, ctx->h, ctx->native_id, 
@@ -206,6 +232,35 @@ int GKGLMakeCurrent(GKGLContext ctx)
     _mesa_EGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, ctx->tiled_image);
     glBindFramebuffer(GL_FRAMEBUFFER, ctx->tiled_fb);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ctx->tiled_rb);
+
+    // It also needs a depth + stencil buffer, if so requested
+    if(ctx->depth_size || ctx->stencil_size)
+    {
+        glGenRenderbuffers(1, &ctx->tiled_rb_depth_stencil);
+        glBindRenderbuffer(GL_RENDERBUFFER, ctx->tiled_rb_depth_stencil);
+
+        if(ctx->depth_size == 0)
+        {
+            // just a stencil
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, ctx->w, ctx->h);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ctx->tiled_rb_depth_stencil);
+        }
+        else if(ctx->stencil_size == 0)
+        {
+            // just depth
+            if(ctx->depth_size <= 16)
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, ctx->w, ctx->h);
+            else
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, ctx->w, ctx->h);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ctx->tiled_rb_depth_stencil);
+        }
+        else
+        {
+            // both
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx->w, ctx->h);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ctx->tiled_rb_depth_stencil);
+        }
+    }
 
     // Now create three linear buffers (these are the screen framebuffers)
     for(int i = 0; i < 3; i++)
@@ -250,8 +305,9 @@ int GKGLSwapBuffers(GKGLContext ctx)
         a linear screen buffer */
     glBindFramebuffer(GL_READ_FRAMEBUFFER, ctx->tiled_fb);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->linear_fbs[GK_GPUGetRenderBuffer()]);
-    glBlitFramebuffer(0, 0, ctx->w, ctx->h, 0, 0,
-        ctx->w, ctx->h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, ctx->w, ctx->h,
+        0, ctx->h, ctx->w, 0,
+        GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glFinish();
     glBindFramebuffer(GL_FRAMEBUFFER, ctx->tiled_fb);
     GK_GPUFlipScreen();

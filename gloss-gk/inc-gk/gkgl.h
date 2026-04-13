@@ -17,8 +17,8 @@ struct GKGLAttribs
 extern "C" {
 #endif
 
-int GKGLAttribInit(GKGLAttribs *attrs);
-int GKGLCreateContext(GKGLContext *ctx, GKGLAttribs *attrs);
+int GKGLAttribInit(struct GKGLAttribs *attrs);
+int GKGLCreateContext(GKGLContext *ctx, struct GKGLAttribs *attrs);
 int GKGLDeleteContext(GKGLContext ctx);
 int GKGLMakeCurrent(GKGLContext ctx);
 int GKGLSwapBuffers(GKGLContext ctx);

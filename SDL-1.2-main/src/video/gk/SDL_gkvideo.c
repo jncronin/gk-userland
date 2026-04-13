@@ -1,8 +1,17 @@
+#if __GAMEKID__ >= 4
+#include <gkgl.h>
+#include <dlfcn.h>
+#else
 #include <GL/osmesa.h>
+#endif
 
 struct gkglctx {
+#if __GAMEKID__ >= 4
+    GKGLContext ctx;
+#else
     struct osmesa_context *ctx;
     GLenum type;
+#endif
 };
 
 #define SDL_PrivateGLData gkglctx
@@ -67,8 +76,10 @@ static void GK_GL_SwapWindow(_THIS);
 static int GK_GL_LoadLibrary(_THIS, const char *path);
 static void *GK_GL_GetProcAddress(_THIS, const char *name);
 
+#if __GAMEKID__ < 4
 void OSMesaNemaEndFrame(OSMesaContext ctx);
 void OSMesaEnableNema(OSMesaContext ctx, GLboolean enable);
+#endif
 
 static int GK_Available(void)
 {
@@ -717,7 +728,8 @@ int GK_GL_LoadLibrary(_THIS, const char *path)
 void *GK_GL_GetProcAddress(_THIS, const char *name)
 {
 #if __GAMEKID__ >= 4
-    return (void *)OSMesaGetProcAddress(name);
+    return dlsym((void *)(intptr_t)-1, name);
+    //return (void *)OSMesaGetProcAddress(name);
 #endif
     return NULL;
 }
@@ -726,10 +738,12 @@ int GK_GL_MakeCurrent(_THIS)
 {
     if(this->gl_data == NULL)
     {
+#if __GAMEKID__ < 4
         void *firstfb;
         unsigned int gkpf;
         GLenum glpf;
         GK_GPU_CommandList(cmds, 4);
+#endif
 
         this->gl_data = SDL_malloc(sizeof(struct gkglctx));
         if(!this->gl_data)
@@ -738,6 +752,10 @@ int GK_GL_MakeCurrent(_THIS)
             return -1;
         }
 
+#if __GAMEKID__ >= 4
+        GKGLCreateContext(&this->gl_data->ctx, NULL);
+        GKGLMakeCurrent(this->gl_data->ctx);
+#else
         // Get current pixel format of the display - SDL doesn't specify here
         GK_GPUGetScreenMode(NULL, NULL, &gkpf);
 
@@ -798,6 +816,7 @@ int GK_GL_MakeCurrent(_THIS)
             this->gl_data->type,
             this->screen->w, this->screen->h);
         OSMesaPixelStore(OSMESA_Y_UP, 0);
+#endif
     }
     else
     {
@@ -809,6 +828,9 @@ int GK_GL_MakeCurrent(_THIS)
 
 static void GK_GL_SwapWindow(_THIS)
 {
+#if __GAMEKID__ >= 4
+    GKGLSwapBuffers(this->gl_data->ctx);
+#else
     void *next_fb;
     GK_GPU_CommandList(cmds, 4);
 
@@ -824,4 +846,5 @@ static void GK_GL_SwapWindow(_THIS)
         this->gl_data->type,
         this->screen->w, this->screen->h);
     OSMesaPixelStore(OSMESA_Y_UP, 0);
+#endif
 }

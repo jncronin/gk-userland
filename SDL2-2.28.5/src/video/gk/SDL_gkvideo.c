@@ -12,6 +12,10 @@
 #include <math.h>
 #include "_gk_memaddrs.h"
 
+#if __GAMEKID__ >= 4
+#include <gkgl.h>
+#include <dlfcn.h>
+#endif
 
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
@@ -43,7 +47,11 @@ void OSMesaEnableNema(OSMesaContext ctx, GLboolean enable);
 typedef struct
 {
     SDL_Window *sdl_window;
+#if __GAMEKID__ >= 4
+    GKGLContext gl_ctx;
+#else
     OSMesaContext gl_ctx;
+#endif
     GLenum gl_dformat;
 } GK_Window;
 
@@ -669,8 +677,10 @@ void GK_PumpEvents(_THIS)
 
 SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 {
-    void *firstfb;
     GK_Window *gk_window = window->driverdata;
+
+#if __GAMEKID__ < 4
+    void *firstfb;
     unsigned int gkpf;
     GLenum glpf;
     GK_GPU_CommandList(cmds, 4);
@@ -704,52 +714,45 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
             SDL_SetError("unsupported glpf: %u\n", gkpf);
             return NULL;
     }
+#endif
 
 #if __GAMEKID__ >= 4
     {
-        int attribs[] =
-        {
-            OSMESA_FORMAT, glpf,
-            OSMESA_DEPTH_BITS, 16,
-            OSMESA_STENCIL_BITS, 0,
-            OSMESA_ACCUM_BITS, 0,
-            OSMESA_PROFILE, OSMESA_COMPAT_PROFILE,
-            OSMESA_CONTEXT_MAJOR_VERSION, 2,
-            OSMESA_CONTEXT_MINOR_VERSION, 0,
-            0
-        };
+        struct GKGLAttribs attribs;
+        GKGLAttribInit(&attribs);
 
         if(_this->gl_config.depth_size)
-            attribs[3] = _this->gl_config.depth_size;
+            attribs.depth_size = _this->gl_config.depth_size;
         if(_this->gl_config.stencil_size)
-            attribs[5] = _this->gl_config.stencil_size;
+            attribs.stencil_size = _this->gl_config.stencil_size;
         if(_this->gl_config.accum_red_size)
-            attribs[7] = _this->gl_config.accum_red_size;
+            attribs.rsize = _this->gl_config.accum_red_size;
+        if(_this->gl_config.accum_green_size)
+            attribs.gsize = _this->gl_config.accum_green_size;
+        if(_this->gl_config.accum_blue_size)
+            attribs.bsize = _this->gl_config.accum_blue_size;
+        if(_this->gl_config.accum_alpha_size)
+            attribs.asize = _this->gl_config.accum_alpha_size;
         if(_this->gl_config.major_version)
-            attribs[11] = _this->gl_config.major_version;
+            attribs.maj_ver = _this->gl_config.major_version;
         if(_this->gl_config.minor_version)
-            attribs[13] = _this->gl_config.minor_version;
+            attribs.min_ver = _this->gl_config.minor_version;
         switch(_this->gl_config.profile_mask)
         {
             case SDL_GL_CONTEXT_PROFILE_COMPATIBILITY:
-                attribs[9] = OSMESA_COMPAT_PROFILE;
+                attribs.core_profile = 0;
                 break;
             case SDL_GL_CONTEXT_PROFILE_CORE:
-                attribs[9] = OSMESA_CORE_PROFILE;
+                attribs.core_profile = 1;
                 break;
             default:
-                if(((attribs[11] == 3) && (attribs[13] >= 2)) ||
-                    (attribs[11] > 3))
-                    attribs[9] = OSMESA_CORE_PROFILE;
+                if(((attribs.maj_ver == 3) && (attribs.min_ver >= 2)) ||
+                    (attribs.maj_ver > 3))
+                    attribs.core_profile = 0;
                 break;
         }
 
-        for(unsigned int i = 0U; attribs[i] != 0; i += 2)
-        {
-            fprintf(stderr, "gl_attribs: %d: %d\n", attribs[i], attribs[i + 1]);
-        }
-
-        gk_window->gl_ctx = OSMesaCreateContextAttribs(attribs, NULL);
+        GKGLCreateContext(&gk_window->gl_ctx, &attribs);
     }
 #else
     gk_window->gl_ctx = OSMesaCreateContext(glpf, NULL);
@@ -761,13 +764,18 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
         return NULL;
     }
 
+#if __GAMEKID__ >= 4
+    GKGLMakeCurrent(gk_window->gl_ctx);
+#else
     if(window->flags & SDL_WINDOW_NEMA)
         OSMesaEnableNema(gk_window->gl_ctx, GL_TRUE);
 
     // Set first framebuffer
     GK_GPUGetScreenMode((size_t *)&window->w, (size_t *)&window->h, NULL);
+
     OSMesaMakeCurrent(gk_window->gl_ctx, firstfb, gk_window->gl_dformat, window->w, window->h);
     OSMesaPixelStore(OSMESA_Y_UP, 0);
+#endif
 
     return gk_window->gl_ctx;
 }
@@ -775,7 +783,11 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)
 {
     GK_Window *gk_window = window->driverdata;
+#if __GAMEKID__ >= 4
+    gk_window->gl_ctx = (GKGLContext)context;
+#else
     gk_window->gl_ctx = (OSMesaContext)context;
+#endif
     return 0;
 }
 
@@ -786,6 +798,10 @@ int GK_GL_GetSwapInterval(_THIS)
 
 int GK_GL_SwapWindow(_THIS, SDL_Window *window)
 {
+#if __GAMEKID__ >= 4
+    GK_Window *gk_window = window->driverdata;
+    GKGLSwapBuffers(gk_window->gl_ctx);
+#else
     void *next_fb;
     GK_Window *gk_window = window->driverdata;
     GK_GPU_CommandList(cmds, 4);
@@ -801,13 +817,18 @@ int GK_GL_SwapWindow(_THIS, SDL_Window *window)
     OSMesaMakeCurrent(gk_window->gl_ctx, next_fb, gk_window->gl_dformat,   
         window->w, window->h);
     OSMesaPixelStore(OSMESA_Y_UP, 0);
+#endif
 
     return 0;    
 }
 
 void GK_GL_DeleteContext(_THIS, SDL_GLContext context)
 {
+#if __GAMEKID__ >= 4
+    GKGLDeleteContext((GKGLContext)context);
+#else
     OSMesaDestroyContext((OSMesaContext)context);
+#endif
 }
 
 int GK_GL_LoadLibrary(_THIS, const char *path)
@@ -820,7 +841,8 @@ int GK_GL_LoadLibrary(_THIS, const char *path)
 void *GK_GL_GetProcAddress(_THIS, const char *name)
 {
 #if __GAMEKID__ >= 4
-    return (void *)OSMesaGetProcAddress(name);
+    return dlsym((void *)(intptr_t)-1, name);
+    //return (void *)OSMesaGetProcAddress(name);
 #else
     return NULL;
 #endif
@@ -830,7 +852,7 @@ void GK_GL_DefaultProfileConfig(_THIS, int *mask, int *major, int *minor)
 {
 #if __GAMEKID__ >= 4
     *mask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-    *major = 3;
+    *major = 2;
     *minor = 1;
 #else
     *mask = 0;

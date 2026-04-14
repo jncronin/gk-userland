@@ -71,6 +71,9 @@ int GKGLAttribInit(GKGLAttribs *attrs)
     attrs->maj_ver = 2;
     attrs->min_ver = 1;
     attrs->core_profile = 0;
+    attrs->gles = 0;
+    attrs->sample_buffers = 0;
+    attrs->samples = 0;
 
     return 0;
 }
@@ -119,17 +122,33 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
     fprintf(stderr, "egl ver %d.%d\n", egl_maj, egl_min);
     fprintf(stderr, "egl vendor %s\n", eglQueryString(ctx->d, EGL_VENDOR));
 
-    eglBindAPI(EGL_OPENGL_API);
+    if(attrs->gles)
+        eglBindAPI(EGL_OPENGL_ES_API);
+    else
+        eglBindAPI(EGL_OPENGL_API);
+
+    GLint renderable_type = EGL_OPENGL_BIT;
+    if(attrs->gles)
+    {
+        if(attrs->maj_ver >= 3)
+            renderable_type = EGL_OPENGL_ES3_BIT;
+        else if(attrs->maj_ver >= 2)
+            renderable_type = EGL_OPENGL_ES2_BIT;
+        else
+            renderable_type = EGL_OPENGL_ES_BIT;
+    }
 
     EGLint const attrib_list[] =
     {
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+        EGL_RENDERABLE_TYPE, renderable_type,
         EGL_RED_SIZE, attrs->rsize,
         EGL_GREEN_SIZE, attrs->gsize,
         EGL_BLUE_SIZE, attrs->bsize,
         EGL_ALPHA_SIZE, attrs->asize,
         EGL_DEPTH_SIZE, attrs->depth_size,
         EGL_STENCIL_SIZE, attrs->stencil_size,
+        EGL_SAMPLE_BUFFERS, attrs->sample_buffers,
+        EGL_SAMPLES, attrs->samples,
         EGL_NONE
     };
 
@@ -148,34 +167,72 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
         return -1;
     }
 
-    auto &conf = configs[1];
-    eglGetConfigAttrib(ctx->d, conf, EGL_RED_SIZE, &attrs->rsize);
-    eglGetConfigAttrib(ctx->d, conf, EGL_GREEN_SIZE, &attrs->gsize);
-    eglGetConfigAttrib(ctx->d, conf, EGL_BLUE_SIZE, &attrs->bsize);
-    eglGetConfigAttrib(ctx->d, conf, EGL_ALPHA_SIZE, &attrs->asize);
-    eglGetConfigAttrib(ctx->d, conf, EGL_DEPTH_SIZE, &attrs->depth_size);
-    eglGetConfigAttrib(ctx->d, conf, EGL_STENCIL_SIZE, &attrs->stencil_size);
-    eglGetConfigAttrib(ctx->d, conf, EGL_NATIVE_VISUAL_ID, &ctx->native_id);
-
-    EGLint ctx_attrib_list[] =
+    for(auto i = 0; i < nconfigs; i++)
     {
-        EGL_CONTEXT_MAJOR_VERSION, (EGLint)attrs->maj_ver,
-        EGL_CONTEXT_MINOR_VERSION, (EGLint)attrs->min_ver,
-        (attrs->maj_ver >= 3) ? EGL_CONTEXT_OPENGL_PROFILE_MASK : EGL_NONE,
-            attrs->core_profile ? EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT : EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT,
-        EGL_NONE
-    };
+        auto &conf = configs[i];
 
-    ctx->ctx = eglCreateContext(ctx->d, conf, EGL_NO_CONTEXT, ctx_attrib_list);
-    if(ctx == EGL_NO_CONTEXT)
+        eglGetConfigAttrib(ctx->d, conf, EGL_RED_SIZE, &attrs->rsize);
+        eglGetConfigAttrib(ctx->d, conf, EGL_GREEN_SIZE, &attrs->gsize);
+        eglGetConfigAttrib(ctx->d, conf, EGL_BLUE_SIZE, &attrs->bsize);
+        eglGetConfigAttrib(ctx->d, conf, EGL_ALPHA_SIZE, &attrs->asize);
+        eglGetConfigAttrib(ctx->d, conf, EGL_DEPTH_SIZE, &attrs->depth_size);
+        eglGetConfigAttrib(ctx->d, conf, EGL_STENCIL_SIZE, &attrs->stencil_size);
+        eglGetConfigAttrib(ctx->d, conf, EGL_NATIVE_VISUAL_ID, &ctx->native_id);
+        eglGetConfigAttrib(ctx->d, conf, EGL_SAMPLE_BUFFERS, &attrs->sample_buffers);
+        eglGetConfigAttrib(ctx->d, conf, EGL_SAMPLES, &attrs->samples);
+
+        if(attrs->gles)
+        {
+            EGLint ctx_attrib_list[] =
+            {
+                EGL_CONTEXT_CLIENT_VERSION, (EGLint)attrs->maj_ver,
+                EGL_NONE
+            };
+
+            ctx->ctx = eglCreateContext(ctx->d, conf, EGL_NO_CONTEXT, ctx_attrib_list);
+        }
+        else
+        {
+            EGLint ctx_attrib_list[] =
+            {
+                EGL_CONTEXT_MAJOR_VERSION, (EGLint)attrs->maj_ver,
+                EGL_CONTEXT_MINOR_VERSION, (EGLint)attrs->min_ver,
+                (attrs->maj_ver >= 3) ? EGL_CONTEXT_OPENGL_PROFILE_MASK : EGL_NONE,
+                    attrs->core_profile ? EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT : EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT,
+                EGL_NONE
+            };
+
+            ctx->ctx = eglCreateContext(ctx->d, conf, EGL_NO_CONTEXT, ctx_attrib_list);
+        }
+
+        if(ctx->ctx)
+        {
+            fprintf(stderr, "gkgl: created context:\n"
+                "  RED:         %d\n"
+                "  GREEN:       %d\n"
+                "  BLUE:        %d\n"
+                "  DEPTH:       %d\n"
+                "  STENCIL:     %d\n"
+                "  SBUFFERS:    %d\n"
+                "  SAMPLES:     %d\n"
+                "  NATIVE_ID:   %x\n",
+                attrs->rsize, attrs->gsize, attrs->bsize, attrs->depth_size, attrs->stencil_size,
+                attrs->sample_buffers, attrs->samples, ctx->native_id);
+            break;
+        }
+    }
+
+    if(ctx->ctx == EGL_NO_CONTEXT)
     {
-        fprintf(stderr, "eglCreateContext failed\n");
+        fprintf(stderr, "eglCreateContext failed: %d\n", eglGetError());
         GKGLDeleteContext(ctx);
         return -1;
     }
     else
     {
-        fprintf(stderr, "gkgl: created OpenGL context ver %u.%u\n", attrs->maj_ver, attrs->min_ver);
+        fprintf(stderr, "gkgl: created OpenGL%s context ver %u.%u\n",
+            attrs->gles ? "ES" : "",
+            attrs->maj_ver, attrs->min_ver);
     }
 
     ctx->w = attrs->width;
@@ -305,11 +362,28 @@ int GKGLSwapBuffers(GKGLContext ctx)
         a linear screen buffer */
     glBindFramebuffer(GL_READ_FRAMEBUFFER, ctx->tiled_fb);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->linear_fbs[GK_GPUGetRenderBuffer()]);
+#if 0
+    auto blend = glIsEnabled(GL_BLEND);
+    glDisable(GL_BLEND);
+#endif
     glBlitFramebuffer(0, 0, ctx->w, ctx->h,
         0, ctx->h, ctx->w, 0,
         GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glFinish();
     glBindFramebuffer(GL_FRAMEBUFFER, ctx->tiled_fb);
+#if 0
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    auto lighting = glIsEnabled(GL_LIGHTING);
+    glDisable(GL_LIGHTING);
+    if(lighting)
+        glEnable(GL_LIGHTING);
+    if(blend)
+        glEnable(GL_BLEND);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
     GK_GPUFlipScreen();
 
     return 0;

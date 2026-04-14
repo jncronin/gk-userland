@@ -737,6 +737,10 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
             attribs.maj_ver = _this->gl_config.major_version;
         if(_this->gl_config.minor_version)
             attribs.min_ver = _this->gl_config.minor_version;
+        if(_this->gl_config.multisamplebuffers)
+            attribs.sample_buffers = _this->gl_config.multisamplebuffers;
+        if(_this->gl_config.multisamplesamples)
+            attribs.samples = _this->gl_config.multisamplesamples;
         switch(_this->gl_config.profile_mask)
         {
             case SDL_GL_CONTEXT_PROFILE_COMPATIBILITY:
@@ -745,6 +749,9 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
             case SDL_GL_CONTEXT_PROFILE_CORE:
                 attribs.core_profile = 1;
                 break;
+            case SDL_GL_CONTEXT_PROFILE_ES:
+                attribs.gles = 1;
+                break;
             default:
                 if(((attribs.maj_ver == 3) && (attribs.min_ver >= 2)) ||
                     (attribs.maj_ver > 3))
@@ -752,7 +759,23 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
                 break;
         }
 
-        GKGLCreateContext(&gk_window->gl_ctx, &attribs);
+        if(GKGLCreateContext(&gk_window->gl_ctx, &attribs) != 0)
+        {
+            SDL_SetError("GKGLCreateContext failed");
+            return NULL;
+        }
+
+        /* Report back what we actually got */
+        _this->gl_config.depth_size = attribs.depth_size;
+        _this->gl_config.stencil_size = attribs.depth_size;
+        _this->gl_config.accum_red_size = attribs.rsize;
+        _this->gl_config.accum_green_size = attribs.gsize;
+        _this->gl_config.accum_blue_size = attribs.bsize;
+        _this->gl_config.accum_alpha_size = attribs.asize;
+        _this->gl_config.major_version = attribs.maj_ver;
+        _this->gl_config.minor_version = attribs.min_ver;
+        _this->gl_config.multisamplebuffers = attribs.sample_buffers;
+        _this->gl_config.multisamplesamples = attribs.samples;
     }
 #else
     gk_window->gl_ctx = OSMesaCreateContext(glpf, NULL);

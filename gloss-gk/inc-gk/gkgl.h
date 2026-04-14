@@ -11,6 +11,8 @@ struct GKGLAttribs
     int depth_size, stencil_size;
     unsigned int maj_ver, min_ver;
     unsigned int core_profile;
+    unsigned int gles;
+    int sample_buffers, samples;
 };
 
 #ifdef __cplusplus

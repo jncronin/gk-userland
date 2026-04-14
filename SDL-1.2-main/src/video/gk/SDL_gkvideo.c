@@ -743,6 +743,8 @@ int GK_GL_MakeCurrent(_THIS)
         unsigned int gkpf;
         GLenum glpf;
         GK_GPU_CommandList(cmds, 4);
+#else
+        struct GKGLAttribs attrs;
 #endif
 
         this->gl_data = SDL_malloc(sizeof(struct gkglctx));
@@ -753,7 +755,11 @@ int GK_GL_MakeCurrent(_THIS)
         }
 
 #if __GAMEKID__ >= 4
-        GKGLCreateContext(&this->gl_data->ctx, NULL);
+        GKGLAttribInit(&attrs);
+        // default to OpenGL 1.0 for SDL1.2 (expected by tuxracer)
+        attrs.maj_ver = 1;
+        attrs.min_ver = 0;
+        GKGLCreateContext(&this->gl_data->ctx, &attrs);
         GKGLMakeCurrent(this->gl_data->ctx);
 #else
         // Get current pixel format of the display - SDL doesn't specify here

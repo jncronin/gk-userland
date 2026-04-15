@@ -140,5 +140,19 @@ target_sources(rt
 	src-rt/dummy.c
 )
 
-install(TARGETS gloss-gk pthread gk dl rt)
+# gkgl_base is combined with libEGL to create libGKGL
+add_library(gkgl_base)
+
+target_sources(gkgl_base
+PRIVATE
+	src-gkgl/gkgl.cpp
+)
+
+target_include_directories(gkgl_base
+PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/inc-pthread"
+	"${CMAKE_CURRENT_SOURCE_DIR}/gk-userlandinterface"
+)
+
+install(TARGETS gloss-gk pthread gk dl rt gkgl_base)
 

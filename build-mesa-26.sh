@@ -20,3 +20,6 @@ cp ~/opt/gkv4/usr/lib/gbm/dri_gbm.a ~/opt/gkv4/usr/lib/libdri_gbm.a
 # combine the various mesa libraries into libGL.a
 echo -n -e "create $SYSROOT/usr/lib/libGL2.a\naddlib $SYSROOT/usr/lib/libglapi_bridge.a\naddlib $SYSROOT/usr/lib/libglapi.a\naddlib $SYSROOT/usr/lib/libgallium.a\naddlib $SYSROOT/usr/lib/libexpat.a\naddlib $SYSROOT/usr/lib/libgbm.a\naddlib $SYSROOT/usr/lib/libdri_gbm.a\naddlib $SYSROOT/usr/lib/libdrm.a\naddlib $SYSROOT/usr/lib/libllvm.a\nsave\nend\n" | aarch64-none-gkos-ar -M
 mv $SYSROOT/usr/lib/libGL2.a $SYSROOT/usr/lib/libGL.a
+
+# combine gkgl_base and libEGL to libGKGL.a
+echo -n -e "create $SYSROOT/usr/lib/libGKGL.a\naddlib $SYSROOT/usr/lib/libgkgl_base.a\naddlib $SYSROOT/usr/lib/libEGL.a\nsave\nend\n" | aarch64-none-gkos-ar -M

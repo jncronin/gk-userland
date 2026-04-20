@@ -28,6 +28,11 @@ json joystick_conf_read()
 int joystick_conf_write(const json &j)
 {
     std::ofstream o(conf_fname);
+    if(o.is_open() == false)
+    {
+        fprintf(stderr, "joystick_conf_write: could not open %s for writing\n", conf_fname);
+        return -1;
+    }
     o << std::setw(4) << j << std::endl;
     o.close();
     return 0;

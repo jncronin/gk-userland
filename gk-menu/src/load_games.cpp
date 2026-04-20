@@ -133,9 +133,13 @@ static int compile_file(HSQUIRRELVM v,const char *filename)
     FILE *f=fopen(filename,"rb");
     if(f)
     {
-         printf("compile: %d\n", sq_compile(v,file_lexfeedASCII,f,filename,1));
-         fclose(f);
-         return 1;
+        auto compile_ret = sq_compile(v,file_lexfeedASCII,f,filename,1);
+#ifndef DEBUG
+        if(compile_ret != 0)
+#endif
+            printf("compile: %s: %d\n", filename, compile_ret);
+        fclose(f);
+        return 1;
     }
     return 0;
 }
@@ -414,7 +418,9 @@ static int parse_game()
         sq_pop(v, 1);
     }
 
+#ifdef DEBUG
     printf("loaded: %s\n", g.name.c_str());
+#endif
 
     games.push_back(g);
     return 0;
@@ -652,7 +658,9 @@ int load_games()
                 if(name.length() >= 4 && std::equal(ending.rbegin(), ending.rend(), name.rbegin()))
                 {
                     auto fname = "games/" + name;
+#ifdef DEBUG
                     printf("loading %s\n", fname.c_str());
+#endif
                     load_game(fname.c_str());
                 }
             }

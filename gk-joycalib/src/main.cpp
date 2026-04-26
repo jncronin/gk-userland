@@ -16,6 +16,7 @@ static int joyx_to_screen(int v);
 static int joyy_to_screen(int v);
 static int joyx_to_screen(double v);
 static int joyy_to_screen(double v);
+static void draw_circle(SDL_Renderer *r, double radius, int segments = 32);
 
 json conf;
 
@@ -93,21 +94,9 @@ int main()
 
         /* Draw digital bounding boxes */
         // deadzone hard coded at 8000 - TODO: read from kernel somehow
-        const double deadzone = 8000.0;
-        const int circle_segments = 32;
-        SDL_Point cs[circle_segments + 1];
-        for(auto ccs = 0; ccs < circle_segments; ccs++)
-        {
-            auto ang = 2.0 * (double)M_PI / (double)circle_segments * (double)ccs;
-            auto x = (int)std::round((deadzone * std::cos(ang) + 32768.0) * (double)scr_w / 65536.0);
-            auto y = (int)std::round((deadzone * std::sin(ang) + 32768.0) * (double)scr_h / 65536.0);
-            cs[ccs].x = joyx_to_screen(deadzone * std::cos(ang));
-            cs[ccs].y = joyy_to_screen(deadzone * std::sin(ang));
-        }
-        cs[circle_segments].x = joyx_to_screen(deadzone);
-        cs[circle_segments].y = joyy_to_screen(0);
-        SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
-        SDL_RenderDrawLines(r, cs, circle_segments + 1);
+        const double deadzone = 12000.0;
+        draw_circle(r, deadzone);
+        draw_circle(r, 1000.0);
 
         for(auto ang_i = -7; ang_i <= 7; ang_i += 2)
         {
@@ -227,4 +216,19 @@ static inline int joyx_to_screen(double v)
 static inline int joyy_to_screen(double v)
 {
     return joy_to_screen(v, scr_h);
+}
+
+static void draw_circle(SDL_Renderer *r, double deadzone, int circle_segments)
+{
+    SDL_Point cs[circle_segments + 1];
+    for(auto ccs = 0; ccs < circle_segments; ccs++)
+    {
+        auto ang = 2.0 * (double)M_PI / (double)circle_segments * (double)ccs;
+        cs[ccs].x = joyx_to_screen(deadzone * std::cos(ang));
+        cs[ccs].y = joyy_to_screen(deadzone * std::sin(ang));
+    }
+    cs[circle_segments].x = joyx_to_screen(deadzone);
+    cs[circle_segments].y = joyy_to_screen(0);
+    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
+    SDL_RenderDrawLines(r, cs, circle_segments + 1);
 }

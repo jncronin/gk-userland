@@ -164,7 +164,11 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
                     if(kval == "true")
                     {
                         auto fpid = GK_GetFocusProcess();
-                        lv_obj_add_event_cb(cur, cosd_clickquit_cb, LV_EVENT_CLICKED, (void *)(intptr_t)fpid);
+                        // If no keystrokes defined they quit immediately, else allow the game to try
+                        //  and gracefully close
+                        lv_obj_add_event_cb(cur,
+                            cur_clicks.empty() ? kill_click : cosd_clickquit_cb,
+                            LV_EVENT_CLICKED, (void *)(intptr_t)fpid);
                     }
                 }
             }

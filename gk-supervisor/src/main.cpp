@@ -575,12 +575,24 @@ void close_supervisor()
     lv_anim_set_path_cb(&anim, lv_anim_path_ease_in);
     lv_anim_set_var(&anim, (void*)0);       // leaving
     lv_anim_start(&anim);
+
+    // send unpause actions, if any
+    extern std::vector<unsigned short> unpause_actions;
+    void cosd_send_click(unsigned short key);
+    for(auto key : unpause_actions)
+        cosd_send_click(key);
 }
 
 void show_supervisor()
 {
     fprintf(stderr, "show supervisor\n");
     supervisor_last_show_cmd = true;
+
+    // send pause actions, if any
+    extern std::vector<unsigned short> pause_actions;
+    void cosd_send_click(unsigned short key);
+    for(auto key : pause_actions)
+        cosd_send_click(key);
 
     // stop any running hide animation
     lv_anim_del((void*)0, supervisor_anim_cb);

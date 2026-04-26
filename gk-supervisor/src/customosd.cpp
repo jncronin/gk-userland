@@ -14,6 +14,8 @@ static unsigned short str_to_key(const std::string &s);
 static void cosd_click_cb(lv_event_t *e);
 static void cosd_clickquit_cb(lv_event_t *e);
 
+std::vector<unsigned short> pause_actions, unpause_actions;
+
 extern bool focus_obj;
 
 static void kill_click(lv_event_t *)
@@ -58,6 +60,8 @@ int osd_load_custom(lv_obj_t *parent, const std::string &fname)
 int osd_clear(lv_obj_t *parent)
 {
     lv_obj_clean(parent);
+    pause_actions.clear();
+    unpause_actions.clear();
     return 0;
 }
 
@@ -97,6 +101,7 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
     {
         lv_obj_t *cur = nullptr;
         lv_obj_t *lab = nullptr;
+        std::vector<unsigned short> cur_clicks;
 
         auto sname = rdr.GetSection(sect);
 
@@ -142,6 +147,17 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
                 {
                     auto i = str_to_key(kval);
                     lv_obj_add_event_cb(cur, cosd_click_cb, LV_EVENT_CLICKED, (void *)(uintptr_t)i);
+                    cur_clicks.push_back(i);
+                }
+                else if(kname == "clickpause" && kval == "true")
+                {
+                    pause_actions = cur_clicks;
+                    if(unpause_actions.empty())
+                        unpause_actions = cur_clicks;
+                }
+                else if(kname == "clickunpause" && kval == "true")
+                {
+                    unpause_actions = cur_clicks;
                 }
                 else if(kname == "clickquit")
                 {
@@ -160,9 +176,8 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
     return 0;
 }
 
-void cosd_click_cb(lv_event_t *e)
+void cosd_send_click(unsigned short key)
 {
-    auto key = (unsigned short)(uintptr_t)lv_event_get_user_data(e);
     fprintf(stderr, "cosd: send key %u\n", key);
 
     auto fpid = GK_GetFocusProcess();
@@ -176,6 +191,12 @@ void cosd_click_cb(lv_event_t *e)
     ev_release.type = Event::event_type_t::KeyUp;
     ev_release.key = key;
     GK_EventSend(fpid, &ev_release);
+}
+
+void cosd_click_cb(lv_event_t *e)
+{
+    auto key = (unsigned short)(uintptr_t)lv_event_get_user_data(e);
+    cosd_send_click(key);
 }
 
 static void cosd_clickquick_delayed_cb(lv_timer_t *t)

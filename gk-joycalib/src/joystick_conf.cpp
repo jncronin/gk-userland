@@ -59,6 +59,16 @@ int joystick_conf_add_calib(json &j, unsigned int axis_pair, const joystick_cali
     return 0;
 }
 
+int joystick_conf_set_deadzones(json &j, unsigned int digital_deadzone, unsigned int analog_deadzone)
+{
+    j["deadzone"] = {
+        { "digital", digital_deadzone },
+        { "analog", analog_deadzone }
+    };
+
+    return 0;
+}
+
 int joystick_conf_apply_calib(const json &j)
 {
     for(const auto &member : j.items())
@@ -77,6 +87,19 @@ int joystick_conf_apply_calib(const json &j)
 
         if(axis_pair >= n_axes)
         {
+            // is it a deadzone mapping instead?
+            if(!strcmp(member.key().c_str(), "deadzone"))
+            {
+                auto analog = member.value()["analog"];
+                auto digital = member.value()["digital"];
+
+                if(analog.is_number() && digital.is_number())
+                {
+                    GK_SetJoystickDeadzones(digital.get<unsigned int>(),
+                        analog.get<unsigned int>());
+                }
+            }
+
             continue;
         }
 

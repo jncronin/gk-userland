@@ -25,6 +25,16 @@ int main()
     conf = joystick_conf_read();
     joystick_conf_apply_calib(conf);
 
+    int deadzone = 12000;
+    int analog_deadzone = 250;
+
+    auto json_dz = conf["deadzone"]["digital"];
+    if(json_dz.is_number())
+        deadzone = json_dz.get<int>();
+    auto json_adz = conf["deadzone"]["analog"];
+    if(json_adz.is_number())
+        analog_deadzone = json_adz.get<int>();
+
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
     SDL_Window *w;
@@ -64,6 +74,41 @@ int main()
                     do_calib(ev.jbutton.button, rawpt[ev.jbutton.button]);
                 }
             }
+
+            if(ev.type == SDL_KEYDOWN)
+            {
+                switch(ev.key.keysym.scancode)
+                {
+                    case SDL_SCANCODE_LEFT:
+                        deadzone -= 100;
+                        if(deadzone < analog_deadzone)
+                            deadzone = analog_deadzone;
+                        break;
+                    case SDL_SCANCODE_RIGHT:
+                        deadzone += 100;
+                        if(deadzone >= 32000)
+                            deadzone = 32000;
+                        break;
+                    case SDL_SCANCODE_UP:
+                        analog_deadzone -= 25;
+                        if(analog_deadzone < 0)
+                            analog_deadzone = 0;
+                        break;
+                    case SDL_SCANCODE_DOWN:
+                        analog_deadzone += 25;
+                        if(analog_deadzone >= deadzone)
+                            analog_deadzone = deadzone;
+                        break;
+                    case SDL_SCANCODE_TAB:
+                        quit = true;
+                        break;
+                    case SDL_SCANCODE_RETURN:
+                        GK_SetJoystickDeadzones(deadzone, analog_deadzone);
+                        joystick_conf_set_deadzones(conf, deadzone, analog_deadzone);
+                        joystick_conf_write(conf);
+                        break;
+                }
+            }
         }
 
         if(quit)
@@ -94,16 +139,15 @@ int main()
 
         /* Draw digital bounding boxes */
         // deadzone hard coded at 8000 - TODO: read from kernel somehow
-        const double deadzone = 12000.0;
-        draw_circle(r, deadzone);
-        draw_circle(r, 1000.0);
+        draw_circle(r, (double)deadzone);
+        draw_circle(r, (double)analog_deadzone);
 
         for(auto ang_i = -7; ang_i <= 7; ang_i += 2)
         {
             auto ang = (double)ang_i * (double)M_PI / 8.0;
             SDL_RenderDrawLine(r,
-                joyx_to_screen(deadzone * cos(ang)),
-                joyy_to_screen(deadzone * sin(ang)),
+                joyx_to_screen((double)deadzone * cos(ang)),
+                joyy_to_screen((double)deadzone * sin(ang)),
                 joyx_to_screen(32768.0 * cos(ang)),
                 joyy_to_screen(32768.0 * sin(ang)));
         }

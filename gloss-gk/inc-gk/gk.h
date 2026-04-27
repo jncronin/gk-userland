@@ -94,6 +94,7 @@ int GK_GetThrottle(int *y);
 int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int is_raw);
 int GK_SetJoystickCalibration(unsigned int axis_pair,
     int left, int right, int top, int bottom, int middle_x, int middle_y);
+int GK_SetJoystickDeadzones(unsigned int digital_deadzone, unsigned int analog_deadzone);
 
 int GK_SetGoldenThread(pthread_t tid);
 #endif

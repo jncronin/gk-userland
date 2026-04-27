@@ -89,6 +89,17 @@ extern "C" int GK_GetJoystickAxesEx(unsigned int axis_pair, int *x, int *y, int 
     return 0;
 }
 
+extern "C" int GK_SetJoystickDeadzones(unsigned int digital_deadzone, unsigned int analog_deadzone)
+{
+    struct __syscall_joystick_deadzone_params p
+    {
+        .digital = digital_deadzone,
+        .analog = analog_deadzone
+    };
+
+    return deferred_call(__syscall_joystick_deadzone, &p);
+}
+
 extern "C" int GK_SetJoystickCalibration(unsigned int axis_pair,
     int left, int right, int top, int bottom, int middle_x, int middle_y)
 {

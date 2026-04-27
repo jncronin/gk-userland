@@ -13,6 +13,7 @@ struct joystick_calib
 json joystick_conf_read();
 int joystick_conf_write(const json &j);
 int joystick_conf_add_calib(json &j, unsigned int axis_pair, const joystick_calib &calib);
+int joystick_conf_set_deadzones(json &j, unsigned int digital_deadzone, unsigned int analog_deadzone);
 int joystick_conf_apply_calib(const json &j);
 
 #endif

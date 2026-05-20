@@ -179,6 +179,15 @@ static bool read_bool(const std::string &name, bool *out)
     {
         if(SQ_SUCCEEDED(sq_getbool(v, -1, &val)))
             *out = val;
+        else
+        {
+            // try and read as int
+            SQInteger val_as_int;
+            if(SQ_SUCCEEDED(sq_getinteger(v, -1, &val_as_int)))
+            {
+                *out = val_as_int != 0;
+            }
+        }
         sq_pop(v, 1);
     }
     return ret;

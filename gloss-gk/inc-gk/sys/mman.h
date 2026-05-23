@@ -17,6 +17,7 @@ int munmap(void *addr, size_t length);
 #define PROT_EXEC       4
 #define PROT_NONE       0
 
+#define MAP_FILE        0
 #define MAP_SHARED      1
 #define MAP_PRIVATE     2
 

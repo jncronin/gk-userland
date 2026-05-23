@@ -11,6 +11,8 @@
 #include <GL/osmesa.h>
 #include <math.h>
 #include "_gk_memaddrs.h"
+#include <errno.h>
+#include <sys/mman.h>
 
 #if __GAMEKID__ >= 4
 #include <gkgl.h>
@@ -60,6 +62,11 @@ typedef struct
     unsigned int gkpf;
 } GK_ModeData;
 
+typedef struct
+{
+    int fd;
+    unsigned int w, h, hx, hy, pf, stride;
+} GK_CursorData;
 
 uint32_t gkpf_to_pformat(unsigned int gkpf)
 {
@@ -269,6 +276,131 @@ static int GKV4_AddModes(_THIS)
     return 0;
 }
 
+static SDL_Cursor * GK_CreateCursor(SDL_Surface * surface, int hot_x, int hot_y)
+{
+    unsigned int gkpf;
+    size_t dbuf_len;
+    int dbuf_fd;
+    void *dbuf_addr;
+    SDL_Cursor *cursor;
+    GK_CursorData *cdata;
+
+    if(!surface)
+    {
+        return NULL;
+    }
+
+    gkpf = pformat_to_gkpf(surface->format->format);
+    dbuf_len = surface->h * surface->pitch;
+    dbuf_fd = GK_DMABufAlloc(dbuf_len);
+    if(dbuf_fd < 0)
+    {
+        fprintf(stderr, "GK_DMABufAlloc failed: %d\n", errno);
+        return NULL;
+    }
+
+    dbuf_addr = mmap(NULL, dbuf_len, PROT_WRITE, MAP_SYNC, dbuf_fd, 0);
+    if(dbuf_addr == MAP_FAILED)
+    {
+        fprintf(stderr, "mmap of DMABuf failed: %d\n", errno);
+        return NULL;
+    }
+
+    memcpy(dbuf_addr, surface->pixels, dbuf_len);
+    munmap(dbuf_addr, dbuf_len);
+
+    cursor = (SDL_Cursor *) SDL_calloc(1, sizeof(*cursor));
+    if(!cursor)
+    {
+        return NULL;
+    }
+
+    cdata = (GK_CursorData *) SDL_calloc(1, sizeof(*cdata));
+    if(!cdata)
+    {
+        return NULL;
+    }
+
+    cursor->driverdata = cdata;
+    cdata->fd = dbuf_fd;
+    cdata->w = surface->w;
+    cdata->h = surface->h;
+    cdata->hx = hot_x;
+    cdata->hy = hot_y;
+    cdata->pf = gkpf;
+    cdata->stride = surface->pitch;
+
+    return cursor;
+}
+
+static int GK_ShowCursor(SDL_Cursor *cursor)
+{
+	SDL_Mouse *mouse = SDL_GetMouse();
+
+	if (mouse == NULL) {
+		return 0;
+	}
+
+	if (cursor) {
+		GK_CursorData *cdata = (GK_CursorData *)cursor->driverdata;
+        if(!cdata)
+        {
+            return 0;
+        }
+
+        GK_SetCursor(cdata->fd, cdata->w, cdata->h, cdata->hx, cdata->hy, 255,
+            cdata->pf, cdata->stride);
+    }
+    else
+    {
+        GK_SetCursor(-1, 0, 0, 0, 0, 0, 0, 0);
+    }
+    return 0;
+}
+
+static void GK_FreeCursor(SDL_Cursor * cursor)
+{
+    if(cursor && cursor->driverdata)
+    {
+        SDL_free(cursor->driverdata);
+        cursor->driverdata = NULL;
+    }
+}
+
+static int GK_SetRelativeMouseMode(SDL_bool)
+{
+    /* We don't need to do anything here - gkos already separates events into
+        absolute and relative therefore just use the relative_mode flag in
+        SDL_Mouse when processing events */
+    return 0;
+}
+
+static int GK_WarpMouseGlobal(int x, int y)
+{
+    return GK_WarpCursor(x, y);
+}
+
+static void GK_WarpMouse(SDL_Window *, int x, int y)
+{
+    GK_WarpMouseGlobal(x, y);
+}
+
+static void GK_MouseInit(_THIS)
+{
+    SDL_Mouse *mouse = SDL_GetMouse();
+    if(!mouse)
+    {
+        return;
+    }
+
+    mouse->CreateCursor = GK_CreateCursor;
+    mouse->ShowCursor = GK_ShowCursor;
+    mouse->FreeCursor = GK_FreeCursor;
+    mouse->SetRelativeMouseMode = GK_SetRelativeMouseMode;
+    mouse->WarpMouse = GK_WarpMouse;
+    mouse->WarpMouseGlobal = GK_WarpMouseGlobal;
+}
+
 int GK_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
@@ -372,6 +504,8 @@ int GK_VideoInit(_THIS)
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);
+
+    GK_MouseInit(_this);
 
     return 0;
 }

@@ -385,6 +385,25 @@ static void GK_WarpMouse(SDL_Window *, int x, int y)
     GK_WarpMouseGlobal(x, y);
 }
 
+static SDL_Cursor *GK_CreateDefaultCursor(int gkfd)
+{
+    SDL_Cursor *dcursor;
+    GK_CursorData *dcd;
+
+    dcursor = (SDL_Cursor *) SDL_calloc(1, sizeof(*dcd));
+    if(dcursor)
+    {
+        dcd = (GK_CursorData *) SDL_calloc(1, sizeof(*dcd));
+        if(dcd)
+        {
+            dcursor->driverdata = dcd;
+            dcd->fd = GK_FD_CURSOR_ARROW;
+            return dcursor;
+        }
+    }
+    return NULL;
+}
+
 static void GK_MouseInit(_THIS)
 {
     SDL_Mouse *mouse = SDL_GetMouse();
@@ -399,6 +418,9 @@ static void GK_MouseInit(_THIS)
     mouse->SetRelativeMouseMode = GK_SetRelativeMouseMode;
     mouse->WarpMouse = GK_WarpMouse;
     mouse->WarpMouseGlobal = GK_WarpMouseGlobal;
+
+    /* Default cursor */
+    SDL_SetDefaultCursor(GK_CreateDefaultCursor(GK_FD_CURSOR_ARROW));
 }
 
 int GK_VideoInit(_THIS)

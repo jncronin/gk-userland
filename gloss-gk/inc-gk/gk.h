@@ -87,6 +87,11 @@ uint64_t GK_GetCurUs();
 int GK_GetJoystickAxes(int *x, int *y);
 int GK_GetTiltAxes(int *x, int *y);
 
+int GK_DMABufAlloc(size_t len);
+int GK_SetCursor(int fd, unsigned int w, unsigned int h, unsigned int hx, unsigned int hy,
+    unsigned int alpha, unsigned int pf, unsigned int stride);
+int GK_WarpCursor(unsigned int x, unsigned int y);
+
 #if __GAMEKID__ >= 4
 int GK_GetJoystickBAxes(int *x, int *y);
 int GK_GetThrottle(int *y);

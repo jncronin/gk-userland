@@ -772,8 +772,19 @@ void GK_PumpEvents(_THIS)
                 }
                 break;
             case MouseMove:
-                SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
-                    ev.mouse_data.x, ev.mouse_data.y);
+                {
+                    // Only send relative moves (i.e. stick) in relative mode and
+                    //  absolute moves (i.e. touch) in absolute mode
+                    SDL_Mouse *m = SDL_GetMouse();
+                    SDL_bool is_rel = (m && SDL_GetRelativeMouseMode());
+
+                    if((is_rel && ev.mouse_data.is_rel) ||
+                        (!is_rel && !ev.mouse_data.is_rel))
+                    {
+                        SDL_SendMouseMotion(SDL_GetKeyboardFocus(), 0, ev.mouse_data.is_rel,
+                            ev.mouse_data.x, ev.mouse_data.y);
+                    }
+                }
                 break;
             case MouseUp:
 #if __GAMEKID__ < 4

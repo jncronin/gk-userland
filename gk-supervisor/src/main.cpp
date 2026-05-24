@@ -11,6 +11,7 @@
 #include "widget.h"
 #include "osd.h"
 #include "joystick_conf.h"
+#include "wifi_conf.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -58,6 +59,10 @@ int main(int argc, char *argv[])
     // load joystick calibration
     auto joy_conf = joystick_conf_read();
     joystick_conf_apply_calib(joy_conf);
+
+    // load known wifi networks
+    auto wifi_conf = wifi_conf_read();
+    wifi_conf_apply(wifi_conf);
     
     lv_init();
 

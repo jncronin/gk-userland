@@ -19,7 +19,7 @@ static lv_obj_t *oscr, *osbar, *omain, *ovol;
 
 static lv_obj_t *sbar_date, *sbar_fps, *sbar_temp, *sbar_v, *sbar_w, *sbar_cpu, *sbar_icons;
 static lv_obj_t *main_title;
-static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd;
+static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd, *btn_reboot;
 static lv_obj_t *vol_ctrl;
 
 static lv_obj_t *main_tv, *main_tv1;
@@ -39,6 +39,7 @@ static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
 static void wifi_change(lv_event_t *e);
 static void rawsd_change(lv_event_t *e);
+static void reboot_click(lv_event_t *e);
 static void main_gesture(lv_event_t *e);
 static void close_supervisor();
 static void show_supervisor();
@@ -206,6 +207,9 @@ int main(int argc, char *argv[])
     btn_rawsd = gk_btn_create(p2_l2, "RawSD");
     lv_obj_add_flag(btn_rawsd, LV_OBJ_FLAG_CHECKABLE);
     lv_obj_add_event_cb(btn_rawsd, rawsd_change, LV_EVENT_VALUE_CHANGED, nullptr);
+
+    btn_reboot = gk_btn_create(p2_l2, "Reboot");
+    lv_obj_add_event_cb(btn_reboot, reboot_click, LV_EVENT_LONG_PRESSED, nullptr);
 
     // Keyboard on p3
     lv_obj_set_style_pad_all(main_tv3, 16, 0);
@@ -799,4 +803,9 @@ void readd_static_objects_to_group()
         lv_obj_set_state(bright_ctrl, LV_STATE_FOCUS_KEY, true);
         focus_obj = true;
     }
+}
+
+void reboot_click(lv_event_t *e)
+{
+    GK_Shutdown(1);
 }

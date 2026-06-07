@@ -4,13 +4,13 @@
 #include <cstdio>
 #include <lvgl.h>
 
-std::map<std::string, lv_image_dsc_t *> img_map;
+gk_img_context def_img_context;
 
-const lv_image_dsc_t *get_img(const std::string &fname)
+const lv_image_dsc_t *get_img(const std::string &fname, gk_img_context &ctx)
 {
-    if(img_map.find(fname) != img_map.end())
+    if(ctx.img_map.find(fname) != ctx.img_map.end())
     {
-        return img_map[fname];
+        return ctx.img_map[fname];
     }
 
     FILE *fp = fopen(fname.c_str(), "rb");
@@ -97,6 +97,19 @@ const lv_image_dsc_t *get_img(const std::string &fname)
     id->data_size = width * height * 4;
     id->data = (const uint8_t *)ret;
 
-    img_map[fname] = id;
+    ctx.img_map[fname] = id;
     return id;
+}
+
+gk_img_context::~gk_img_context()
+{
+    for(auto [ _ , img ] : img_map)
+    {
+        if(img)
+        {
+            delete[] img->data;
+            delete img;
+        }
+    }
+    img_map.clear();
 }

@@ -4,10 +4,15 @@
 #include "gk.h"
 #include <signal.h>
 #include <vector>
+#include "customosd_sq.h"
+#include "toasts.h"
+#include "styles.h"
 
-int osd_load_gkmenu(lv_obj_t *parent);
-int osd_load_ini(lv_obj_t *parent, const std::string &fname);
-int osd_clear(lv_obj_t *parent);
+using namespace std::chrono_literals;
+
+std::unique_ptr<class osd> osd_load_gkmenu(lv_obj_t *hidden_tv);
+std::unique_ptr<class osd> osd_load_ini(const std::string &fname, lv_obj_t *hidden_tv);
+int osd_clear();
 
 static lv_obj_t *def_overlay_kill;
 static unsigned short str_to_key(const std::string &s);
@@ -33,47 +38,67 @@ static void kill_click(lv_event_t *)
     }
 }
 
-int osd_load_custom(lv_obj_t *parent, const std::string &fname)
+std::unique_ptr<class osd> osd_load_custom(const std::string &fname, lv_obj_t *hidden_tv)
 {
-    osd_clear(parent);
+    osd_clear();
 
     if(fname == "")
     {
-        return osd_load_default(parent);
+        return osd_load_default(hidden_tv);
     }
 
+    std::unique_ptr<class osd> ret;
     if(fname == "gkmenu.osd")
     {
         // special case gkmenu
-        return osd_load_gkmenu(parent);
-    }
-
-    if(fname.ends_with(".ini"))
+        ret = std::move(osd_load_gkmenu(hidden_tv));
+    } 
+    else if(fname.ends_with(".ini"))
     {
-        return osd_load_ini(parent, fname);
+        ret = std::move(osd_load_ini(fname, hidden_tv));
+    }
+    else if(fname.ends_with(".nut"))
+    {
+        ret = std::move(customosd_sq_create(fname, hidden_tv));
+    }
+    else
+    {
+        fprintf(stderr, "osd: don't know how to load %s\n", fname.c_str());
+        ret = std::move(osd_load_default(hidden_tv));
     }
 
-    fprintf(stderr, "osd: don't know how to load %s\n", fname.c_str());
-    return -1;
+    if(!ret)
+    {
+        toast_message("failed to open " + fname, 2000ms);
+        ret = std::move(osd_load_default(hidden_tv));
+    }
+
+    return ret;
 }
 
-int osd_clear(lv_obj_t *parent)
+int osd_clear()
 {
-    lv_obj_clean(parent);
     pause_actions.clear();
     unpause_actions.clear();
     return 0;
 }
 
-int osd_load_gkmenu(lv_obj_t *parent)
+std::unique_ptr<class osd> osd_load_gkmenu(lv_obj_t *parent)
 {
     // gkmenu doesn't have an osd
-    return 0;
+    return std::make_unique<class osd>();
 }
 
-int osd_load_default(lv_obj_t *parent)
+std::unique_ptr<class osd> osd_load_default(lv_obj_t *hidden_tv)
 {
-    def_overlay_kill = gk_btn_create(parent, "Quit");
+    auto osd = std::make_unique<class osd>();
+
+    auto tv = lv_obj_create(hidden_tv);
+    lv_obj_add_style(tv, &style_transp, 0);
+    lv_obj_set_size(tv, 800, 240-32);
+    osd->user_tabs.push_back(tv);
+
+    def_overlay_kill = gk_btn_create(tv, "Quit");
     lv_obj_center(def_overlay_kill);
     lv_obj_set_size(def_overlay_kill, 120, 80);
     lv_obj_add_event_cb(def_overlay_kill, kill_click, LV_EVENT_CLICKED, nullptr);
@@ -83,7 +108,9 @@ int osd_load_default(lv_obj_t *parent)
     lv_obj_set_state(def_overlay_kill, LV_STATE_FOCUS_KEY, true);
     focus_obj = true;
 
-    return 0;
+    toast_message("using default osd", 2000ms);
+
+    return osd;
 }
 
 static int getint(const std::string &s)
@@ -91,11 +118,23 @@ static int getint(const std::string &s)
     return strtol(s.c_str(), nullptr, 0);
 }
 
-int osd_load_ini(lv_obj_t *parent, const std::string &fname)
+std::unique_ptr<class osd> osd_load_ini(const std::string &fname, lv_obj_t *hidden_tv)
 {
+    auto osd = std::make_unique<class osd>();
+
+    auto tv = lv_obj_create(hidden_tv);
+    lv_obj_add_style(tv, &style_transp, 0);
+    lv_obj_set_size(tv, 800, 240-32);
+    osd->user_tabs.push_back(tv);
+
     INIReader rdr(fname);
 
-    fprintf(stderr, "load_ini: %s, parse error: %d\n", fname.c_str(), rdr.ParseError());
+    if(rdr.ParseError())
+    {
+        fprintf(stderr, "load_ini: %s, parse error: %d\n", fname.c_str(), rdr.ParseError());
+        toast_message("osd_ini: parse error: " + std::to_string(rdr.ParseError()), 2000ms);
+        return nullptr;
+    }
 
     for(const auto &sect : rdr.SectionLinenums())
     {
@@ -108,12 +147,12 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
         fprintf(stderr, "load_ini: section: %s\n", sname.c_str());
         if(sname == "label")
         {
-            cur = gk_label_create(parent, "");
+            cur = gk_label_create(tv, "");
             lab = cur;
         }
         else if(sname == "button")
         {
-            std::tie(cur, lab) = gk_btnlab_create(parent);
+            std::tie(cur, lab) = gk_btnlab_create(tv);
             lv_group_add_obj(grp, cur);
 
             if(!focus_obj)
@@ -175,9 +214,9 @@ int osd_load_ini(lv_obj_t *parent, const std::string &fname)
         }
     }
 
-    lv_obj_invalidate(parent);
+    lv_obj_invalidate(tv);
 
-    return 0;
+    return osd;
 }
 
 void cosd_send_click(unsigned short key)

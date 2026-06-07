@@ -12,6 +12,8 @@
 #include "osd.h"
 #include "joystick_conf.h"
 #include "wifi_conf.h"
+#include "toasts.h"
+#include "dialogbox.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -22,7 +24,8 @@ static lv_obj_t *main_title;
 static lv_obj_t *bright_ctrl, *btn_wifi, *btn_rawsd, *btn_reboot;
 static lv_obj_t *vol_ctrl;
 
-static lv_obj_t *main_tv, *main_tv1;
+static lv_obj_t *main_tv = nullptr;
+static lv_obj_t *hidden_tv;
 
 static lv_obj_t *kbd_widget;
 
@@ -31,6 +34,10 @@ static lv_timer_t *vol_timer;
 pid_t gkmenu_pid;
 
 lv_group_t *grp;
+
+std::unique_ptr<class osd> osd;
+
+void recreate_tabview();
 
 static std::string cosd;
 
@@ -67,8 +74,6 @@ int main(int argc, char *argv[])
     
     lv_init();
 
-    init_styles();
-
     overlay = lv_gk_overlaydisplay_create();
     lv_gk_overlaydisplay_set_alpha(192);
     lv_display_set_default(overlay);
@@ -83,6 +88,9 @@ int main(int argc, char *argv[])
 
     auto touch = lv_gk_mouse_create();
 
+    init_styles();
+    init_toasts();
+    init_dialogbox();
 
     /* Add supervisor style display */
     oscr = lv_disp_get_scr_act(overlay);
@@ -146,83 +154,13 @@ int main(int argc, char *argv[])
     lv_label_set_long_mode(main_title, LV_LABEL_LONG_MODE_SCROLL);
     lv_obj_add_style(main_title, &style_text, 0);
 
-    main_tv = lv_tabview_create(omain);
-    lv_obj_add_style(main_tv, &style_transp, 0);
-    lv_obj_set_pos(main_tv, 0, 32);
-    lv_obj_set_size(main_tv, 800, 240-32);
-    lv_obj_add_flag(lv_tabview_get_tab_btns(main_tv), LV_OBJ_FLAG_HIDDEN);
-    main_tv1 = lv_tabview_add_tab(main_tv, "");
-    lv_obj_add_style(main_tv1, &style_transp, 0);
-    auto main_tv2 = lv_tabview_add_tab(main_tv, "");
-    lv_obj_add_style(main_tv2, &style_transp, 0);
-    auto main_tv3 = lv_tabview_add_tab(main_tv, "");
-    lv_obj_add_style(main_tv3, &style_transp, 0);
+    hidden_tv = lv_obj_create(oscr);
+    lv_obj_add_flag(hidden_tv, LV_OBJ_FLAG_HIDDEN);
 
     // Custom OSD on page 1
-    osd_load_custom(main_tv1, "gkmenu.osd");
+    osd = osd_load_custom("gkmenu.osd", hidden_tv);
 
-    // Options on page 2
-    lv_obj_set_layout(main_tv2, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(main_tv2, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_style_pad_row(main_tv2, 16, 0);
-    lv_obj_set_style_pad_all(main_tv2, 16, 0);
-
-    auto p2_l1 = lv_obj_create(main_tv2);
-    lv_obj_add_style(p2_l1, &style_transp, 0);
-    lv_obj_set_layout(p2_l1, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(p2_l1, LV_FLEX_FLOW_ROW);
-    lv_obj_set_width(p2_l1, LV_PCT(100));
-    lv_obj_set_flex_align(p2_l1, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-    lv_obj_set_height(p2_l1, 64);
-
-    auto bright_text = gk_label_create(p2_l1, "Brightness", &lv_font_montserrat_20);
-    lv_obj_set_width(bright_text, 150);
-    bright_ctrl = lv_slider_create(p2_l1);
-    lv_obj_set_width(bright_ctrl, 500);
-    lv_obj_set_height(bright_ctrl, 32);
-    lv_obj_set_style_margin_all(bright_ctrl, 16, 0);
-    lv_slider_set_range(bright_ctrl, 0, 100);
-    lv_slider_set_value(bright_ctrl, GK_KERNEL_INFO->brightness, LV_ANIM_OFF);
-    lv_obj_add_event_cb(bright_ctrl, bright_change, LV_EVENT_VALUE_CHANGED, nullptr);
-    lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
-    lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
-    lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
-    lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_MAIN | 
-        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
-    lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_INDICATOR |
-        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
-
-    auto p2_l2 = lv_obj_create(main_tv2);
-    lv_obj_add_style(p2_l2, &style_transp, 0);
-    lv_obj_set_layout(p2_l2, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(p2_l2, LV_FLEX_FLOW_ROW_WRAP);
-    lv_obj_set_height(p2_l2, 64);
-    lv_obj_set_width(p2_l2, LV_PCT(100));
-    btn_wifi = gk_btn_create(p2_l2, "Wifi");
-    lv_obj_add_flag(btn_wifi, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn_wifi, wifi_change, LV_EVENT_VALUE_CHANGED, nullptr);
-    if(GK_KERNEL_INFO->wifi_state > 0)
-        lv_obj_add_state(btn_wifi, LV_STATE_CHECKED);
-
-    btn_rawsd = gk_btn_create(p2_l2, "RawSD");
-    lv_obj_add_flag(btn_rawsd, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn_rawsd, rawsd_change, LV_EVENT_VALUE_CHANGED, nullptr);
-
-    btn_reboot = gk_btn_create(p2_l2, "Reboot");
-    lv_obj_add_event_cb(btn_reboot, reboot_click, LV_EVENT_LONG_PRESSED, nullptr);
-
-    // Keyboard on p3
-    lv_obj_set_style_pad_all(main_tv3, 16, 0);
-    kbd_widget = gk_kbd_create(main_tv3);
-    lv_obj_add_style(kbd_widget, &style_kbd, LV_PART_MAIN);
-    lv_obj_add_style(kbd_widget, &style_kbd_button, LV_PART_ITEMS);
-    lv_obj_add_style(kbd_widget, &style_kbd_btn_focus, (lv_style_selector_t)LV_PART_ITEMS |
-        (lv_style_selector_t)LV_STATE_FOCUS_KEY);
-    lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
-    lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, 2, LV_ANIM_ON); },
-        LV_EVENT_FOCUSED, nullptr);
-
-    readd_static_objects_to_group();
+    recreate_tabview();
 
     /* Volume on separate panel */
     ovol = lv_obj_create(oscr);
@@ -414,11 +352,11 @@ int cc_cb()
         lv_group_remove_all_objs(grp);
         focus_obj = false;
 
-        osd_load_custom(main_tv1, new_osd);
+        osd = osd_load_custom(new_osd, hidden_tv);
         cosd = new_osd;
 
         /* Now readd screens 2/3 widgets to indev group */
-        readd_static_objects_to_group();
+        recreate_tabview();
     }
 
     return 0;
@@ -794,6 +732,7 @@ void readd_static_objects_to_group()
     lv_group_add_obj(grp, bright_ctrl);
     lv_group_add_obj(grp, btn_wifi);
     lv_group_add_obj(grp, btn_rawsd);
+    lv_group_add_obj(grp, btn_reboot);
 
     lv_group_add_obj(grp, kbd_widget);
 
@@ -808,4 +747,134 @@ void readd_static_objects_to_group()
 void reboot_click(lv_event_t *e)
 {
     GK_Shutdown(1);
+}
+
+static size_t n_user_tabs = 0;
+void recreate_tabview()
+{
+    if(main_tv)
+    {
+        lv_obj_del(main_tv);
+    }
+
+    main_tv = lv_tabview_create(omain);
+    lv_obj_add_style(main_tv, &style_transp, 0);
+    lv_obj_set_pos(main_tv, 0, 32);
+    lv_obj_set_size(main_tv, 800, 240-32);
+    lv_obj_add_flag(lv_tabview_get_tab_btns(main_tv), LV_OBJ_FLAG_HIDDEN);
+
+    n_user_tabs = 0;
+
+    if(osd)
+    {
+        for(auto tv_p : osd->user_tabs)
+        {
+            auto ctv = lv_tabview_add_tab(main_tv, "");
+            lv_obj_remove_style_all(ctv);
+
+            lv_obj_set_parent(tv_p, ctv);
+            lv_obj_set_size(tv_p, 800, 240-32);
+            lv_obj_set_size(ctv, 800, 240-32);
+        }
+
+        n_user_tabs = osd->user_tabs.size();
+    }
+
+    {
+        auto tv_p2 = lv_tabview_add_tab(main_tv, "");
+
+        // Options on page 2
+        lv_obj_set_layout(tv_p2, LV_LAYOUT_FLEX);
+        lv_obj_set_flex_flow(tv_p2, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_style_pad_row(tv_p2, 16, 0);
+        lv_obj_set_style_pad_all(tv_p2, 16, 0);
+
+        auto p2_l1 = lv_obj_create(tv_p2);
+        lv_obj_add_style(p2_l1, &style_transp, 0);
+        lv_obj_set_layout(p2_l1, LV_LAYOUT_FLEX);
+        lv_obj_set_flex_flow(p2_l1, LV_FLEX_FLOW_ROW);
+        lv_obj_set_width(p2_l1, LV_PCT(100));
+        lv_obj_set_flex_align(p2_l1, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+        lv_obj_set_height(p2_l1, 64);
+
+        auto bright_text = gk_label_create(p2_l1, "Brightness", &lv_font_montserrat_20);
+        lv_obj_set_width(bright_text, 150);
+        bright_ctrl = lv_slider_create(p2_l1);
+        lv_obj_set_width(bright_ctrl, 500);
+        lv_obj_set_height(bright_ctrl, 32);
+        lv_obj_set_style_margin_all(bright_ctrl, 16, 0);
+        lv_slider_set_range(bright_ctrl, 0, 100);
+        lv_slider_set_value(bright_ctrl, GK_KERNEL_INFO->brightness, LV_ANIM_OFF);
+        lv_obj_add_event_cb(bright_ctrl, bright_change, LV_EVENT_VALUE_CHANGED, nullptr);
+        lv_obj_add_style(bright_ctrl, &style_slider_main, LV_PART_MAIN);
+        lv_obj_add_style(bright_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
+        lv_obj_add_style(bright_ctrl, &style_slider_knob, LV_PART_KNOB);
+        lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_MAIN | 
+            (lv_style_selector_t)LV_STATE_FOCUS_KEY);
+        lv_obj_add_style(bright_ctrl, &style_btn_focus, (lv_style_selector_t)LV_PART_INDICATOR |
+            (lv_style_selector_t)LV_STATE_FOCUS_KEY);
+
+        auto p2_l2 = lv_obj_create(tv_p2);
+        lv_obj_add_style(p2_l2, &style_transp, 0);
+        lv_obj_set_layout(p2_l2, LV_LAYOUT_FLEX);
+        lv_obj_set_flex_flow(p2_l2, LV_FLEX_FLOW_ROW_WRAP);
+        lv_obj_set_height(p2_l2, 64);
+        lv_obj_set_width(p2_l2, LV_PCT(100));
+        btn_wifi = gk_btn_create(p2_l2, "Wifi");
+        lv_obj_add_flag(btn_wifi, LV_OBJ_FLAG_CHECKABLE);
+        lv_obj_add_event_cb(btn_wifi, wifi_change, LV_EVENT_VALUE_CHANGED, nullptr);
+        if(GK_KERNEL_INFO->wifi_state > 0)
+            lv_obj_add_state(btn_wifi, LV_STATE_CHECKED);
+
+        btn_rawsd = gk_btn_create(p2_l2, "RawSD");
+        lv_obj_add_flag(btn_rawsd, LV_OBJ_FLAG_CHECKABLE);
+        lv_obj_add_event_cb(btn_rawsd, rawsd_change, LV_EVENT_VALUE_CHANGED, nullptr);
+
+        btn_reboot = gk_btn_create(p2_l2, "Reboot");
+        lv_obj_add_event_cb(btn_reboot, reboot_click, LV_EVENT_LONG_PRESSED, nullptr);
+    }
+
+    {
+        auto tv_p3 = lv_tabview_add_tab(main_tv, "");
+
+        // Keyboard on p3
+        lv_obj_set_style_pad_all(tv_p3, 16, 0);
+        kbd_widget = gk_kbd_create(tv_p3);
+        lv_obj_add_style(kbd_widget, &style_kbd, LV_PART_MAIN);
+        lv_obj_add_style(kbd_widget, &style_kbd_button, LV_PART_ITEMS);
+        lv_obj_add_style(kbd_widget, &style_kbd_btn_focus, (lv_style_selector_t)LV_PART_ITEMS |
+            (lv_style_selector_t)LV_STATE_FOCUS_KEY);
+        lv_obj_set_size(kbd_widget, LV_PCT(100), LV_PCT(100));
+        lv_obj_add_event_cb(kbd_widget, [](lv_event_t *e) { lv_tabview_set_active(main_tv, n_user_tabs + 1, LV_ANIM_ON); },
+            LV_EVENT_FOCUSED, nullptr);
+    }
+
+    lv_obj_update_layout(main_tv);
+    readd_static_objects_to_group();
+}
+
+osd::~osd()
+{
+    for(auto obj : user_tabs)
+    {
+        lv_obj_del(obj);
+    }
+    user_tabs.clear();
+}
+
+void loadosd(const std::string &fname)
+{
+    if(fname != cosd)
+    {
+        /* Custom OSD is screen 1.  Therefore need to remove all entries from the indev group, and begin
+            again at screen 1. */
+        lv_group_remove_all_objs(grp);
+        focus_obj = false;
+
+        osd = osd_load_custom(fname, hidden_tv);
+        cosd = fname;
+
+        /* Now readd screens 2/3 widgets to indev group */
+        recreate_tabview();
+    }
 }

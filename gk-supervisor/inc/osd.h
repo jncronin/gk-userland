@@ -3,8 +3,18 @@
 
 #include <lvgl/lvgl.h>
 #include <string>
+#include <vector>
+#include <memory>
 
-int osd_load_default(lv_obj_t *parent);
-int osd_load_custom(lv_obj_t *parent, const std::string &fname);
+class osd
+{
+    public:
+        std::vector<lv_obj_t *> user_tabs;
+
+        virtual ~osd();
+};
+
+std::unique_ptr<class osd> osd_load_custom(const std::string &fname, lv_obj_t *hidden_tv);
+std::unique_ptr<class osd> osd_load_default(lv_obj_t *hidden_tv);
 
 #endif

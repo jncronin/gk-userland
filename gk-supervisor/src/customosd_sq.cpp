@@ -1307,9 +1307,9 @@ std::unique_ptr<osd> customosd_sq_create(const std::string &fname, lv_obj_t *hid
     sq_pop(v, 1);
 
     // load gk_sq_lib.nut library
-    if(compile_file(v, "gk_sq_lib.nut") != 1)
+    if(compile_file(v, "osd/gk_sq_lib.nut") != 1)
     {
-        printf("customosq_sq_create: compile_file(gk_sq_lib.nut) failed\n");
+        printf("customosq_sq_create: compile_file(osd/gk_sq_lib.nut) failed\n");
         return nullptr;
     }
 

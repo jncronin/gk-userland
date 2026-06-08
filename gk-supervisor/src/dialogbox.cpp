@@ -115,7 +115,9 @@ int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> b
         lv_obj_get_width(dialog_text)));
     lv_obj_remove_flag(dialog_parent, LV_OBJ_FLAG_HIDDEN);
 
+#ifndef SUPERVISOR_SIMULATOR
     update_kernel_state(last_show);
+#endif
 
     return 0;
 }   
@@ -161,5 +163,7 @@ void dialog_destroy()
     cdialog.clear();
 
     has_dialog = false;
+#ifndef SUPERVISOR_SIMULATOR
     update_kernel_state(last_show);
+#endif
 }

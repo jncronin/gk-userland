@@ -8,6 +8,7 @@
 #include <vector>
 #include <lvgl.h>
 #include <assert.h>
+#include <unistd.h>
 #include "customosd_sq.h"
 #include "styles.h"
 #include "dialogbox.h"
@@ -18,6 +19,8 @@
 #ifndef SUPERVISOR_SIMULATOR
 #include <gk.h>
 #include <_gk_event.h>
+
+void close_supervisor();
 #endif
 
 extern lv_group_t *grp;
@@ -30,6 +33,8 @@ static SQInteger toast_func(HSQUIRRELVM v);
 static SQInteger sendkeyevent_func(HSQUIRRELVM v);
 static SQInteger loadosd_func(HSQUIRRELVM v);
 static SQInteger delaykill_func(HSQUIRRELVM v);
+static SQInteger close_func(HSQUIRRELVM v);
+static SQInteger delay_func(HSQUIRRELVM v);
 
 #define ADD_DEFINE(x) \
     sq_pushstring(v, #x, -1); \
@@ -440,6 +445,20 @@ SQInteger class_set(HSQUIRRELVM v)
         lv_obj_set_style_pad_left(obj, pad[3], 0);
         handled = true;
     }
+    else if(!strcmp("internal_pad", func_name))
+    {
+        SQInteger pad[2];
+        for(auto i = 0u; i < 2; i++)
+        {
+            sq_pushinteger(v, i);
+            if(!SQ_SUCCEEDED(sq_get(v, -2))) return SQ_ERROR;
+            if(!SQ_SUCCEEDED(sq_getinteger(v, -1, &pad[i]))) return SQ_ERROR;
+            sq_poptop(v);
+        }
+        lv_obj_set_style_pad_row(obj, pad[0], 0);
+        lv_obj_set_style_pad_column(obj, pad[1], 0);
+        handled = true;
+    }
     else if(!strcmp("text", func_name))
     {
         const SQChar *val;
@@ -735,6 +754,14 @@ int add_lvgl_classes(HSQUIRRELVM v, lv_obj_t *_parent)
 
     sq_pushstring(v, "delaykill", -1);
     sq_newclosure(v, delaykill_func, 0);
+    sq_newslot(v, -3, SQFalse);
+
+    sq_pushstring(v, "close", -1);
+    sq_newclosure(v, close_func, 0);
+    sq_newslot(v, -3, SQFalse);
+
+    sq_pushstring(v, "delay", -1);
+    sq_newclosure(v, delay_func, 0);
     sq_newslot(v, -3, SQFalse);
 
     // create the lv namespace with various defines
@@ -1120,14 +1147,19 @@ SQInteger loadosd_func(HSQUIRRELVM v)
     return 0;
 }
 
+#ifndef SUPERVISOR_SIMULATOR
 static void delaykill_delayed_cb(lv_timer_t *t)
 {
     auto fpid = (pid_t)(intptr_t)lv_timer_get_user_data(t);
     kill(fpid, SIGKILL);
 }
+#endif
 
 SQInteger delaykill_func(HSQUIRRELVM v)
 {
+#ifdef SUPERVISOR_SIMULATOR
+    printf("delaykill\n");
+#else
     // delaykill(ms = 1000);
     SQInteger delaykill_param;
 
@@ -1137,7 +1169,27 @@ SQInteger delaykill_func(HSQUIRRELVM v)
         SQ_SUCCEEDED(sq_getinteger(v, -1, &delaykill_param)) ? (uint32_t)delaykill_param : 1000,
         (void *)(intptr_t)fpid);
     lv_timer_set_repeat_count(t, 1);
+#endif
 
+    return 0;
+}
+
+SQInteger close_func(HSQUIRRELVM v)
+{
+#ifdef SUPERVISOR_SIMULATOR
+    printf("close\n");
+#else
+    close_supervisor();
+#endif
+    return 0;
+}
+
+SQInteger delay_func(HSQUIRRELVM v)
+{
+    // delay(ms = 1);
+    SQInteger delay_param;
+    auto delay_ms = SQ_SUCCEEDED(sq_getinteger(v, -1, &delay_param)) ? (int)delay_param : 1;
+    usleep(delay_ms * 1000);
     return 0;
 }
 

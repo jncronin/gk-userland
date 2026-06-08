@@ -50,7 +50,7 @@ static void wifi_change(lv_event_t *e);
 static void rawsd_change(lv_event_t *e);
 static void reboot_click(lv_event_t *e);
 static void main_gesture(lv_event_t *e);
-static void close_supervisor();
+void close_supervisor();
 static void show_supervisor();
 static void toggle_supervisor();
 static bool supervisor_last_show_cmd = false;

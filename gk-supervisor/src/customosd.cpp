@@ -108,8 +108,6 @@ std::unique_ptr<class osd> osd_load_default(lv_obj_t *hidden_tv)
     lv_obj_set_state(def_overlay_kill, LV_STATE_FOCUS_KEY, true);
     focus_obj = true;
 
-    toast_message("using default osd", 2000ms);
-
     return osd;
 }
 

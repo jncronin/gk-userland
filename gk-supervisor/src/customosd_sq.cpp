@@ -720,10 +720,6 @@ int add_lvgl_classes(HSQUIRRELVM v, lv_obj_t *_parent)
     // create the lv namespace with various defines
     sq_pushstring(v, "lv", -1);
     sq_newtable(v);
-    sq_newslot(v, -3, SQFalse);
-
-    sq_pushstring(v, "lv", -1);
-    assert(SQ_SUCCEEDED(sq_get(v, -2)));
 
     ADD_DEFINE(LV_LAYOUT_NONE);
     ADD_DEFINE(LV_LAYOUT_FLEX);
@@ -771,9 +767,10 @@ int add_lvgl_classes(HSQUIRRELVM v, lv_obj_t *_parent)
     ADD_DEFINE(LV_FLEX_ALIGN_SPACE_AROUND);
     ADD_DEFINE(LV_FLEX_ALIGN_SPACE_BETWEEN);
 
-    sq_pop(v, sq_gettop(v));
+    sq_newslot(v, -3, SQFalse);
+
+    // scancodes in root table
     
-    sq_pushroottable(v);
     ADD_DEFINE(GK_SCANCODE_0);
     ADD_DEFINE(GK_SCANCODE_1);
     ADD_DEFINE(GK_SCANCODE_2);
@@ -1229,6 +1226,9 @@ static SQInteger error_handler(HSQUIRRELVM vm)
     printf("error raised: ");
     dump_item(vm, -1, false);
     printf("\n");
+
+    dump_stack(vm);
+
     return 0;
 }
 

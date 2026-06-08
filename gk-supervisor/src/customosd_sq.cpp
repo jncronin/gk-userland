@@ -29,6 +29,7 @@ static SQInteger dialog_func(HSQUIRRELVM v);
 static SQInteger toast_func(HSQUIRRELVM v);
 static SQInteger sendkeyevent_func(HSQUIRRELVM v);
 static SQInteger loadosd_func(HSQUIRRELVM v);
+static SQInteger delaykill_func(HSQUIRRELVM v);
 
 #define ADD_DEFINE(x) \
     sq_pushstring(v, #x, -1); \
@@ -62,6 +63,12 @@ class sq_context : public osd
 
         // images
         gk_img_context imgs;
+
+        // pause, resume
+        int ev_pause = -1;
+        int ev_resume = -1;
+        int pause();
+        int resume();
 
         lv_obj_t *tv_container;     // just for initial add - changed later in recreate_tabview()
 
@@ -307,10 +314,15 @@ sq_event stack_to_event(HSQUIRRELVM v, HSQOBJECT *sq_obj)
     // get the raw closure
     HSQOBJECT o_closure;
     if(!SQ_SUCCEEDED(sq_getstackobj(v, -1, &o_closure))) return ev;
-    sq_addref(v, &o_closure);
-    sq_addref(v, sq_obj);
+    if(!o_closure._type == OT_CLOSURE) return ev;
 
-    ev.obj = *sq_obj;
+    sq_addref(v, &o_closure);
+
+    if(sq_obj)
+    {
+        sq_addref(v, sq_obj);
+        ev.obj = *sq_obj;
+    }
     ev.closure = o_closure;
 
     return ev;
@@ -491,8 +503,6 @@ SQInteger class_set(HSQUIRRELVM v)
         }
         else
         {
-            sq_release(v, &ev.closure);
-            sq_release(v, &ev.obj);
             printf("not a closure\n");
             return SQ_ERROR;
         }                
@@ -549,9 +559,15 @@ void run_ev_closure(size_t ev_idx, sq_context *ctx)
     sq_getclosureroot(v, 1);
 
     // then the param
-    sq_pushobject(ev.v, ev.obj);
+    auto nparams = 1;
 
-    auto cret = sq_call(ev.v, 2, SQFalse, SQTrue);
+    if(ev.obj._type != OT_NULL)
+    {
+        sq_pushobject(ev.v, ev.obj);
+        nparams++;
+    }
+
+    auto cret = sq_call(ev.v, nparams, SQFalse, SQTrue);
 
     if(!SQ_SUCCEEDED(cret))
     {
@@ -715,6 +731,10 @@ int add_lvgl_classes(HSQUIRRELVM v, lv_obj_t *_parent)
 
     sq_pushstring(v, "loadosd", -1);
     sq_newclosure(v, loadosd_func, 0);
+    sq_newslot(v, -3, SQFalse);
+
+    sq_pushstring(v, "delaykill", -1);
+    sq_newclosure(v, delaykill_func, 0);
     sq_newslot(v, -3, SQFalse);
 
     // create the lv namespace with various defines
@@ -1063,7 +1083,7 @@ SQInteger sendkeyevent_func(HSQUIRRELVM v)
     auto fpid = GK_GetFocusProcess();
 
     Event ev_press;
-    ev_press.type = Event::event_type_t::KeyDown;
+    ev_press.type = (pressed == 0) ? Event::event_type_t::KeyUp : Event::event_type_t::KeyDown;
     ev_press.key = key;
     GK_EventSend(fpid, &ev_press);
 #endif
@@ -1096,6 +1116,27 @@ SQInteger loadosd_func(HSQUIRRELVM v)
     auto sosd_file = new std::string(osd_file);
 
     lv_async_call(loadosd_cb, sosd_file);
+
+    return 0;
+}
+
+static void delaykill_delayed_cb(lv_timer_t *t)
+{
+    auto fpid = (pid_t)(intptr_t)lv_timer_get_user_data(t);
+    kill(fpid, SIGKILL);
+}
+
+SQInteger delaykill_func(HSQUIRRELVM v)
+{
+    // delaykill(ms = 1000);
+    SQInteger delaykill_param;
+
+    // schedule a callback for 1 s time to actually kill the process if not already by other keystrokes
+    auto fpid = GK_GetFocusProcess();
+    auto t = lv_timer_create(delaykill_delayed_cb,
+        SQ_SUCCEEDED(sq_getinteger(v, -1, &delaykill_param)) ? (uint32_t)delaykill_param : 1000,
+        (void *)(intptr_t)fpid);
+    lv_timer_set_repeat_count(t, 1);
 
     return 0;
 }
@@ -1336,6 +1377,40 @@ std::unique_ptr<osd> customosd_sq_create(const std::string &fname, lv_obj_t *hid
     }
     sq_pop(v, 1);
 
+    // Did the script set any pause or unpause actions?
+    sq_pushroottable(v);
+    sq_pushstring(v, "pause", -1);
+    if(SQ_SUCCEEDED(sq_get(v, -2)))
+    {
+        auto ev = stack_to_event(v, nullptr);
+
+        if(ev.closure._type == OT_CLOSURE)
+        {
+            auto ev_id = ctx->events.size();
+            ctx->events.push_back(ev);
+            ctx->ev_pause = ev_id;
+        }
+    }
+    sq_settop(v, 0);
+
+    sq_pushroottable(v);
+    sq_pushstring(v, "resume", -1);
+    if(SQ_SUCCEEDED(sq_get(v, -2)))
+    {
+        auto ev = stack_to_event(v, nullptr);
+
+        if(ev.closure._type == OT_CLOSURE)
+        {
+            auto ev_id = ctx->events.size();
+            ctx->events.push_back(ev);
+            ctx->ev_resume = ev_id;
+        }
+    }
+    sq_settop(v, 0);
+
+    if(ctx->ev_resume == -1 && ctx->ev_pause != -1)
+        ctx->ev_resume = ctx->ev_pause;    
+
     return ctx;
 }
 
@@ -1347,7 +1422,9 @@ sq_context::~sq_context()
         for(auto ev : events)
         {
             sq_release(v, &ev.closure);
-            sq_release(v, &ev.obj);
+
+            if(ev.obj._type != OT_NULL)
+                sq_release(v, &ev.obj);
         }
 
         for(auto [ inst, _ ] : obj_map)
@@ -1363,4 +1440,22 @@ sq_context::~sq_context()
         sq_close(v);
         v = nullptr;
     }
+}
+
+int sq_context::pause()
+{
+    if(ev_pause != -1)
+    {
+        run_ev_closure(ev_pause, this);
+    }
+    return 0;
+}
+
+int sq_context::resume()
+{
+    if(ev_resume != -1)
+    {
+        run_ev_closure(ev_resume, this);
+    }
+    return 0;
 }

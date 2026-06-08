@@ -19,8 +19,6 @@ static unsigned short str_to_key(const std::string &s);
 static void cosd_click_cb(lv_event_t *e);
 static void cosd_clickquit_cb(lv_event_t *e);
 
-std::vector<unsigned short> pause_actions, unpause_actions;
-
 extern bool focus_obj;
 
 static void kill_click(lv_event_t *)
@@ -78,8 +76,6 @@ std::unique_ptr<class osd> osd_load_custom(const std::string &fname, lv_obj_t *h
 
 int osd_clear()
 {
-    pause_actions.clear();
-    unpause_actions.clear();
     return 0;
 }
 
@@ -188,13 +184,13 @@ std::unique_ptr<class osd> osd_load_ini(const std::string &fname, lv_obj_t *hidd
                 }
                 else if(kname == "clickpause" && kval == "true")
                 {
-                    pause_actions = cur_clicks;
-                    if(unpause_actions.empty())
-                        unpause_actions = cur_clicks;
+                    osd->pause_actions = cur_clicks;
+                    if(osd->unpause_actions.empty())
+                        osd->unpause_actions = cur_clicks;
                 }
                 else if(kname == "clickunpause" && kval == "true")
                 {
-                    unpause_actions = cur_clicks;
+                    osd->unpause_actions = cur_clicks;
                 }
                 else if(kname == "clickquit")
                 {
@@ -375,4 +371,20 @@ unsigned short str_to_key(const std::string &s)
     }
     ret |= _str_to_key(s.substr(pos_start));
     return ret;
+}
+
+int osd::pause()
+{
+    for(auto key : pause_actions)
+        cosd_send_click(key);
+
+    return 0;
+}
+
+int osd::resume()
+{
+    for(auto key : unpause_actions)
+        cosd_send_click(key);
+
+    return 0;
 }

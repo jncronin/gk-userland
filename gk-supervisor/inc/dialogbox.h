@@ -17,5 +17,6 @@ void init_dialogbox();
 
 int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> btns);
 bool dialog_visible();
+lv_obj_t *dialogbox_get();
 
 #endif

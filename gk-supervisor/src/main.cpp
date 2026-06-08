@@ -41,6 +41,8 @@ void recreate_tabview();
 
 static std::string cosd;
 
+bool last_show = false;
+
 static int cc_cb();
 static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
@@ -90,7 +92,6 @@ int main(int argc, char *argv[])
 
     init_styles();
     init_toasts();
-    init_dialogbox();
 
     /* Add supervisor style display */
     oscr = lv_disp_get_scr_act(overlay);
@@ -176,6 +177,9 @@ int main(int argc, char *argv[])
     lv_obj_add_style(vol_ctrl, &style_slider_indicator, LV_PART_INDICATOR);
     lv_bar_set_range(vol_ctrl, 0, 100);
     lv_bar_set_value(vol_ctrl, GK_KERNEL_INFO->volume, LV_ANIM_OFF);
+
+    /* Dialog box on top of all others */
+    init_dialogbox();
 
     /* Timer that can be used to hide the volume control after a period of inactivity */
     vol_timer = lv_timer_create(vol_timer_cb, 2000, nullptr);
@@ -438,7 +442,8 @@ static void update_ks_obj(std::vector<gk_supervisor_visible_region> &visreg, lv_
 
 void update_kernel_state(bool show)
 {
-    if(!show)
+    last_show = show;
+    if(!show && !dialog_visible())
     {
         GK_SetSupervisorVisibleEx(0, nullptr, 0);
     }
@@ -446,8 +451,14 @@ void update_kernel_state(bool show)
     {
         std::vector<gk_supervisor_visible_region> visreg;
 
-        update_ks_obj(visreg, omain);
-        update_ks_obj(visreg, osbar);
+        if(show)
+        {
+            update_ks_obj(visreg, omain);
+            update_ks_obj(visreg, osbar);
+        }
+
+        if(dialog_visible())
+            update_ks_obj(visreg, dialogbox_get());
 
         GK_SetSupervisorVisibleEx(1, visreg.data(), visreg.size());
     }

@@ -15,6 +15,11 @@ struct dialog_btn_impl
 
 static std::vector<dialog_btn_impl> cdialog;
 
+#ifndef SUPERVISOR_SIMULATOR
+void update_kernel_state(bool show);
+extern bool last_show;
+#endif
+
 static void dialog_cb(lv_event_t *e);
 static void dialog_destroy();
 
@@ -73,6 +78,8 @@ int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> b
         return -1;
     }
 
+    has_dialog = true;
+
     /* Set title text */
     lv_label_set_text(dialog_text, msg.c_str());
 
@@ -108,8 +115,16 @@ int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> b
         lv_obj_get_width(dialog_text)));
     lv_obj_remove_flag(dialog_parent, LV_OBJ_FLAG_HIDDEN);
 
+    update_kernel_state(last_show);
+
     return 0;
 }   
+
+lv_obj_t *dialogbox_get()
+{
+    lv_obj_update_layout(dialog_background);
+    return dialog_background;
+}
 
 bool dialog_visible()
 {
@@ -146,4 +161,5 @@ void dialog_destroy()
     cdialog.clear();
 
     has_dialog = false;
+    update_kernel_state(last_show);
 }

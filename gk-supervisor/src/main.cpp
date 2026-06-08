@@ -315,6 +315,49 @@ void supervisor_tick()
     }
 }
 
+std::string pf_to_bpp(unsigned int pf)
+{
+    switch(pf)
+    {
+        case GK_PIXELFORMAT_ARGB8888:
+        case GK_PIXELFORMAT_ABGR8888:
+        case GK_PIXELFORMAT_RGBA8888:
+        case GK_PIXELFORMAT_BGRA8888:
+            return "32";
+
+        case GK_PIXELFORMAT_RGB565:
+        case GK_PIXELFORMAT_BGR565:
+            return "16";
+
+        case GK_PIXELFORMAT_RGB888:
+        case GK_PIXELFORMAT_XRGB8888:
+            return "24";
+
+        case GK_PIXELFORMAT_L8:
+            return "8";
+
+        case GK_PIXELFORMAT_A8L8:
+            return "A8L8";
+
+        case GK_PIXELFORMAT_A4L4:
+            return "A4L4";
+
+        case GK_PIXELFORMAT_ARGB1555:
+            return "ARGB1555";
+
+        case GK_PIXELFORMAT_ARGB4444:
+            return "ARGB4444";
+
+        case GK_PIXELFORMAT_RGB565A8:
+            return "RGB565A8";
+
+        case GK_PIXELFORMAT_RGB8:
+            return "RGB8";
+    }
+
+    return std::to_string(pf);
+}
+
 int cc_cb()
 {
     auto fpid = GK_GetFocusProcess();
@@ -335,8 +378,8 @@ int cc_cb()
     pname[sizeof(pname) - 1] = 0;
     
     char titlebuf[512];
-    snprintf(titlebuf, sizeof(titlebuf) - 1, "%s (%llux%llux%u@%d)", pname,
-        w, h, pf, refresh);
+    snprintf(titlebuf, sizeof(titlebuf) - 1, "%s (%llux%llux%s@%d)", pname,
+        w, h, pf_to_bpp(pf).c_str(), refresh);
     titlebuf[sizeof(titlebuf) - 1] = 0;
 
     lv_label_set_text(main_title, titlebuf);

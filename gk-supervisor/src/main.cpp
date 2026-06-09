@@ -43,6 +43,8 @@ static std::string cosd;
 
 bool last_show = false;
 
+lv_indev_t *kbd;
+
 static int cc_cb();
 static void kill_click(lv_event_t *e);
 static void bright_change(lv_event_t *e);
@@ -82,7 +84,7 @@ int main(int argc, char *argv[])
     lv_gk_register_caption_change_callback(cc_cb);
     lv_gk_register_rawkey_callback(rk_cb);
 
-    auto kbd = lv_gk_kbd_create();
+    kbd = lv_gk_kbd_create();
 
     grp = lv_group_create();
     lv_indev_set_group(kbd, grp);

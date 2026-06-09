@@ -199,12 +199,12 @@ SQInteger class_constructor(HSQUIRRELVM v)
                             obj = lv_button_create(pobj);
                             lv_obj_add_style(obj, &style_button, 0);
                             lv_obj_add_style(obj, &style_btn_focus, LV_STATE_FOCUS_KEY);
-                            lv_group_add_obj(grp, pobj);
+                            lv_group_add_obj(grp, obj);
 
                             if(!focus_obj)
                             {
-                                lv_group_focus_obj(pobj);
-                                lv_obj_set_state(pobj, LV_STATE_FOCUS_KEY, true);
+                                lv_group_focus_obj(obj);
+                                lv_obj_set_state(obj, LV_STATE_FOCUS_KEY, true);
                                 focus_obj = true;
                             }
 

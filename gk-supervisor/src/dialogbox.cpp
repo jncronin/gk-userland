@@ -18,6 +18,7 @@ static std::vector<dialog_btn_impl> cdialog;
 #ifndef SUPERVISOR_SIMULATOR
 void update_kernel_state(bool show);
 extern bool last_show;
+extern lv_indev_t *kbd;
 #endif
 
 static void dialog_cb(lv_event_t *e);
@@ -84,6 +85,7 @@ int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> b
     lv_label_set_text(dialog_text, msg.c_str());
 
     /* Create the buttons */
+    bool focus_obj_set = false;
     for(const auto &ibtn : btns)
     {
         dialog_btn_impl cbtn;
@@ -103,11 +105,20 @@ int dialogbox_show(const std::string &msg, const std::vector<dialogbox_button> b
 
         lv_group_add_obj(dialog_grp, cbtn.btn);
 
+        if(!focus_obj_set)
+        {
+            lv_group_focus_obj(cbtn.btn);
+            lv_obj_set_state(cbtn.btn, LV_STATE_FOCUS_KEY, true);
+            focus_obj_set = true;
+        }
+
         lv_obj_add_event_cb(cbtn.btn, dialog_cb, LV_EVENT_CLICKED, (void *)cdialog.size());
         cdialog.push_back(cbtn);
     }
 
-    //lv_indev_set_group(kbd, dialog_grp);
+#ifndef SUPERVISOR_SIMULATOR
+    lv_indev_set_group(kbd, dialog_grp);
+#endif
 
     lv_obj_update_layout(dialog_btn_container);
     lv_obj_update_layout(dialog_text);
@@ -148,7 +159,9 @@ void dialog_cb(lv_event_t *e)
 
 void dialog_destroy()
 {
-    //lv_indev_set_group(kbd, grp);
+#ifndef SUPERVISOR_SIMULATOR
+    lv_indev_set_group(kbd, grp);
+#endif
 
     lv_obj_add_flag(dialog_parent, LV_OBJ_FLAG_HIDDEN);
 

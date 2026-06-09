@@ -1447,7 +1447,7 @@ std::unique_ptr<osd> customosd_sq_create(const std::string &fname, lv_obj_t *hid
     sq_settop(v, 0);
 
     sq_pushroottable(v);
-    sq_pushstring(v, "resume", -1);
+    sq_pushstring(v, "unpause", -1);
     if(SQ_SUCCEEDED(sq_get(v, -2)))
     {
         auto ev = stack_to_event(v, nullptr);

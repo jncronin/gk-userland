@@ -214,6 +214,7 @@ SQInteger class_constructor(HSQUIRRELVM v)
                             break;
                         case ID_OBJECT:
                             obj = lv_obj_create(pobj);
+                            lv_obj_add_style(obj, &style_transp, 0);
                             break;
                         case ID_TABVIEWPAGE:
                             obj = lv_obj_create(ctx->tv_container);

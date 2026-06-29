@@ -1,6 +1,6 @@
 #include "threads.h"
 #include "pthread.h"
-#include <cstdint>
+#include <stdint.h>
 
 extern "C"
 {

@@ -1,7 +1,7 @@
 #define _RETARGETABLE_LOCKING 1
 #include <sys/lock.h>
 #include <pthread.h>
-#include <cstdint>
+#include <stdint.h>
 
 /* struct __lock
 {

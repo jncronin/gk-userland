@@ -1,6 +1,6 @@
 #include <syslog.h>
-#include <cstdio>
-#include <cstdarg>
+#include <stdio.h>
+#include <stdarg.h>
 
 extern "C" void openlog(const char *ident, int option, int facility)
 {

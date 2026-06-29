@@ -1,7 +1,7 @@
 #include "_gk_memaddrs.h"
 #include "syscalls.h"
 #include "deferred.h"
-#include <cstdint>
+#include <stdint.h>
 
 #if __GAMEKID__ >= 4
 extern "C" int GK_GetJoystickAxes(int *x, int *y)

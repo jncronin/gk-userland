@@ -14,7 +14,7 @@ echo "Using GK toolchain in $TOOLSDIR.  Sysroot set to $SYSROOT."
 
 # check for presence of g++
 if [ ! -x $TOOLSDIR/bin/aarch64-none-gkos-c++ ]; then
-    echo "Toolchain not found.  Please run ./build-toolchain.sh first."
+    echo "Toolchain not found.  Please run ./build-toolchain-v4.sh first."
     exit -1
 fi
 

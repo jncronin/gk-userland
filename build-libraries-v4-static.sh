@@ -120,7 +120,7 @@ mkdir -p $SYSROOT/usr/lib/pkgconfig
 cp tcl.pc $SYSROOT/usr/lib/pkgconfig
 cd ../..
 
-make $CMAKE_OPTS -S lvgl-9.5.0/ -B build-v4/lvgl95 -DCONFIG_LV_BUILD_DEMOS=OFF -DCONFIG_LV_BUILD_EXAMPLES=OFF
+cmake $CMAKE_OPTS -S lvgl-9.5.0/ -B build-v4/lvgl95 -DCONFIG_LV_BUILD_DEMOS=OFF -DCONFIG_LV_BUILD_EXAMPLES=OFF
 make -C build-v4/lvgl95 -j 16 install
 
 cp toolchain-gkosv4.cmake mpg123-1.32.7/ports
@@ -143,6 +143,7 @@ cp -dpR openal-soft-1.24.2/include/AL $SYSROOT/usr/include
 
 cd gettext-tiny-0.3.2
 make CROSS_COMPILE=aarch64-none-gkos- CFLAGS="-g -O2" CC=aarch64-none-gkos-gcc AR=aarch64-none-gkos-ar prefix=$SYSROOT/usr install
+sed -e "s|PREFIX|$SYSROOT|" < libintl.pc.in > $SYSROOT/usr/lib/pkgconfig/libintl.pc
 cd ..
 
 mkdir -p build-v4/glib
@@ -162,7 +163,7 @@ make -C build-v4/libmt32emu/ -j16 install
 
 mkdir -p build-v4/speexdsp
 cd build-v4/speexdsp/
-./../speexdsp-1.2.1/configure --host=aarch64-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
+../../speexdsp-1.2.1/configure --host=aarch64-none-gkos --enable-static --disable-shared --prefix=$SYSROOT/usr
 make -j16 install
 cd ../..
 

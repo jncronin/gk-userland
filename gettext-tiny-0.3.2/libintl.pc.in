@@ -1,0 +1,10 @@
+prefix=PREFIX/usr
+exec_prefix=${prefix}/bin
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libintl
+Description: gettext-tiny
+Version: 0.3.2
+Libs: -L${libdir} -lintl
+Cflags: -I${includedir}

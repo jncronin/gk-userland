@@ -1,8 +1,9 @@
-build/
-build-*/
+/build/
+/build-*/
 *.o
 !build-aux/
 
+speexdsp-1.2.1/autom4te.cache
 busybox-1.36.1/applets/.built-in.o.cmd
 busybox-1.36.1/busybox_unstripped.out
 gk*.tar

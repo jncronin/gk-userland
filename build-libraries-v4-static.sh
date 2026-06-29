@@ -35,9 +35,11 @@ cp -dpf $SYSROOT/usr/lib/liblibcharset.a $SYSROOT/usr/lib/libcharset.a
 
 cmake $CMAKE_OPTS -S zlib-1.3 -B build-v4/zlib
 make -C build-v4/zlib -j16 install
+cp -dpf $SYSROOT/usr/lib/libzlib.a $SYSROOT/usr/lib/libz.a
 
 cmake $CMAKE_OPTS -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -S libpng-1.6.40 -B build-v4/libpng
 make -C build-v4/libpng -j16 install
+cp -dpf $SYSROOT/usr/lib/libpng.a $SYSROOT/usr/lib/libpng16.a
 
 mkdir -p build/mesa4
 cd build/mesa4

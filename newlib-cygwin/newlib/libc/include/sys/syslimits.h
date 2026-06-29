@@ -33,6 +33,23 @@
 #ifndef _SYS_SYSLIMITS_H_
 #define _SYS_SYSLIMITS_H_
 
+#if !defined(__STRICT_ANSI__) || \
+    (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || \
+    (defined(__cplusplus) && __cplusplus >= 201103L) || \
+    defined(_GNU_SOURCE)
+
+# ifndef ULLONG_MAX
+#  define ULLONG_MAX (__LONG_LONG_MAX__ * 2ULL + 1ULL)
+# endif
+# ifndef LLONG_MAX
+#  define LLONG_MAX __LONG_LONG_MAX__
+# endif
+# ifndef LLONG_MIN
+#  define LLONG_MIN (-LLONG_MAX - 1LL)
+# endif
+
+#endif
+
 #define	ARG_MAX			65536	/* max bytes for an exec function */
 #ifndef CHILD_MAX
 #define	CHILD_MAX		   40	/* max simultaneous processes */

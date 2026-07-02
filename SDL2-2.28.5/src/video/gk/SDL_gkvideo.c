@@ -901,9 +901,10 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
         if(_this->gl_config.accum_alpha_size)
             attribs.asize = _this->gl_config.accum_alpha_size;
         if(_this->gl_config.major_version)
+        {
             attribs.maj_ver = _this->gl_config.major_version;
-        if(_this->gl_config.minor_version)
             attribs.min_ver = _this->gl_config.minor_version;
+        }
         if(_this->gl_config.multisamplebuffers)
             attribs.sample_buffers = _this->gl_config.multisamplebuffers;
         if(_this->gl_config.multisamplesamples)

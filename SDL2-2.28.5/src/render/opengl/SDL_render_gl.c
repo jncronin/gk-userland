@@ -21,6 +21,14 @@
 #include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_OGL && !SDL_RENDER_DISABLED
+
+#ifdef __GAMEKID__
+#define __SDL_NOGETPROCADDR__ 1
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+
 #include "SDL_hints.h"
 #include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
 #include "SDL_opengl.h"
@@ -237,10 +245,10 @@ GL_CheckAllErrors(const char *prefix, SDL_Renderer *renderer, const char *file, 
 
 static int GL_LoadFunctions(GL_RenderData *data)
 {
+    int retval = 0;
 #ifdef __SDL_NOGETPROCADDR__
 #define SDL_PROC(ret, func, params) data->func = func;
 #else
-    int retval = 0;
 #define SDL_PROC(ret, func, params)                                                           \
     do {                                                                                      \
         data->func = SDL_GL_GetProcAddress(#func);                                            \

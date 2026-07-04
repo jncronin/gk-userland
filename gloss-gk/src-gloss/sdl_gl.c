@@ -10,7 +10,6 @@ static void GK_GL_NotLinked()
 static void GK_GKGL_NotLinked()
 {
     fprintf(stderr, "error: GL functions requested but not linked with -lGKGL -lGL\n");
-    exit(-1);
 }
 
 __attribute__((weak)) void OSMesaGetProcAddress()
@@ -85,5 +84,10 @@ __attribute__((weak)) int GKGLSwapBuffers()
 __attribute__((weak)) int GKGLDeleteContext()
 {
     GK_GKGL_NotLinked();
+    return -1;
+}
+
+__attribute__((weak)) int GKGLLoadSDLFunctions(void *)
+{
     return -1;
 }

@@ -23,7 +23,7 @@
 #if SDL_VIDEO_RENDER_OGL && !SDL_RENDER_DISABLED
 
 #ifdef __GAMEKID__
-#define __SDL_NOGETPROCADDR__ 1
+int GKGLLoadSDLFunctions(void *data);
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -246,6 +246,9 @@ GL_CheckAllErrors(const char *prefix, SDL_Renderer *renderer, const char *file, 
 static int GL_LoadFunctions(GL_RenderData *data)
 {
     int retval = 0;
+#ifdef __GAMEKID__
+    retval = GKGLLoadSDLFunctions(&data->glBegin);
+#else
 #ifdef __SDL_NOGETPROCADDR__
 #define SDL_PROC(ret, func, params) data->func = func;
 #else
@@ -260,6 +263,7 @@ static int GL_LoadFunctions(GL_RenderData *data)
 
 #include "SDL_glfuncs.h"
 #undef SDL_PROC
+#endif
     return retval;
 }
 
@@ -1732,6 +1736,7 @@ static SDL_Renderer *GL_CreateRenderer(SDL_Window *window, Uint32 flags)
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, RENDERER_CONTEXT_MINOR);
 
         if (SDL_RecreateWindow(window, (window_flags & ~(SDL_WINDOW_VULKAN | SDL_WINDOW_METAL)) | SDL_WINDOW_OPENGL) < 0) {
+            printf("SDL_RecreateWindow failed\n");
             goto error;
         }
     }

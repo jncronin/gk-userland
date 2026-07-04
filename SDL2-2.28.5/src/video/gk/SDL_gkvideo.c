@@ -886,7 +886,11 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 #if __GAMEKID__ >= 4
     {
         struct GKGLAttribs attribs;
-        GKGLAttribInit(&attribs);
+        if(GKGLAttribInit(&attribs) != 0)
+        {
+            SDL_SetError("GKGLAttribInit failed");
+            return NULL;
+        }
 
         if(_this->gl_config.depth_size)
             attribs.depth_size = _this->gl_config.depth_size;
@@ -973,7 +977,15 @@ SDL_GLContext GK_GL_CreateContext(_THIS, SDL_Window *window)
 
 int GK_GL_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)
 {
-    GK_Window *gk_window = window->driverdata;
+    GK_Window *gk_window;
+    
+    if(!window)
+    {
+        SDL_SetError("window was null");
+        return -1;
+    }
+
+    gk_window = window->driverdata;
 #if __GAMEKID__ >= 4
     gk_window->gl_ctx = (GKGLContext)context;
 #else

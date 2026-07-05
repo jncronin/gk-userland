@@ -8,7 +8,7 @@ extern "C" int _stat(char *file, struct stat *st)
 	int fd, ret;
 
 	// open file then fstat it
-	struct __syscall_open_params p { file, O_RDONLY, 0 };
+	struct __syscall_open_params p { file, O_RDONLY | O_NOFOLLOW, 0 };
 	fd = deferred_call(__syscall_open, &p);
 
 	if(fd < 0)

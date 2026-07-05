@@ -410,7 +410,7 @@ int GKGLDeleteContext(GKGLContext ctx)
         }
         for(int i = 0; i < 3; i++)
         {
-            if(ctx->linear_bos)
+            if(ctx->linear_bos[i])
             {
                 gbm_bo_destroy(ctx->linear_bos[i]);
             }

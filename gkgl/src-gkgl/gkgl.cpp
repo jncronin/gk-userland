@@ -145,8 +145,8 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
         EGL_GREEN_SIZE, attrs->gsize,
         EGL_BLUE_SIZE, attrs->bsize,
         EGL_ALPHA_SIZE, attrs->asize,
-        EGL_DEPTH_SIZE, attrs->depth_size,
-        EGL_STENCIL_SIZE, attrs->stencil_size,
+        EGL_DEPTH_SIZE, (attrs->depth_size <= 16) ? attrs->depth_size : 16,
+        EGL_STENCIL_SIZE, (attrs->stencil_size <= 8) ? attrs->stencil_size : 8,
         EGL_SAMPLE_BUFFERS, attrs->sample_buffers,
         EGL_SAMPLES, attrs->samples,
         EGL_NONE
@@ -163,6 +163,8 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
     fprintf(stderr, "egl found %d configs\n", nconfigs);
     if(nconfigs == 0)
     {
+        fprintf(stderr, "egl failed to match rsize: %d, gsize: %d, bsize: %d, asize: %d, depth_size: %d, stencil_size: %d, sample_buffers: %d, samples: %d\n",
+            attrs->rsize, attrs->gsize, attrs->bsize, attrs->asize, attrs->depth_size, attrs->stencil_size, attrs->sample_buffers, attrs->sample_buffers);
         GKGLDeleteContext(ctx);
         return -1;
     }

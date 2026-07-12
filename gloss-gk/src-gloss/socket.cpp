@@ -124,4 +124,16 @@ int getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
     return 0;
 }
 
+ssize_t sendmsg(int socket, const struct msghdr *message, int flags)
+{
+    errno = ENOSYS;
+    return -1;
+}
+
+ssize_t recvmsg(int socket, struct msghdr *message, int flags)
+{
+    errno = ENOSYS;
+    return -1;
+}
+
 }

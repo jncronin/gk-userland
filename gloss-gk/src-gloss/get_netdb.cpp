@@ -66,6 +66,29 @@ extern "C" int inet_aton(const char *cp, in_addr *inp)
     return 0;
 }
 
+extern "C" int inet_pton(int af, const char *src, void *dst)
+{
+    if(af != AF_INET)
+    {
+        errno = EAFNOSUPPORT;
+        return -1;
+    }
+    return inet_aton(src, (in_addr *)dst);
+}
+
+extern "C" const char *inet_ntop(int af, const void *src,
+    char *dst, socklen_t size)
+{
+    if(af != AF_INET)
+    {
+        errno = EAFNOSUPPORT;
+        return nullptr;
+    }
+
+    in_addr ina = *(in_addr *)src;
+    return inet_ntoa(ina);
+}
+
 extern "C" in_addr_t inet_addr(const char *cp)
 {
     in_addr ia;

@@ -346,6 +346,29 @@ void *dlsym(void *handle, const char *name)
     return nullptr;
 }
 
+int dlinfo(void *handle, int request, void *info)
+{
+    auto dl = getdl(handle);
+    if(dl.fd < 0)
+    {
+        return -1;
+    }
+
+    switch(request)
+    {
+        case RTLD_DI_ORIGIN:
+            strcpy((char *)info, dl.name);
+            return 0;
+
+        case RTLD_DI_PHDR:
+            *(uintptr_t *)info = (uintptr_t)dl.eh + dl.eh->e_phoff;
+            return (int)dl.eh->e_phnum;
+
+        default:
+            return -1;                
+    }
+}
+
 static char _dlerror[] = "dlfcn.h functions are not supported";
 char *dlerror()
 {

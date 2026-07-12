@@ -14,6 +14,16 @@ int dlclose(void *);
 char *dlerror(void);
 void *dlopen(const char *, int);
 void *dlsym(void *, const char *);
+int dlinfo(void *handle, int request, void *info);
+
+#define RTLD_DI_LMID        1
+#define RTLD_DI_LINKMAP     2
+#define RTLD_DI_ORIGIN      3
+#define RTLD_DI_SERINFO     4
+#define RTLD_DI_SERINFOSIZE 5
+#define RTLD_DI_TLS_MODID   6
+#define RTLD_DI_TLS_DATA    7
+#define RTLD_DI_PHDR        8
 
 typedef struct
 {

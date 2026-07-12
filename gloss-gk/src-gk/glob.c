@@ -201,10 +201,22 @@ glob(pattern, flags, errfunc, pglob)
 		    *bufnext++ = c;
 	*bufnext = EOS;
 
+	int ret;
+
 	if (flags & GLOB_BRACE)
-	    return globexp1(patbuf, pglob, &limit);
+	    ret = globexp1(patbuf, pglob, &limit);
 	else
-	    return glob0(patbuf, pglob, &limit);
+	    ret = glob0(patbuf, pglob, &limit);
+
+	if(ret != 0)
+	{
+		return ret;
+	}
+	if(!pglob->gl_matchc)
+	{
+		return GLOB_NOMATCH;
+	}
+	return 0;
 }
 
 /*

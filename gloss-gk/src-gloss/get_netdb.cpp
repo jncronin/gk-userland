@@ -1,6 +1,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <errno.h>
+#include <netinet/in.h>
 
 extern "C" struct servent *getservent(void)
 {
@@ -125,3 +126,16 @@ extern "C" int getaddrinfo(const char * nodename,
     // not yet implemented
     return EAI_NONAME;
 }
+
+extern "C" int getnameinfo(const struct sockaddr *addr,
+    socklen_t addrlen,
+    char *host,
+    socklen_t hostlen,
+    char *serv,
+    socklen_t servlen,
+    unsigned int flags)
+{
+    return EAI_NONAME;
+}
+
+const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;

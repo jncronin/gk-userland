@@ -15,4 +15,6 @@ extern const struct in6_addr in6addr_loopback;
 
 #define IN6_IS_ADDR_V4MAPPED(a)     0
 
+#define IN6ADDR_ANY_INIT { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } } }
+
 #endif

@@ -399,6 +399,11 @@ int GKGLDeleteContext(GKGLContext ctx)
         return -1;
     }
 
+    if(ctx->d)
+    {
+        eglMakeCurrent(ctx->d, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_SURFACE);
+    }
+
     if(ctx->ctx)
     {
         eglDestroyContext(ctx->d, ctx->ctx);

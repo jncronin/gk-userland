@@ -76,6 +76,18 @@ chmod ugo+x $SYSROOT/usr/bin/sdl-config
 sed 's/SDL2/SDL/g' $SYSROOT/usr/lib/pkgconfig/sdl2.pc | sed 's/sdl2/sdl/g' > $SYSROOT/usr/lib/pkgconfig/sdl.pc
 chmod ugo+x $SYSROOT/usr/lib/pkgconfig/sdl.pc
 
+mkdir -p build-v4/sdl12image
+cd build-v4/sdl12image
+../../SDL_image-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-webp --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
+make -j16 install
+cd ../..
+
+mkdir -p build-v4/sdl12mixer
+cd build-v4/sdl12mixer
+../../SDL_mixer-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-music-mod --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
+make -j16 install-lib install-hdrs
+cd ../..
+
 mkdir -p build-v4/sdl_gfx
 cd build-v4/sdl_gfx
 ../../SDL_gfx-2.0.27/configure --host=aarch64-none-gkos --disable-shared --enable-static --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr

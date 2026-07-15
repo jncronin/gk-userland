@@ -321,13 +321,31 @@ int GKGLMakeCurrent(GKGLContext ctx)
         }
     }
 
+    // map GK screen format to GBM format
+    unsigned int gk_pf;
+    GK_GPUGetScreenMode(nullptr, nullptr, &gk_pf);
+    uint32_t gbm_format = GBM_FORMAT_ARGB8888;
+    switch(gk_pf)
+    {
+        case GK_PIXELFORMAT_RGB565:
+            gbm_format = GBM_FORMAT_RGB565;
+            break;
+        case GK_PIXELFORMAT_ARGB8888:
+            break;
+        default:
+            fprintf(stderr, "gkgl: unsupported GK pixel format %u - switching to ARGB8888\n");
+            gk_pf = GK_PIXELFORMAT_ARGB8888;
+            GK_SetScreenMode(nullptr, nullptr, &gk_pf, nullptr);
+            break;
+    }
+
     // Now create three linear buffers (these are the screen framebuffers)
     for(int i = 0; i < 3; i++)
     {
         // linear screen buffer
         GK_GPUCreateRenderBufferNext(i);
         ctx->linear_bos[i] = gbm_bo_create(ctx->gbm, ctx->w, ctx->h, 
-                                    GBM_FORMAT_ARGB8888,
+                                    gbm_format,
                                     GBM_BO_USE_LINEAR | GBM_BO_USE_SCANOUT);
         if(!ctx->linear_bos[i])
         {

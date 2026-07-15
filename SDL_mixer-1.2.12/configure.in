@@ -381,6 +381,13 @@ AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
     if test x$enable_music_fluidsynth_midi = xyes; then
         AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
         AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes])
+        if test x$have_fluidsynth_hdr = xyes; then
+            case "$host" in
+                *-*-gkos*)
+                    have_fluidsynth_lib=yes
+                    ;;
+            esac
+        fi
         if test x$have_fluidsynth_hdr = xyes -a x$have_fluidsynth_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -466,6 +473,13 @@ if test x$enable_music_ogg = xyes; then
     else
         AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
         AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes])
+        if test x$have_ogg_hdr = xyes; then
+            case "$host" in
+                *-*-gkos*)
+                    have_ogg_lib=yes
+                    ;;
+            esac
+        fi
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -526,6 +540,13 @@ if test x$enable_music_flac = xyes; then
     if test x$have_flac_ver = xyes; then
         AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
         AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes])
+        if test x$have_flac_hdr = xyes; then
+            case "$host" in
+                *-*-gkos*)
+                    have_flac_lib=yes
+                    ;;
+            esac
+        fi
         if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then    
             case "$host" in
                 *-*-darwin*)

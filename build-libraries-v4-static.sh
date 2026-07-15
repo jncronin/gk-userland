@@ -82,12 +82,6 @@ cd build-v4/sdl12image
 make -j16 install
 cd ../..
 
-mkdir -p build-v4/sdl12mixer
-cd build-v4/sdl12mixer
-../../SDL_mixer-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-music-mod --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
-make -j16 install-lib install-hdrs
-cd ../..
-
 mkdir -p build-v4/sdl_gfx
 cd build-v4/sdl_gfx
 ../../SDL_gfx-2.0.27/configure --host=aarch64-none-gkos --disable-shared --enable-static --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
@@ -196,5 +190,11 @@ make -j16 -C build-v4/libmad-0.16.4 install
 cmake $CMAKE_OPTS -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -S flac-1.5.0 -B build-v4/flac
 make -j16 -C build-v4/flac install
 
+mkdir -p build-v4/sdl12mixer
+cd build-v4/sdl12mixer
+# disable fluidsynth here because it needs SDL2 output, and this is SDL1.2 mixer
+../../SDL_mixer-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-music-mod --disable-music-fluidsynth-midi --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
+make -j16 install-lib install-hdrs
+cd ../..
 
 echo "Successfully built gk libraries in $SYSROOT"

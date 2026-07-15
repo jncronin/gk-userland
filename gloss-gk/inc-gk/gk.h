@@ -108,6 +108,8 @@ int GK_SetJoystickCalibration(unsigned int axis_pair,
 int GK_SetJoystickDeadzones(unsigned int digital_deadzone, unsigned int analog_deadzone);
 
 int GK_SetGoldenThread(pthread_t tid);
+
+int GK_SetScreenMode(size_t *w, size_t *h, unsigned int *pf, int *refresh);
 #endif
 
 #define GK_AUDIO_MAX_BUFFER_SIZE    (16*1024)

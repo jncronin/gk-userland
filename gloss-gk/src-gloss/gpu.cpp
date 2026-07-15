@@ -237,6 +237,18 @@ int GK_GPUFlipBuffersEx(void *cmdlist, void **next_buffer, void **old_buffer)
     return 0;
 }
 
+#if __GAMEKID__ >= 4
+int GK_SetScreenMode(size_t *w, size_t *h, unsigned int *pf, int *refresh)
+{
+    __syscall_getscreenmodeex_params p;
+    p.x = (int *)w;
+    p.y = (int *)h;
+    p.pf = (int *)pf;
+    p.refresh = (int *)refresh;
+    return deferred_call(__syscall_setscreenmode, &p);
+}
+#endif
+
 int GK_GPUSetScreenModeEx(void *cmdlist, size_t w, size_t h, unsigned int pf, int refresh)
 {
     auto hdr = reinterpret_cast<__gk_cmd_list_header *>(cmdlist);

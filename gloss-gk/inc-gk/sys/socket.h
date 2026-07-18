@@ -53,6 +53,7 @@ struct msghdr
 };
 
 #define INADDR_ANY      0
+#define INADDR_BROADCAST    0xffffffffu
 
 #ifdef __cplusplus
 extern "C" {

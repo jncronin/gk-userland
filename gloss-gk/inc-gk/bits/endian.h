@@ -9,6 +9,11 @@
 #define __BYTE_ORDER __LITTLE_ENDIAN
 #endif
 
+#if defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define __FLOAT_WORD_ORDER __LITTLE_ENDIAN
+#elif defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define __FLOAT_WORD_ORDER __BIG_ENDIAN
+#else
 /* FPA floating point units are always big-endian, irrespective of the
    CPU endianness.  VFP floating point units use the same endianness
    as the rest of the system.  */
@@ -16,4 +21,5 @@
 #define __FLOAT_WORD_ORDER __BYTE_ORDER
 #else
 #define __FLOAT_WORD_ORDER __BIG_ENDIAN
+#endif
 #endif

@@ -834,13 +834,6 @@ int res2_inverse(vorbis_block *vb,vorbis_look_residue *vl,
 
         /* now we decode residual values for the partitions */
         for(k=0;k<partitions_per_word && i<partvals;k++,i++)
-          if(partword == NULL) { fprintf(stderr, "partword null\n"); goto errout; }
-          if(partword[l] == NULL) { fprintf(stderr, "partword[l] null\n"); goto errout; }
-          if(info->secondstages == NULL) { fprintf(stderr, "info->secondstages null\n"); goto errout; }
-          if(partword[l][k] >= (sizeof(info->secondstages) / sizeof(info->secondstages[0])))
-          { fprintf(stderr, "partword[l][k] too big: %d\n", partword[l][k]); goto errout; }
-          if(partword[l][k] < 0)
-          { fprintf(stderr, "partword[l][k] too small: %d\n", partword[l][k]); goto errout; }
           if(info->secondstages[partword[l][k]]&(1<<s)){
             codebook *stagebook=look->partbooks[partword[l][k]][s];
 

@@ -48,6 +48,77 @@ extern "C" {
 #define SDL2_GFXPRIMITIVES_MINOR	0
 #define SDL2_GFXPRIMITIVES_MICRO	4
 
+/* JC: The version of SDL2_gfx I found has changed function names from,
+	e.g. pixelColor to GFX_pixelColor
+	
+	To ensure backwards compatibility we by default #define them back to what they
+	originally were.  Define -DSDL2_GFX_DONTPOLLUTE to stop this happening
+	*/
+
+#ifndef SDL2_GFX_DONTPOLLUTE
+
+#define GFX_pixelColor pixelColor
+#define GFX_pixelRGBA pixelRGBA
+#define GFX_hlineColor hlineColor
+#define GFX_hlineRGBA hlineRGBA
+#define GFX_vlineColor vlineColor
+#define GFX_vlineRGBA vlineRGBA
+#define GFX_rectangleColor rectangleColor
+#define GFX_rectangleRGBA rectangleRGBA
+#define GFX_roundedRectangleColor roundedRectangleColor
+#define GFX_roundedRectangleRGBA roundedRectangleRGBA
+#define GFX_boxColor boxColor
+#define GFX_boxRGBA boxRGBA
+#define GFX_roundedBoxColor roundedBoxColor
+#define GFX_roundedBoxRGBA roundedBoxRGBA
+#define GFX_lineColor lineColor
+#define GFX_lineRGBA lineRGBA
+#define GFX_aalineColor aalineColor
+#define GFX_aalineRGBA aalineRGBA
+#define GFX_thickLineColor thickLineColor
+#define GFX_thickLineRGBA thickLineRGBA
+#define GFX_circleColor circleColor
+#define GFX_circleRGBA circleRGBA
+#define GFX_arcColor arcColor
+#define GFX_arcRGBA arcRGBA
+#define GFX_aacircleColor aacircleColor
+#define GFX_aacircleRGBA aacircleRGBA
+#define GFX_filledCircleColor filledCircleColor
+#define GFX_filledCircleRGBA filledCircleRGBA
+#define GFX_ellipseColor ellipseColor
+#define GFX_ellipseRGBA ellipseRGBA
+#define GFX_aaellipseColor aaellipseColor
+#define GFX_aaellipseRGBA aaellipseRGBA
+#define GFX_filledEllipseColor filledEllipseColor
+#define GFX_filledEllipseRGBA filledEllipseRGBA
+#define GFX_pieColor pieColor
+#define GFX_pieRGBA pieRGBA
+#define GFX_filledPieColor filledPieColor
+#define GFX_filledPieRGBA filledPieRGBA
+#define GFX_trigonColor trigonColor
+#define GFX_trigonRGBA trigonRGBA
+#define GFX_aatrigonColor aatrigonColor
+#define GFX_aatrigonRGBA aatrigonRGBA
+#define GFX_filledTrigonColor filledTrigonColor
+#define GFX_filledTrigonRGBA filledTrigonRGBA
+#define GFX_polygonColor polygonColor
+#define GFX_polygonRGBA polygonRGBA
+#define GFX_aapolygonColor aapolygonColor
+#define GFX_aapolygonRGBA aapolygonRGBA
+#define GFX_filledPolygonColor filledPolygonColor
+#define GFX_filledPolygonRGBA filledPolygonRGBA
+#define GFX_texturedPolygon texturedPolygon
+#define GFX_bezierColor bezierColor
+#define GFX_bezierRGBA bezierRGBA
+#define GFX_gfxPrimitivesSetFont gfxPrimitivesSetFont
+#define GFX_gfxPrimitivesSetFontRotation gfxPrimitivesSetFontRotation
+#define GFX_characterColor characterColor
+#define GFX_characterRGBA characterRGBA
+#define GFX_stringColor stringColor
+#define GFX_stringRGBA stringRGBA
+
+#endif
+
 
 	/* ---- Function Prototypes */
 

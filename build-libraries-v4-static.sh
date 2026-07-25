@@ -88,6 +88,12 @@ cd build-v4/sdl_gfx
 make -j16 install
 cd ../..
 
+mkdir -p build-v4/sdl2_gfx
+cd build-v4/sdl2_gfx
+../../SDL2_gfx-master/configure --host=aarch64-none-gkos --disable-shared --enable-static --prefix=$SYSROOT/usr --disable-mmx --with-sdl-prefix=$SYSROOT/usr
+make -j16 install
+cd ../..
+
 cmake $CMAKE_OPTS -DBOOST_EXCLUDE_LIBRARIES=fiber\;wave\;asio\;log\;cobalt\;test -DBOOST_RUNTIME_LINK=static -DBUILD_TESTING=OFF -S boost-1.85.0/ -B build-v4/boost
 make -C build-v4/boost -j16 install
 

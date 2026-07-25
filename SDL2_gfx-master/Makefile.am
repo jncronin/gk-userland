@@ -8,7 +8,8 @@ libSDL2_gfxinclude_HEADERS =	\
 	SDL2_framerate.h	\
 	SDL2_gfxPrimitives.h	\
 	SDL2_imageFilter.h	\
-	SDL2_rotozoom.h
+	SDL2_rotozoom.h \
+	SDL2_gfxPrimitives_font.h
 
 libSDL2_gfx_la_SOURCES =	\
 	SDL2_framerate.c	\

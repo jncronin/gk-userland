@@ -1224,7 +1224,10 @@ int Mix_GetMusicVolume(Mix_Music *music)
 /* Halt playing of music */
 static void music_internal_halt(void)
 {
-    if (music_playing->interface->Stop) {
+    if (!music_playing)
+        return;
+    
+    if (music_playing->interface && music_playing->interface->Stop) {
         music_playing->interface->Stop(music_playing->context);
     }
 

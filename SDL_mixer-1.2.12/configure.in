@@ -437,6 +437,13 @@ if test x$enable_music_ogg = xyes; then
     if test x$enable_music_ogg_tremor = xyes; then
         AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
         AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes])
+        if test x$have_tremor_hdr = xyes; then
+            case "$host" in
+                *-*-gkos*)
+                    have_tremor_lib=yes
+                    ;;
+            esac
+        fi
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)

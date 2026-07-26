@@ -13105,6 +13105,13 @@ then :
   have_tremor_lib=yes
 fi
 
+        if test x$have_tremor_hdr = xyes; then
+            case "$host" in
+                *-*-gkos*)
+                    have_tremor_lib=yes
+                    ;;
+            esac
+        fi
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)

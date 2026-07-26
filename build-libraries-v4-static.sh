@@ -111,6 +111,9 @@ make -C build-v4/ogg -j16 install
 cmake $CMAKE_OPTS -S libvorbis-1.3.7/ -B build-v4/vorbis
 make -C build-v4/vorbis -j16 install
 
+cmake $CMAKE_OPTS -S tremor-1.2.1-SDL -B build-v4/tremor
+make -C build-v4/tremor -j16 install
+
 cmake $CMAKE_OPTS -DPHYSFS_BUILD_TEST=OFF -S physfs-main/ -B build-v4/physfs
 make -C build-v4/physfs -j16 install
 
@@ -142,7 +145,7 @@ cp toolchain-gkosv4-static.cmake mpg123-1.32.7/ports
 cmake $CMAKE_OPTS -S mpg123-1.32.7/ports/cmake -B build-v4/mpg123
 make -C build-v4/mpg123 install
 
-cmake $CMAKE_OPTS -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=ON -DSDL2MIXER_MIDI_TIMIDITY=ON -DSDL2MIXER_MIDI_FLUIDSYNTH=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_MP3_MINIMP3=OFF -DSDL2MIXER_MP3_MPG123=ON -DSDL2MIXER_MP3_MPG123_SHARED=OFF -DSDL2MIXER_SAMPLES=OFF SDL_mixer-release-2.8.0/ -B build-v4/sdl2_mixer
+cmake $CMAKE_OPTS -DUNIX=ON -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MIDI=ON -DSDL2MIXER_MIDI_TIMIDITY=ON -DSDL2MIXER_MIDI_FLUIDSYNTH=OFF -DSDL2MIXER_WAVPACK=OFF -DSDL2MIXER_MP3_MINIMP3=OFF -DSDL2MIXER_MP3_MPG123=ON -DSDL2MIXER_MP3_MPG123_SHARED=OFF -DSDL2MIXER_SAMPLES=OFF -DSDL2MIXER_VORBIS_STB=ON -DSDL2MIXER_VORBIS_TREMOR=OFF -DSDL2MIXER_VORBIS_VORBISFILE=OFF -DSDL2MIXER_VORBIS="STB" SDL_mixer-release-2.8.0/ -B build-v4/sdl2_mixer
 make -C build-v4/sdl2_mixer -j16 install
 
 cmake $CMAKE_OPTS -DUNIX=ON -DSDL2NET_SAMPLES=OFF SDL2_net-2.2.0 -B build-v4/sdl2_net
@@ -199,7 +202,8 @@ make -j16 -C build-v4/flac install
 mkdir -p build-v4/sdl12mixer
 cd build-v4/sdl12mixer
 # disable fluidsynth here because it needs SDL2 output, and this is SDL1.2 mixer
-../../SDL_mixer-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-music-mod --disable-music-fluidsynth-midi --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
+# use tremor vorbis library due to weird crashes in libvorbis
+../../SDL_mixer-1.2.12/configure --host=aarch64-none-gkos --disable-shared --enable-static --disable-music-mod --disable-music-fluidsynth-midi --enable-music-ogg-tremor --disable-music-mod-shared --disable-music-ogg-shared --disable-music-flac-shared --prefix=$SYSROOT/usr --with-sdl-prefix=$SYSROOT/usr
 make -j16 install-lib install-hdrs
 cd ../..
 

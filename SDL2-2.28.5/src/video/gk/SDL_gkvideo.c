@@ -13,6 +13,7 @@
 #include "_gk_memaddrs.h"
 #include <errno.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 #if __GAMEKID__ >= 4
 #include <gkgl.h>
@@ -362,6 +363,12 @@ static void GK_FreeCursor(SDL_Cursor * cursor)
 {
     if(cursor && cursor->driverdata)
     {
+		GK_CursorData *cdata = (GK_CursorData *)cursor->driverdata;
+        if(cdata->fd >= 0)
+        {
+            close(cdata->fd);
+        }
+
         SDL_free(cursor->driverdata);
         cursor->driverdata = NULL;
     }

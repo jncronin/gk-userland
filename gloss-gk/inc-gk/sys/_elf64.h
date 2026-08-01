@@ -73,6 +73,30 @@ typedef struct
     Elf64_Word n_type;
 } __attribute__((packed)) Elf64_Nhdr;
 
+typedef struct
+{
+    Elf64_Sxword d_tag;
+    union
+    {
+        Elf64_Xword d_val;
+        Elf64_Addr d_ptr;
+    } d_un;
+} __attribute__((packed)) Elf64_Dyn;
+
+typedef struct
+{
+    Elf64_Addr r_offset;
+    Elf64_Xword r_info;
+    Elf64_Sxword r_addend;
+} __attribute__((packed)) Elf64_Rela;
+
+typedef struct
+{
+    Elf64_Word nbucket;
+    Elf64_Word nchain;
+    Elf64_Word bucket[];
+} __attribute__((packed)) Elf64_Hash;
+
 #define EM_AARCH64      0xb7
 
 #define EI_CLASS        4
@@ -80,7 +104,12 @@ typedef struct
 
 #define EI_DATA         5
 #define ELFDATA2LSB     1
+
+#define ET_NONE         0
+#define ET_REL          1
 #define ET_EXEC         2
+#define ET_DYN          3
+#define ET_CORE         4
 
 #define PT_NULL         0
 #define PT_LOAD         1
@@ -111,5 +140,66 @@ typedef struct
 #define SHT_HIOS 0x6FFFFFFF
 #define SHT_LOPROC 0x70000000
 #define SHT_HIPROC 0x7FFFFFFF
+
+#define DT_NULL                 0
+#define DT_NEEDED               1
+#define DT_PLTRELSZ             2
+#define DT_PLTGOT               3
+#define DT_HASH                 4
+#define DT_STRTAB               5
+#define DT_SYMTAB               6
+#define DT_RELA                 7
+#define DT_RELASZ               8
+#define DT_RELAENT              9
+#define DT_STRSZ                10
+#define DT_SYMENT               11
+#define DT_INIT                 12
+#define DT_FINI                 13
+#define DT_SONAME               14
+#define DT_RPATH                15
+#define DT_SYMBOLIC             16
+#define DT_REL                  17
+#define DT_RELSZ                18
+#define DT_RELENT               19
+#define DT_PLTREL               20
+#define DT_DEBUG                21
+#define DT_TEXTREL              22
+#define DT_JMPREL               23
+#define DT_BIND_NOW             24
+#define DT_INIT_ARRAY           25
+#define DT_FINI_ARRAY           26
+#define DT_INIT_ARRAYSZ         27
+#define DT_FINI_ARRAYSZ         28
+#define DT_LOOS                 0x60000000
+#define DT_HIOS                 0x6fffffff
+#define DT_LOPROC               0x70000000
+#define DT_HIPROC               0x7fffffff
+
+#define DT_RELACOUNT	        0x6ffffff9
+#define DT_RELCOUNT	            0x6ffffffa
+
+#define ELF32_R_SYM(val)		((val) >> 8)
+#define ELF32_R_TYPE(val)		((val) & 0xff)
+#define ELF32_R_INFO(sym, type)		(((sym) << 8) + ((type) & 0xff))
+
+#define ELF64_R_SYM(i)			((i) >> 32)
+#define ELF64_R_TYPE(i)			((i) & 0xffffffff)
+#define ELF64_R_INFO(sym,type)		((((Elf64_Xword) (sym)) << 32) + (type))
+
+#if __ELF_NATIVE_CLASS == 64
+#define ELF_R_SYM(i) ELF64_R_SYM(i)
+#define ELF_R_TYPE(i) ELF64_R_TYPE(i)
+#define ELF_R_INFO(sym,type) ELF64_R_INFO(sym,type)
+#elif __ELF_NATIVE_CLASS == 32
+#define ELF_R_SYM(i) ELF32_R_SYM(i)
+#define ELF_R_TYPE(i) ELF32_R_TYPE(i)
+#define ELF_R_INFO(sym,type) ELF32_R_INFO(sym,type)
+#endif
+
+#define R_AARCH64_RELATIVE          1027
+#define R_AARCH64_ABS64             257
+#define R_AARCH64_TLS_TPREL         1030
+#define R_AARCH64_JUMP_SLOT         1026
+#define R_AARCH64_GLOB_DAT          1025
 
 #endif

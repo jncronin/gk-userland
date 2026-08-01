@@ -24,6 +24,10 @@ target_sources(gloss-gk
 	${SOURCES_GLOSS}
 )
 
+target_compile_options(gloss-gk PRIVATE 
+    $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+)
+
 target_include_directories(gloss-gk
 	PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/src-gloss"

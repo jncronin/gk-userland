@@ -892,6 +892,32 @@ int dlfcn_loadimage(struct _dlinfo dl)
 
     if(textrel) reset_textrel(dl);
     if(rodatarel) reset_rodatarel(dl);
+
+    /* Now execute the various sections, if appropriate */
+    if(p_dyn)
+    {
+        auto dt_init = get_first_dyn(p_dyn, dl.eh, DT_INIT);
+        if(dt_init)
+        {
+            auto init_func = (void (*)())(dt_init->d_un.d_ptr + (uintptr_t)dl.baseaddr);
+            init_func();
+        }
+
+        auto dt_initarray = get_first_dyn(p_dyn, dl.eh, DT_INIT_ARRAY);
+        auto dt_initarraysz = get_first_dyn(p_dyn, dl.eh, DT_INIT_ARRAYSZ);
+        if(dt_initarray && dt_initarraysz)
+        {
+            auto nfuncs = dt_initarraysz->d_un.d_val / sizeof(void (*)());
+            for(auto i = 0u; i < nfuncs; i++)
+            {
+                auto init_func = (void (*)())*(uintptr_t *)(
+                    (uintptr_t)dl.baseaddr + dt_initarray->d_un.d_ptr +
+                    i * sizeof(void (*)())
+                );
+                init_func();
+            }
+        }
+    }
     return 0;
 }
 

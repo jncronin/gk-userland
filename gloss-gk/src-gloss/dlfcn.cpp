@@ -18,12 +18,11 @@ static void * const __dl_main_exec = (void *)-1;
 
 struct _dlinfo
 {
-    int fd;
     char *name;
     ElfW(Ehdr) *eh;
     void *baseaddr;
     int id;
-    bool global;
+    int global;
     const ElfW(Phdr) *_p_dyn = nullptr;
     uintptr_t symtab = 0;
     uintptr_t hash = 0;
@@ -36,7 +35,7 @@ struct _dlinfo
 };
 
 static int getndl();
-static _dlinfo getdl(int dl_id);
+static _dlinfo getdl(int dl_id, int dl_fd = -1);
 static _dlinfo getdl(void *handle);
 static void freedl(struct _dlinfo &dl);
 static int dlfcn_loadimage(struct _dlinfo dl);
@@ -143,47 +142,44 @@ class ImageList
 
 void *dlopen(const char *file, int mode)
 {
+    int dl_id = -1;
+    int run_init = 0;
     if(!file)
     {
         // open main exec
-        return __dl_main_exec;
+        dl_id = 0;
     }
-    else
+
+    __syscall_dlopen_params p;
+    p.path = file;
+    p.dl_id = dl_id;
+    p.global = (((mode & RTLD_GLOBAL) != 0) && ((mode & RTLD_LOCAL) == 0)) ? 1 : 0;
+    p.run_init = &run_init;
+
+    auto ret = deferred_call(__syscall_dlopen, &p);
+    if(ret < 0)
     {
-        // just try and open
-        auto oret = open(file, O_RDONLY);
-        if(oret >= 0)
-        {
-            __syscall_loadimage_params p;
-            p.fd = oret;
-            p.global = (((mode & RTLD_GLOBAL) != 0) && ((mode & RTLD_LOCAL) == 0)) ? 1 : 0;
-            auto liret = deferred_call(__syscall_loadimage, &p);
-            if(liret != 0)
-            {
-                fprintf(stderr, "dlopen: loadimage failed: %d\n", errno);
-                close(oret);
-                return nullptr;
-            }
-
-            // load dependencies, resolve relocations, run init() etc
-            auto h = (void *)(intptr_t)oret;
-            auto dl = getdl(h);
-            if(dlfcn_loadimage(dl) != 0)
-            {
-                fprintf(stderr, "dlopen: dlfcn_loadimage failed: %d\n", errno);
-                close(oret);
-                freedl(dl);
-                return nullptr;
-            }
-
-            freedl(dl);
-            return h;
-        }
-        else
-        {
-            return nullptr;
-        }
+        return nullptr;
     }
+
+    if(!run_init)
+    {
+        // this is not the first time this image is loaded, therefore don't run init stuff
+        return (void *)(intptr_t)ret;
+    }
+
+    // load dependencies, resolve relocations, run init() etc
+    auto dl = getdl(p.dl_id);
+    if(dlfcn_loadimage(dl) != 0)
+    {
+        fprintf(stderr, "dlopen: dlfcn_loadimage failed: %d\n", errno);
+        dlclose((void *)(intptr_t)ret);
+        freedl(dl);
+        return nullptr;
+    }
+
+    freedl(dl);
+    return (void *)(intptr_t)ret;
 }
 
 int dlclose(void *handle)
@@ -203,7 +199,7 @@ static int getndl()
     return deferred_call(__syscall_getndl, &dummy);
 }
 
-static _dlinfo getdl(int dl_id)
+static _dlinfo getdl(int dl_id, int fd)
 {
     size_t fname_len = 256;
     char *fname = (char *)malloc(fname_len);
@@ -213,24 +209,27 @@ static _dlinfo getdl(int dl_id)
 
     while(fname && fname_len < PATH_MAX)
     {
-        __syscall_getdl_params p
+        auto old_fname_len = fname_len;
+
+        __syscall_getdlex_params p
         {
             .dl_id = dl_id,
-            .fd = &ret.fd,
+            .fd = fd,
             .name = fname,
             .namelen = &fname_len,
             .img = (void **)&ret.eh,
             .baseaddr = &ret.baseaddr,
+            .global = &ret.global
         };
-        auto sret = deferred_call(__syscall_getdl, &p);
+        auto sret = deferred_call(__syscall_getdlex, &p);
 
         //fprintf(stderr, "getdl(%d): sret: %d, fname_len: %u\n", dl_id, sret, fname_len);
 
         if(sret == -1)
         {
-            if(fname_len == 0)
+            if(fname_len == 0 || fname_len == old_fname_len)
             {
-                // error - doesn't exist
+                // error - doesn't exist or unsupported syscall
                 break;
             }
             else if(fname_len < PATH_MAX)
@@ -242,8 +241,7 @@ static _dlinfo getdl(int dl_id)
         {
             // success
             ret.name = fname;
-            ret.id = dl_id;
-            ret.global = true;      // TODO: get this from kernel
+            ret.id = p.dl_id;
             return ret;
         }
     }
@@ -253,7 +251,6 @@ static _dlinfo getdl(int dl_id)
         free(fname);
     }
 
-    ret.fd = -1;
     ret.name = nullptr;
     ret.eh = nullptr;
     ret.baseaddr = nullptr;
@@ -263,35 +260,12 @@ static _dlinfo getdl(int dl_id)
 
 static _dlinfo getdl(void *handle)
 {
-    auto fd = (int)(intptr_t)handle;
-
-    if(fd == -1)
-    {
-        return getdl(0);
-    }
-
-    auto ndls = getndl();
-    for(int i = 0; i < ndls; i++)
-    {
-        auto cdl = getdl(i);
-        if(cdl.fd == fd)
-        {
-            return cdl;
-        }
-    }
-
-    _dlinfo ret;
-    ret.fd = -1;
-    ret.name = nullptr;
-    ret.eh = nullptr;
-    ret.baseaddr = nullptr;
-    ret.id = -1;
-    return ret;
+    return getdl(-1, (int)(intptr_t)handle);
 }
 
 static void freedl(struct _dlinfo &dl)
 {
-    if(dl.fd >= 0 && dl.name)
+    if(dl.id >= 0 && dl.name)
     {
         free(dl.name);
     }
@@ -442,51 +416,20 @@ void *dlsym(void *handle, const char *name)
 {
     //fprintf(stderr, "dlsym(%s) begin\n", name);
     auto dl = getdl(handle);
-    //fprintf(stderr, "dlsym(%s): dl: { fd: %d, name: %s, baseaddr: %p, eh: %p }\n",
-    //    name, dl.fd, dl.name, dl.baseaddr, dl.eh);
-    if(dl.eh)
+    auto ret = dl.get_sym(name);
+    freedl(dl);
+    if(!ret)
     {
-        //fprintf(stderr, "dlsym(%s) have dl: %s\n", name, dl.name);
-        const auto ehaddr = (uintptr_t)dl.eh;
-        const auto symtab = get_symtab(dl);
-        if(symtab)
-        {
-            const auto symstrhdr = (const ElfW(Shdr) *)
-                (ehaddr + dl.eh->e_shoff +
-                symtab->sh_link * dl.eh->e_shentsize);
-            const char *symstrs = (const char *)(ehaddr +
-                symstrhdr->sh_offset);
-            const auto nsyms = symtab->sh_size /
-                symtab->sh_entsize;
-            //fprintf(stderr, "dlsym(%s) have symtab: %u syms\n", name, nsyms);
-            for(auto i = symtab->sh_info; i < nsyms; i++)
-            {
-                const auto csym = (const ElfW(Sym) *)
-                    (ehaddr + symtab->sh_offset +
-                    i * symtab->sh_entsize);
-                const char *csymname = &symstrs[csym->st_name];
-
-                //fprintf(stderr, "dlsym(%s) sym %u: %s\n", name, i, csymname);
-
-                if(strcmp(name, csymname) == 0)
-                {
-                    // found
-                    freedl(dl);
-                    return (void *)((uintptr_t)dl.baseaddr +
-                        (uintptr_t)csym->st_value);
-                }
-            }
-        }
-        freedl(dl);
+        fprintf(stderr, "dlsym: %s not found within %p\n", name, handle);
+        return nullptr;
     }
-    fprintf(stderr, "dlsym: %s not found within %p\n", name, handle);
-    return nullptr;
+    return (void *)ret;
 }
 
 int dlinfo(void *handle, int request, void *info)
 {
     auto dl = getdl(handle);
-    if(dl.fd < 0)
+    if(dl.id < 0)
     {
         return -1;
     }
@@ -923,7 +866,7 @@ int dlfcn_loadimage(struct _dlinfo dl)
 
 uintptr_t _dlinfo::get_sym(const char *symname)
 {
-    if(fd < 0 || !eh)
+    if(id < 0 || !eh)
         return 0;
     
     if(eh->e_type == ET_DYN)

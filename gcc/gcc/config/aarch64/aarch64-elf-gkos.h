@@ -51,7 +51,8 @@
       %{rdynamic:-export-dynamic}                               \
       %{!shared:-dynamic-linker /bin/ld.so }}      \
    %{mbig-endian:-EB} %{mlittle-endian:-EL} -X	\
-  -maarch64elf%{mabi=ilp32*:32}%{mbig-endian:b}" \
+  -maarch64elf_gkos   \
+  -z separate-code" \
   AARCH64_ERRATA_LINK_SPEC
 #endif
 

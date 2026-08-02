@@ -2,3 +2,6 @@ source_sh ${srcdir}/emulparams/aarch64elf.sh
 
 MAXPAGESIZE=65536
 COMMONPAGESIZE=65536
+SCRIPT_NAME=elf64_gkos
+GENERATE_PIE_SCRIPT=yes
+GENERATE_SHLIB_SCRIPT=yes

@@ -681,6 +681,23 @@ static void reset_textrel(struct _dlinfo &dl)
     }
 }
 
+static void reset_rodatarel(struct _dlinfo &dl)
+{
+    for(auto i = 0u; i < dl.eh->e_phnum; i++)
+    {
+        const auto *cp = (const ElfW(Phdr) *)((uintptr_t)dl.eh +
+            i * dl.eh->e_phentsize);
+        if(cp->p_type == PT_LOAD)
+        {
+            if(!(cp->p_flags & PF_X) && !(cp->p_flags & PF_W))
+            {
+                mprotect((void *)((uintptr_t)dl.baseaddr + cp->p_vaddr),
+                    cp->p_memsz, PROT_READ);
+            }
+        }
+    }
+}
+
 /* Perform the actual load of a possibly dynamic image */
 int dlfcn_loadimage(struct _dlinfo dl)
 {
@@ -806,6 +823,22 @@ int dlfcn_loadimage(struct _dlinfo dl)
             }
         }
     }
+    bool rodatarel = false;
+    /* do the same for rodata sections */
+    for(auto i = 0u; i < dl.eh->e_phnum; i++)
+    {
+        const auto *cp = (const ElfW(Phdr) *)((uintptr_t)dl.eh +
+            dl.eh->e_phoff + i * dl.eh->e_phentsize);
+        if(cp->p_type == PT_LOAD)
+        {
+            if(!(cp->p_flags & PF_X) && !(cp->p_flags & PF_W))
+            {
+                mprotect((void *)((uintptr_t)dl.baseaddr + cp->p_vaddr),
+                    cp->p_memsz, PROT_READ | PROT_WRITE);
+                rodatarel = true;
+            }
+        }
+    }
 
     /* Perform the actual relocations */
     if(p_dyn)
@@ -831,6 +864,7 @@ int dlfcn_loadimage(struct _dlinfo dl)
                 il) != 0)
             {
                 if(textrel) reset_textrel(dl);
+                if(rodatarel) reset_rodatarel(dl);
                 return -1;
             }
         }
@@ -849,6 +883,7 @@ int dlfcn_loadimage(struct _dlinfo dl)
                     il) != 0)
                 {
                     if(textrel) reset_textrel(dl);
+                    if(rodatarel) reset_rodatarel(dl);
                     return -1;
                 }
             }
@@ -856,6 +891,7 @@ int dlfcn_loadimage(struct _dlinfo dl)
     }
 
     if(textrel) reset_textrel(dl);
+    if(rodatarel) reset_rodatarel(dl);
     return 0;
 }
 

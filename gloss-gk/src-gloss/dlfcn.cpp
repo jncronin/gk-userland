@@ -39,6 +39,7 @@ static _dlinfo getdl(int dl_id, int dl_fd = -1);
 static _dlinfo getdl(void *handle);
 static void freedl(struct _dlinfo &dl);
 static int dlfcn_loadimage(struct _dlinfo dl);
+static const ElfW(Dyn) *get_first_dyn(const ElfW(Phdr) *p_dyn, void *image, long id);
 
 class ImageList
 {
@@ -188,8 +189,65 @@ int dlclose(void *handle)
     {
         return 0;
     }
+    
+    /* get details on the module, in case we need to run fini etc.
+        We cannot run this after dlclose() because the handle will
+        no longer be valid. */
+    auto dl = getdl(handle);
+    if(!dl.eh)
+    {
+        errno = EBADF;
+        return -1;
+    }
 
+    __syscall_dlclose_params p;
+    int run_fini = 0;
+    p.fd = (int)(intptr_t)handle;
+    p.run_fini = &run_fini;
+    auto sret = deferred_call(__syscall_dlclose, &p);
+    if(sret != 0)
+    {
+        return sret;
+    }
+
+    if(!run_fini)
+    {
+        // nothing more to do - kernel fd already closed for us
+        return 0;
+    }
+
+    auto p_dyn = dl.pdyn();
+    if(p_dyn)
+    {
+        fprintf(stderr, "dlclose(%d): running fini sections\n", (int)(intptr_t)handle);
+
+        auto dt_finiarray = get_first_dyn(p_dyn, dl.eh, DT_FINI_ARRAY);
+        auto dt_finiarraysz = get_first_dyn(p_dyn, dl.eh, DT_FINI_ARRAYSZ);
+        if(dt_finiarray && dt_finiarraysz)
+        {
+            auto nfuncs = dt_finiarraysz->d_un.d_val / sizeof(void (*)());
+            for(auto i = 0u; i < nfuncs; i++)
+            {
+                auto ri = nfuncs - i - 1;       // run these backwards
+                auto fini_func = (void (*)())*(uintptr_t *)(
+                    (uintptr_t)dl.baseaddr + dt_finiarray->d_un.d_ptr +
+                    ri * sizeof(void (*)())
+                );
+                fini_func();
+            }
+        }
+
+        auto dt_fini = get_first_dyn(p_dyn, dl.eh, DT_FINI);
+        if(dt_fini)
+        {
+            auto fini_func = (void (*)())(dt_fini->d_un.d_ptr + (uintptr_t)dl.baseaddr);
+            fini_func();
+        }
+    }
+
+    // finally, close up the kernel side including freeing memory etc
     close((int)(intptr_t)handle);
+
     return 0;
 }
 
@@ -593,6 +651,9 @@ const ElfW(Phdr) *_dlinfo::pdyn()
 {
     if(_p_dyn)
         return _p_dyn;
+
+    if(eh->e_type != ET_DYN)
+        return nullptr;
     
     // find dynamic section
     for(auto i = 0u; i < eh->e_phnum; i++)

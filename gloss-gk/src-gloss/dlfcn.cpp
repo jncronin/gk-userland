@@ -207,6 +207,12 @@ static _dlinfo getdl(int dl_id, int fd)
 
 //    fprintf(stderr, "getdl(%d) begin\n", dl_id);
 
+    // handle old-style dlsym(-1, ...) for main exec
+    if(dl_id == -1 && fd == -1)
+    {
+        dl_id = 0;
+    }
+
     while(fname && fname_len < PATH_MAX)
     {
         auto old_fname_len = fname_len;
@@ -223,8 +229,6 @@ static _dlinfo getdl(int dl_id, int fd)
         };
         auto sret = deferred_call(__syscall_getdlex, &p);
 
-        //fprintf(stderr, "getdl(%d): sret: %d, fname_len: %u\n", dl_id, sret, fname_len);
-
         if(sret == -1)
         {
             if(fname_len == 0 || fname_len == old_fname_len)
@@ -240,6 +244,7 @@ static _dlinfo getdl(int dl_id, int fd)
         else
         {
             // success
+            //fprintf(stderr, "getdl(%d,%d): %s @ %p\n", p.dl_id, fd, fname, ret.baseaddr);
             ret.name = fname;
             ret.id = p.dl_id;
             return ret;
@@ -414,16 +419,16 @@ int dl_iterate_phdr(int (*callback)(struct dl_phdr_info *, size_t, void *), void
 
 void *dlsym(void *handle, const char *name)
 {
-    //fprintf(stderr, "dlsym(%s) begin\n", name);
     auto dl = getdl(handle);
     auto ret = dl.get_sym(name);
+    auto baseaddr = (uintptr_t)dl.baseaddr;
     freedl(dl);
     if(!ret)
     {
         fprintf(stderr, "dlsym: %s not found within %p\n", name, handle);
         return nullptr;
     }
-    return (void *)ret;
+    return (void *)(ret + baseaddr);
 }
 
 int dlinfo(void *handle, int request, void *info)

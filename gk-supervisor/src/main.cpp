@@ -14,6 +14,7 @@
 #include "wifi_conf.h"
 #include "toasts.h"
 #include "dialogbox.h"
+#include "timezones.h"
 
 static uint32_t last_supervisor_update = 0;
 static lv_display_t *overlay;
@@ -75,6 +76,9 @@ int main(int argc, char *argv[])
     // load known wifi networks
     auto wifi_conf = wifi_conf_read();
     wifi_conf_apply(wifi_conf);
+
+    // init timezone
+    timezones_read();
     
     lv_init();
 

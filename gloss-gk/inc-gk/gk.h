@@ -98,6 +98,8 @@ int GK_WifiAddPSKNetwork(const char *ssid, int ch, const char *psk);
 
 int GK_Shutdown(int reboot);
 
+int GK_SetTZ(const char *tzval);
+
 #if __GAMEKID__ >= 4
 int GK_GetJoystickBAxes(int *x, int *y);
 int GK_GetThrottle(int *y);

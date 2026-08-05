@@ -703,11 +703,11 @@ static int handle_newpress(unsigned short key)
             break;
 
         case GK_SCANCODE_VOLUMEUP:
-            handle_volchange(10);
+            handle_volchange(5);
             break;
 
         case GK_SCANCODE_VOLUMEDOWN:
-            handle_volchange(-10);
+            handle_volchange(-5);
             break;
     }
 

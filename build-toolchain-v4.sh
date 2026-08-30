@@ -66,10 +66,18 @@ cd ../..
 # build libstdc++ - use separate build tree (even though it builds gcc again) so that we pull in new newlib defines
 mkdir -p build-v4/libstdc++
 cd build-v4/libstdc++
-../../gcc/configure --target=aarch64-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --enable-languages=c,c++ --enable-threads=posix
+../../gcc/configure --target=aarch64-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --enable-languages=c,c++ --enable-threads=posix --with-pic --enable-static
 make -j16 all-target-libstdc++-v3
 make -j16 install-target-libstdc++-v3
 cd ../..
+
+mkdir -p build-v4/libstdc++_shared
+cd build-v4/libstdc++_shared
+../../gcc/configure --target=aarch64-none-gkos --prefix="$TOOLSDIR" --with-sysroot="$SYSROOT" --enable-languages=c,c++ --enable-threads=posix --disable-static --enable-shared
+make -j16 all-target-libstdc++-v3
+make -j16 install-target-libstdc++-v3
+cd ../..
+
 
 # move target files from toolsdir to sysroot
 cp -dpR $TOOLSDIR/aarch64-none-gkos/include/* $SYSROOT/usr/include

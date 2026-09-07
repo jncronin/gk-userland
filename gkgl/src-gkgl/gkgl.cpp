@@ -226,7 +226,11 @@ int GKGLCreateContext(GKGLContext *_ctx, GKGLAttribs *attrs)
 
     if(ctx->ctx == EGL_NO_CONTEXT)
     {
-        fprintf(stderr, "eglCreateContext failed: %d\n", eglGetError());
+        fprintf(stderr, "eglCreateContext (v%u.%u%s) failed: %d\n",
+            attrs->maj_ver, attrs->min_ver,
+            attrs->gles ? "ES" :
+                ((attrs->maj_ver >= 3) ? (attrs->core_profile ? "-Core" : "-Compat") : ""),
+            eglGetError());
         GKGLDeleteContext(ctx);
         return -1;
     }

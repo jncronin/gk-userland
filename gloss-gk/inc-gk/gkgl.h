@@ -24,6 +24,7 @@ int GKGLCreateContext(GKGLContext *ctx, struct GKGLAttribs *attrs);
 int GKGLDeleteContext(GKGLContext ctx);
 int GKGLMakeCurrent(GKGLContext ctx);
 int GKGLSwapBuffers(GKGLContext ctx);
+void GKGLBindFramebuffer(GLenum target, GLuint framebuffer);
 
 #ifdef __cplusplus
 }

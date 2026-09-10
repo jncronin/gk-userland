@@ -41,6 +41,8 @@ struct gkgl_ctx
     void (*force_link2)() = nullptr;
 };
 
+static __thread GKGLContext cur_ctx;
+
 extern "C" {
     void GLAPIENTRY _mesa_EGLImageTargetTexture2DOES(GLenum target, GLeglImageOES image);
     void GLAPIENTRY _mesa_EGLImageTargetRenderbufferStorageOES (GLenum target, GLeglImageOES image);
@@ -371,6 +373,8 @@ int GKGLMakeCurrent(GKGLContext ctx)
 
     glBindFramebuffer(GL_FRAMEBUFFER, ctx->tiled_fb);
 
+    cur_ctx = ctx;
+
     return 0;
 }
 
@@ -449,4 +453,20 @@ int GKGLDeleteContext(GKGLContext ctx)
 
     delete ctx;
     return 0;
+}
+
+/* Intercept dlopen calls to glBindFramebuffer to use this function instead.
+    This ensures that programs which call glBindFramebuffer(..., 0) will
+    use the tiled_fb instead of using 0 (which is typically an error with
+    egl contexts created without a surface). */
+extern "C" void GKGLBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+    if(framebuffer == 0 && cur_ctx)
+    {
+        glBindFramebuffer(target, cur_ctx->tiled_fb);
+    }
+    else
+    {
+        glBindFramebuffer(target, framebuffer);
+    }
 }

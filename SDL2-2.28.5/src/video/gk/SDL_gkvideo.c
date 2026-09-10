@@ -1051,6 +1051,10 @@ int GK_GL_LoadLibrary(_THIS, const char *path)
 void *GK_GL_GetProcAddress(_THIS, const char *name)
 {
 #if __GAMEKID__ >= 4
+    if(!strcmp(name, "glBindFramebuffer"))
+    {
+        return GKGLBindFramebuffer;
+    }
     return dlsym((void *)(intptr_t)-1, name);
     //return (void *)OSMesaGetProcAddress(name);
 #else

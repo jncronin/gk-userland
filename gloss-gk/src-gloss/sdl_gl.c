@@ -91,3 +91,8 @@ __attribute__((weak)) int GKGLLoadSDLFunctions(void *)
 {
     return -1;
 }
+
+__attribute__((weak)) void GKGLBindFramebuffer(int, unsigned int)
+{
+    GK_GKGL_NotLinked();
+}

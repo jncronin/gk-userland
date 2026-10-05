@@ -37,6 +37,11 @@ target_include_directories(gloss-gk
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmsis_core/Include"
 	)
 
+set_target_properties(gloss-gk
+PROPERTIES
+	CXX_STANDARD 20
+)
+
 if(PROFILE_SYSCALLS)
 	target_compile_definitions(gloss-gk
 		PRIVATE
@@ -62,6 +67,7 @@ set_target_properties(gk PROPERTIES PUBLIC_HEADER "cmsis_device_h7/Include/stm32
 
 file(GLOB HEADERS_GK CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/inc-gk/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/inc-gk/*.hpp
 )
 file(GLOB HEADERS_GK_SYS CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/inc-gk/sys/*.h

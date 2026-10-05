@@ -32,6 +32,7 @@
 #include <cstring>
 #include <sstream>
 #include <numeric>
+#include <new>
 
 /* Some defines */
 #define QTYPE_A         1
@@ -541,7 +542,7 @@ static std::unique_ptr<uint8_t[]> build_query(const std::string &host, uint16_t 
 	const size_t header_size = 12;
 	auto req_size = header_size + target_len + 4;
 
-	auto buf = std::unique_ptr<uint8_t[]>(new uint8_t[req_size]);
+	auto buf = std::unique_ptr<uint8_t[]>(new (std::nothrow) uint8_t[req_size]);
 	if (!buf)
 		return nullptr;
 
